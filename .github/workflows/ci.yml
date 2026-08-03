@@ -1,0 +1,60 @@
+# CI da aplicacao: lint + typecheck + build.
+#
+# Complementar ao gdas-advisory.yml, que roda os checks de GOVERNANCA do
+# GDAS (senior-baseline, verify, no-agent-attribution) em modo advisory.
+# Este aqui e o gate tecnico da stack Next.js e BLOQUEIA: build quebrado
+# nao entra na main.
+#
+# O job nao define nenhuma variavel de ambiente de proposito: `lib/data/*`
+# usa dados mock e os clientes Supabase sao criados sob demanda. Se algum
+# dia o build passar a exigir segredo, este workflow quebra — e esse e o
+# sinal certo, nao um problema a contornar com secret no CI.
+
+name: ci
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: lint + typecheck + build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
+      # PLANEJAMENTO.md secao 6 pede auditoria de dependencia no verify.
+      # Advisory por enquanto: as vulnerabilidades abertas hoje sao
+      # transitivas do proprio Next.js (postcss/sharp) e so somem quando o
+      # Next publicar release corrigida — bloquear aqui pararia o projeto
+      # sem dar acao possivel. Promover a bloqueante quando a arvore limpar.
+      - name: Dependency audit (advisory)
+        if: always()
+        run: npm audit --audit-level=high || true

@@ -1,0 +1,17 @@
+---
+id: BUG-R<n>
+origem: <demanda/PEN que originou — ex.: #123 ou pen-004>
+garante: <1 frase: o comportamento que este teste garante para sempre>
+criado_em: <YYYY-MM-DD>
+---
+
+Cabeçalho padrão do teste de regressão nomeado (skill gdas-regressao).
+
+- Em arquivo markdown/registro: use o frontmatter acima como está.
+- Em arquivo de código (teste de unidade, script de banco): reproduza as
+  quatro linhas `chave: valor` como comentário no topo do arquivo, na
+  sintaxe de comentário do runner.
+- O corpo do teste vive no runner do projeto (`## Comandos > regressao`).
+- Após criar: `bash agent/skills/gdas-regressao/scripts/regressao-check.sh pin`
+  para registrar no baseline. Remoção posterior exige PEN referenciada
+  (`agent/templates/pen.md.tmpl`).

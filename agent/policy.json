@@ -1,0 +1,195 @@
+{
+  "schema": "gdas-policy/v1",
+  "profile": "node",
+  "shell": {
+    "_comment": "Padroes de comando. Precedencia: deny > ask > allow. Sufixo ' *' casa qualquer continuacao.",
+    "allow": [
+      "make *",
+      "git status *",
+      "git diff *",
+      "git log *",
+      "gh pr list *",
+      "gh pr view *",
+      "node *",
+      "npm test *",
+      "npm run *",
+      "npx tsc *",
+      "npx vitest *",
+      "npx jest *",
+      "npx eslint *",
+      "npx prettier *",
+      "pnpm test *",
+      "pnpm run *"
+    ],
+    "ask": [
+      "git push *",
+      "gh pr create *",
+      "npm install *",
+      "pnpm install *"
+    ],
+    "deny": [
+      "rm -rf *",
+      "git push --force *",
+      "git push -f *",
+      "make deploy *",
+      "npm publish *",
+      "pnpm publish *"
+    ]
+  },
+  "files": {
+    "_comment": ".env.example/.sample/.template sao placeholders versionados e editaveis; bloqueamos so .env reais. gitignore_baseline e a FONTE UNICA do piso de segredo do .gitignore (sintaxe .gitignore): semeado por docs/templates/gitignore.base no gdas init, imposto pela Verificacao 10 do gdas audit e pelo check docs/templates/checks/gitignore-baseline.sh; protect-paths.sh (pre-edit) cobre as mesmas classes de segredo.",
+    "deny_write": [
+      ".env",
+      ".env.local",
+      ".env.*.local",
+      "**/*credentials*",
+      "**/*.pem",
+      "node_modules/**"
+    ],
+    "gitignore_baseline": [
+      "*.env",
+      ".env",
+      ".env.*",
+      "!*.env.example",
+      "!*.env.sample",
+      "!*.env.template",
+      "*.pem",
+      "*.key",
+      "*.p12",
+      "*credentials*",
+      "*secret*",
+      "**/acesso.json"
+    ],
+    "severidade_gitignore_baseline_ausente": "ALTO",
+    "warn_paths": []
+  },
+  "checks": {
+    "turn_end": "agent/checks/verify.sh",
+    "pre_shell": "agent/checks/check-bash.sh",
+    "pre_file_edit": "agent/checks/protect-paths.sh",
+    "session_start": ["agent/checks/data-corrente.sh", "agent/checks/estado-fluxo.sh"]
+  },
+  "documentos": {
+    "_comment": "Tipos de doc de comunicacao humana (/documentar, DEC-020). Schema legivel por maquina, sem espelho humano (fonte unica): o CLI renderiza sob demanda e o gdas audit le este bloco e impoe genericamente. Severidade de cada check vive no audit, nao aqui.",
+    "convencao_caminho": "docs/features/<slug>/{readme,manual,fluxo}.md",
+    "front_matter_obrigatorio": ["titulo", "versao_status", "data", "slug", "fonte"],
+    "tipos": [
+      { "id": "readme",     "proposito": "Porta de entrada de um modulo",                    "gatilho": "por modulo",                      "mutabilidade": "substituivel", "esqueleto": "docs/features/<slug>/readme.md", "checks": ["presenca", "front_matter", "refs_internas"] },
+      { "id": "manual",     "proposito": "Como usar uma feature",                            "gatilho": "por feature",                     "mutabilidade": "substituivel", "esqueleto": "docs/features/<slug>/manual.md", "checks": ["front_matter", "refs_internas", "co_obsolescencia"] },
+      { "id": "fluxograma", "proposito": "Fluxo da feature em diagrama-em-texto versionado", "gatilho": "por feature",                     "mutabilidade": "substituivel", "esqueleto": "docs/features/<slug>/fluxo.md",  "checks": ["front_matter", "fluxograma_existe", "co_obsolescencia"] },
+      { "id": "relatorio",  "proposito": "Registro historico de unidade fechada",            "gatilho": "por unidade de trabalho fechada", "mutabilidade": "append-only",  "esqueleto": null,                             "checks": ["front_matter", "append_only"] }
+    ]
+  },
+  "contrato_verificacao": {
+    "_comment": "Primitivo de governanca (DEC-031; schemas per-type desde DEC-037/#89). Nucleo comum parametrizado por tipo de entregavel (late binding) permanece o tronco compartilhado; cada consumidor tipado declara SO a divergencia semantica propria no sub-bloco tipos. A ferramenta concreta do oraculo vive em docs/adapters.md, nunca aqui — o oraculo declara so a capability. gdas audit le este bloco e impoe os 4 checks genericamente sobre as instancias em convencao_caminho; a severidade de cada check vive no audit. Nota: tipos_oraculo[*].evidencia e o TIPO de artefato; evidencia_exigida.formato_ref e o FORMATO apresentacional (referencia ISSUE-001).",
+    "schema_versao": "0.2.0",
+    "convencao_caminho": "agent/contratos/<id>.md",
+    "tipos_entregavel": {
+      "codigo": "teste_executavel",
+      "documento": "checklist_estrutural",
+      "dec": "falseabilidade_cenario"
+    },
+    "tipos_oraculo": {
+      "teste_executavel":      { "evidencia": "saida_comando",    "verificacao": "binaria" },
+      "checklist_estrutural":  { "evidencia": "log_audit",        "verificacao": "binaria" },
+      "falseabilidade_cenario":{ "evidencia": "registro_cenario", "verificacao": "julgada" }
+    },
+    "tipos": {
+      "_comment": "Schemas per-type (DEC-037; supersede a parametrizacao unica de DEC-031/Q1 #57 — Rule of Three atingida com o 3o consumidor, SPEC-ISO-01 D02). O nucleo comum deste bloco (campos_obrigatorios, definicao_pronto, momentos, gate, separacao_papeis) segue valendo para todos os tipos; cada tipo declara apenas a divergencia. Consumidores: documentar (docs de comunicacao humana), plano (gate modo_plano), invariantes_ambiente (fase de integridade da verificacao).",
+      "documentar": { "herda": "nucleo" },
+      "plano": { "herda": "nucleo", "instancia": "instancias.modo_plano" },
+      "validacao_documental": {
+        "_comment": "4o consumidor do primitivo (SPEC-VAL-01/DEC-048): dois papeis externos de validacao de DOCUMENTOS (valida-spec pre-execucao, valida-doc pos-execucao). Veredito falseavel append-only no formato comentario-veredito-v1; sem secao de evidencia = invalido. Escopo de escrita minimo do validador: ler issue, comentar no formato, mover a label do proprio papel (remover antiga + aplicar nova — plataformas sem exclusividade mutua). Gate MOLE nesta fase (VE-2): executor nao inicia issue reprovada; vira duro quando os checks de validacao entrarem no gate com acesso ao rastreador. Reprovacao por defeito do proprio contrato exige licao com linhagem defeito-de-especificacao (VE-3). Sem consenso: um validador por papel por rodada (D7). Codigo fica FORA (valida-codigo diferido no ROADMAP, Regra de Tres).",
+        "herda": "nucleo",
+        "papeis": { "entrada": "valida-spec", "saida": "valida-doc" },
+        "labels": ["valida-spec::pendente", "valida-spec::ok", "valida-spec::reprovada", "valida-doc::pendente", "valida-doc::ok", "valida-doc::reprovada"],
+        "formato_veredito": "comentario-veredito-v1",
+        "veredito_sem_evidencia": "invalido",
+        "gate": "mole_ate_check_no_audit",
+        "modo": {
+          "_comment": "DEC-049: validacao documental e PROPORCIONAL — cada repo declara UM modo no proprio contrato vivo (secao 'Validacao documental'); sem declaracao = desativada. desativada: fluxo normal basta (gate+audit+humano), zero passos extras — nao e falha, e declaracao honesta. local: papeis exercidos por instancia separada NA MESMA ferramenta (outra sessao/subagente), veredito no mesmo formato. externa: app de assinatura via binding (catalogo na doutrina de adapters do guia; familia distinta quando possivel — VE-4). Alinhamento sugerido a cerimonia: trivial_reversivel=desativada; padrao=local ou externa; alto_blast_radius=externa.",
+          "valores": ["desativada", "local", "externa"],
+          "default": "desativada",
+          "declaracao": "contrato_vivo_do_consumidor",
+          "sugestao_por_cerimonia": { "trivial_reversivel": "desativada", "padrao": "local_ou_externa", "alto_blast_radius": "externa" }
+        }
+      },
+      "invariantes_ambiente": {
+        "_comment": "Semantica pre/pos-execucao exclusiva deste tipo (SPEC-ISO-01 D02): fatos verificaveis capturados ANTES da execucao da suite e re-verificados DEPOIS pelo gate. Divergencia OU impossibilidade de verificar = FAIL, nunca SKIP (D03). O contrato so fecha com a evidencia de integridade anexada, append-only (D05). Degradacao de isolamento nunca e implicita (QA-4).",
+        "herda": "nucleo",
+        "campos_obrigatorios": ["suite_fingerprint", "schema_fingerprint", "contagens_sentinela", "isolamento"],
+        "captura": { "momento": "pre_execucao", "reverificacao": "pos_execucao" },
+        "isolamento": { "valores": ["completo", "parcial"], "regra": "parcial_so_com_declaracao_explicita_no_contrato" },
+        "divergencia": { "resultado": "FAIL", "skip_proibido": true, "invariante_nao_verificavel": "FAIL_com_motivo_estruturado" },
+        "gate": { "fechar_exige": ["evidencia_integridade_anexada"] }
+      }
+    },
+    "campos_obrigatorios": ["id", "demanda_ref", "tipo_entregavel", "nivel_cerimonia", "definicao_pronto", "oraculo", "papel_gerador", "papel_avaliador", "evidencia_exigida"],
+    "definicao_pronto": {
+      "tipo": "lista_criterios",
+      "min_criterios": 1,
+      "criterio": {
+        "campos": ["id", "descricao", "limiar", "como_verificar"],
+        "limiar": { "tipo": "rigido", "regra": "abaixo_do_limiar_contrato_falha" }
+      }
+    },
+    "criterio_falseabilidade": { "exigencia": "condicional_por_nivel", "min": 1 },
+    "abstencao": { "budget_tentativas": 3, "ao_esgotar": "escalar_revisao_de_hipotese", "registro": "licao" },
+    "separacao_papeis": { "regra": "papel_gerador_diferente_de_papel_avaliador", "severidade_violacao": "ALTO" },
+    "cerimonia_proporcional": {
+      "eixo": "blast_radius",
+      "niveis": {
+        "trivial_reversivel": { "avaliador": "auto_check_com_evidencia",   "falseabilidade": "heuristica" },
+        "padrao":             { "avaliador": "instancia_separada",         "falseabilidade": "obrigatoria" },
+        "alto_blast_radius":  { "avaliador": "gerador_avaliador_completo", "falseabilidade": "obrigatoria" }
+      }
+    },
+    "evidencia_exigida": { "presenca": "obrigatoria", "formato_ref": "issue-001#formato_saida" },
+    "momentos": {
+      "planejamento": { "checa": ["contrato_existe", "oraculo_coerente", "falseabilidade_quando_exigida"] },
+      "pos_entrega":  { "checa": ["oraculo_executado", "evidencia_anexada", "criterios_satisfeitos"] }
+    },
+    "gate": {
+      "fechar_exige": ["evidencia_anexada", "todos_criterios_satisfeitos"],
+      "severidade_ausencia_contrato": "ALTO",
+      "severidade_fechar_sem_evidencia": "CRITICO"
+    },
+    "instancias": {
+      "_comment": "Instancias parametrizadas do primitivo (schema unico, Q1 do #57 — sem bloco nomeado paralelo). modo_plano e a 1a instancia do gate momentos.planejamento: antes de iniciar a execucao de um plano, o plano precisa estar registrado num rastreador externo de demandas e o identificador que o efeito de registro retorna deve ser externamente RESOLVIVEL. Auto-declaracao NAO e gate. A capability do rastreador (canal de registro) vive em docs/adapters.md, referenciada por capability — a plataforma concreta nunca aqui. O identificador capturado E a evidencia (formato: issue-001#formato_saida). gdas audit impoe isto na Verificacao 9, estruturalmente (existe/resolve), sem avaliar a prosa do plano. Ao esgotar o orcamento de tentativas de registro: interromper e reportar sem iniciar a execucao.",
+      "modo_plano": {
+        "tipo": "plano",
+        "momento": "planejamento",
+        "definicao_pronto": { "entrada_chave": "registro_externo_com_identificador_resolvivel", "min_criterios": 1 },
+        "criterio_falseabilidade": { "mecanismo": "instancia_ou_mecanismo_distinto_resolve_identificador", "falha_se": ["auto_declaracao", "identificador_ausente_ou_nao_resolvivel"] },
+        "abstencao": { "orcamento_tentativas": 2, "ao_esgotar": "interromper_e_reportar_sem_iniciar_execucao" },
+        "separacao_papel": { "gera_plano": "instancia_executora", "avalia_pronto": "instancia_ou_mecanismo_distinto" },
+        "cerimonia": "proporcional_ao_blast_radius",
+        "registro_externo": "rastreador_de_demandas",
+        "evidencia_ref": "issue-001#formato_saida",
+        "identificador_campos": ["identificador_resolvivel", "registro_ref", "demanda_ref"],
+        "severidade_plano_sem_identificador": "ALTO"
+      }
+    }
+  },
+  "ancoras": {
+    "_comment": "Decomposicao da categoria ancora em DUAS especies com manutencao OPOSTA (DEC-034, spec #54), reusando os DOIS gates temporais de contrato_verificacao.momentos — NAO cria primitivo novo. navegacional: mapa/indice/grafo de deps, DERIVAVEL do codigo, verificacao por EXISTENCIA, auto-geracao PERMITIDA, staleness = falha VISIVEL; gate temporal reusado = pos_entrega (existencia do alvo e a evidencia executada). normativa: contrato/smoke/matriz, PRECEDE e julga o codigo (oraculo), NAO derivavel do codigo, verificacao por FALSEABILIDADE CRUZADA (consistencia mutua entre normativas), auto-geracao do codigo PROIBIDA (proveniencia e SEMPRE uma demanda/US/spec, NUNCA o codigo), append-only + supersessao por marcadores explicitos, staleness = falha SILENCIOSA; gate temporal reusado = planejamento (o oraculo precede e julga). gdas audit impoe isto na Verificacao 11 estruturalmente (7 checks fiados por flag_*, tally dinamico), sobre as instancias em convencao_caminho — verifica ESTRUTURA, jamais a prosa do texto de um contrato. Severidade de cada check vive neste bloco (severidade_*). Desempate AUTOMATICO de supersessao (recencia pura vs canonical-home-wins) fica DEFERIDO (ROADMAP, Regra de Tres): par obrigatorio divergente simplesmente reprova vermelho e um humano reconcilia. No repo-dev nao ha instancias -> verde por vacuidade.",
+    "schema_versao": "0.1.0",
+    "convencao_caminho": "agent/ancoras/<id>.md",
+    "especies": ["navegacional", "normativa"],
+    "regras_por_especie": {
+      "navegacional": { "derivavel_do_codigo": true, "verificacao": "existencia", "auto_geracao_permitida": true },
+      "normativa": { "derivavel_do_codigo": false, "verificacao": "falseabilidade_cruzada", "auto_geracao_permitida": false, "exige_proveniencia": true, "append_only": true, "exige_supersessao": true }
+    },
+    "gate_temporal_por_especie": { "navegacional": "pos_entrega", "normativa": "planejamento" },
+    "papeis_normativa": ["contrato", "smoke", "matriz"],
+    "pares_consistencia_obrigatorios": [["contrato", "smoke"], ["matriz", "contrato"], ["matriz", "smoke"]],
+    "montagem_pack": { "canonico": "id_indice_estatico", "fuzzy_permitido": false, "fuzzy_requer": "demanda_regra_de_tres" },
+    "severidade_especie_ausente": "MEDIO",
+    "severidade_proveniencia_ausente": "ALTO",
+    "severidade_auto_geracao_normativa": "CRITICO",
+    "severidade_append_only_violado": "ALTO",
+    "severidade_consistencia_cruzada": "ALTO",
+    "severidade_existencia_navegacional": "MEDIO",
+    "severidade_pack_fuzzy_sem_demanda": "MEDIO"
+  }
+}

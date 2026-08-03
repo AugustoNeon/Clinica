@@ -1,0 +1,59 @@
+# Campanha — {{PROBLEMA}}
+
+> Plano executável multi-fase com gates de decisão, para o problema mais
+> difícil vivo do projeto. A campanha carrega o PROCESSO; os números
+> esperados vivem no contrato vivo do projeto (`## Comandos` e afins) —
+> **nunca neste template**. Sucesso é medido, jamais julgado a olho. A
+> campanha não contorna o controle de mudanças: toda promoção roteia
+> pelo gate de verificação (`gate.sh`) e pelo fluxo de decisão da casa.
+
+- demanda: <#NNN — registro externo obrigatório antes de executar (gate modo_plano)>
+- contrato de verificação: <id do contrato desta campanha>
+- baseline declarada: <onde os valores esperados estão declarados no contrato vivo>
+
+## Fase 0 — Dry-run em clone descartável (obrigatória antes do handoff)
+
+Ensaie a campanha inteira num **clone/worktree efêmero** (mesmo
+vocabulário de isolamento da fase de integridade do gate): subagente
+executa as fases em modo ensaio, com **zero edições no workspace real**,
+e o clone é descartado ao fim.
+
+- comando de ensaio: <ex.: git worktree add <dir-efemero> && ...; remover ao fim>
+- resultado exigido: cada gate das fases 1..N observado no ensaio.
+- **Divergência no ensaio ⇒ o plano volta para revisão. Proibido
+  "ajustar no real" o que falhou no ensaio.**
+
+## Fases (numeradas; uma tabela por fase)
+
+### Fase 1 — <nome>
+
+| precondição | comando exato | observação ESPERADA | se vir X em vez disso → desvie para |
+|---|---|---|---|
+| <estado verificável antes> | <copy-paste, sem placeholder ambíguo> | <valor declarado no contrato vivo — referencie a chave, não o número> | <fase/ramo Y, nomeado> |
+
+> **Armadilha do modelo apressado:** <o atalho provável do executor
+> nesta fase — nomeie-o para cercá-lo. Ex.: "pular a captura de
+> invariantes porque 'o ambiente não mudou'".>
+
+### Fase 2 — <nome>
+
+(mesma estrutura; adicione quantas fases a campanha exigir)
+
+## Menu de soluções (ranqueado)
+
+| # | solução candidata | obrigação de prova antes de adotar | custo/risco |
+|---|---|---|---|
+| 1 | <preferida> | <o que precisa ser demonstrado, com comando> | <resumo> |
+| 2 | <alternativa> | <idem> | <idem> |
+
+## Caminhos errados conhecidos (cercados)
+
+- <beco sem saída já percorrido + evidência (lição/commit) — proibido
+  re-percorrer sem fato novo declarado>
+
+## Validação e promoção
+
+Fechar a campanha exige: gate de verificação verde no resultado
+(`gate.sh <tarefa>` com evidência anexada), contrato de verificação
+fechado por avaliador separado, e registro da decisão/lição no ponto de
+efeito. Resultado que "parece bom" sem medida declarada não promove.

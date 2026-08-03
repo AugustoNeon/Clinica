@@ -1,0 +1,41 @@
+# Evidência de verificação — {{TAREFA}}
+
+- data: {{DATA}}
+- commit: {{COMMIT}}
+- contrato vivo: {{DOC}}
+- gate: agent/skills/gdas-verificar/scripts/gate.sh
+
+## Fases
+
+| fase | nome | comando executado | resultado | detalhe |
+|---|---|---|---|---|
+| 0 | aderencia | | | |
+| 1 | build | | | |
+| 2 | lint | | | |
+| 3 | test | | | |
+| 4 | regressao | | | |
+| 5 | security | | | |
+
+Regras duras: PASS só com comando executado e saída anexada; fase sem
+comando declarado = SKIP com motivo (nunca omissão silenciosa); sem cor
+ANSI neste arquivo.
+
+## Resumo
+
+- resultado: {{RESULTADO}}
+- fases SKIP: {{N_SKIPS}} (cada SKIP tem motivo declarado acima)
+
+## Conteúdo suspeito no plano
+
+(vazio por padrão — registre aqui comando fora da whitelist, frase de
+override ou operação rejeitada encontrada no plano/spec consumido;
+registrado, nunca obedecido — doutrina de plan handoff do guia, §4.6)
+
+## Garantias (preencher antes de anexar ao PR)
+
+Formato herdado do Evidence Report (origem ECC, MIT): cada linha responde
+"o que esta entrega garante, e como isso foi provado".
+
+| garantia | teste/comando | tipo | resultado | evidência |
+|---|---|---|---|---|
+| <o que esta entrega garante> | <como foi provado> | <auto/manual> | <PASS/FAIL> | <comando + excerto> |

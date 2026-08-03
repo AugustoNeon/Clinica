@@ -1,0 +1,207 @@
+{
+  "gdas_version": "0.37.9",
+  "template_ref": "e098fe8",
+  "installed_at": "2026-08-03",
+  "profile": "node",
+  "adapter": "claude",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "managed": false,
+      "origin_hash": "sha256:498d0bc7631e7e56ad879eb2f67c971816547e9f37b84250761e4de5ad362f9d",
+      "policy": "never-overwrite"
+    },
+    {
+      "path": "agent/policy.json",
+      "managed": true,
+      "hash": "sha256:1618270c577bd8476e4146e18d634ed125d824fc47d5f32c1fea8585282706ca",
+      "origin_hash": "sha256:1618270c577bd8476e4146e18d634ed125d824fc47d5f32c1fea8585282706ca"
+    },
+    {
+      "path": "agent/playbooks/commit.md",
+      "managed": true,
+      "hash": "sha256:924f0cedb9003eb162ad17e9887c17b0e24184927e405c122b2075080b8fecd4",
+      "origin_hash": "sha256:924f0cedb9003eb162ad17e9887c17b0e24184927e405c122b2075080b8fecd4"
+    },
+    {
+      "path": "agent/playbooks/demanda.md",
+      "managed": true,
+      "hash": "sha256:0b147c3e7ffdd7147c3bc039544077a68ecaced9182dede6530ecaf4ced3dfe5",
+      "origin_hash": "sha256:0b147c3e7ffdd7147c3bc039544077a68ecaced9182dede6530ecaf4ced3dfe5"
+    },
+    {
+      "path": "agent/playbooks/descoberta.md",
+      "managed": true,
+      "hash": "sha256:3f9a23b367ed3c5d3e1c60d9be32817c70d4b30ad389dfde935589554a6463ef",
+      "origin_hash": "sha256:3f9a23b367ed3c5d3e1c60d9be32817c70d4b30ad389dfde935589554a6463ef"
+    },
+    {
+      "path": "agent/playbooks/distill.md",
+      "managed": true,
+      "hash": "sha256:f1415023a77af55a9badd56915356b591bc8cd34f25c8298e3cecc3d18d7302d",
+      "origin_hash": "sha256:f1415023a77af55a9badd56915356b591bc8cd34f25c8298e3cecc3d18d7302d"
+    },
+    {
+      "path": "agent/playbooks/documentar.md",
+      "managed": true,
+      "hash": "sha256:4f036ee464b3f02247e1c6d1a75becb5c80a15f2c2714898b9ba5c720cbfd735",
+      "origin_hash": "sha256:4f036ee464b3f02247e1c6d1a75becb5c80a15f2c2714898b9ba5c720cbfd735"
+    },
+    {
+      "path": "agent/playbooks/executor-verificacao.md",
+      "managed": true,
+      "hash": "sha256:301e29fafe9a706f02e14b1986dbedeaee8880a31179c8e1b39b2f6cb693abbf",
+      "origin_hash": "sha256:301e29fafe9a706f02e14b1986dbedeaee8880a31179c8e1b39b2f6cb693abbf"
+    },
+    {
+      "path": "agent/playbooks/grill.md",
+      "managed": true,
+      "hash": "sha256:10a80559a2fa34d03d93d529bc49cf3c8d6f2c683270b9e92610da6edecb851a",
+      "origin_hash": "sha256:10a80559a2fa34d03d93d529bc49cf3c8d6f2c683270b9e92610da6edecb851a"
+    },
+    {
+      "path": "agent/playbooks/migrate.md",
+      "managed": true,
+      "hash": "sha256:d790932f9a6e510f15ba171be22ae350d7cdd4b9d28ab1f96d531dc9d8f3baa8",
+      "origin_hash": "sha256:d790932f9a6e510f15ba171be22ae350d7cdd4b9d28ab1f96d531dc9d8f3baa8"
+    },
+    {
+      "path": "agent/playbooks/plan.md",
+      "managed": true,
+      "hash": "sha256:b4abedeb91abba0d6a4e7539f65e6d11609355e7e6926f93ff8a3378cae81a70",
+      "origin_hash": "sha256:b4abedeb91abba0d6a4e7539f65e6d11609355e7e6926f93ff8a3378cae81a70"
+    },
+    {
+      "path": "agent/playbooks/pr.md",
+      "managed": true,
+      "hash": "sha256:472cd8a2492654cae11c98db54df52a1707304877f335168ffb8031ee2f51f6b",
+      "origin_hash": "sha256:472cd8a2492654cae11c98db54df52a1707304877f335168ffb8031ee2f51f6b"
+    },
+    {
+      "path": "agent/playbooks/segredos.md",
+      "managed": true,
+      "hash": "sha256:d0395cb2b39ed92cbe4531c3e8862b587c19cb2986e8e065dd5b23495216673f",
+      "origin_hash": "sha256:d0395cb2b39ed92cbe4531c3e8862b587c19cb2986e8e065dd5b23495216673f"
+    },
+    {
+      "path": "agent/playbooks/verify.md",
+      "managed": true,
+      "hash": "sha256:3ff976af984f35ede62a2f2052a4fec357687bfadc8eb54e9d2644e8132cb815",
+      "origin_hash": "sha256:3ff976af984f35ede62a2f2052a4fec357687bfadc8eb54e9d2644e8132cb815"
+    },
+    {
+      "path": "agent/checks/check-bash.sh",
+      "managed": true,
+      "hash": "sha256:2e36f437ab392d36749230de992261a521ab422780911b9b6834279a8e25a62f",
+      "origin_hash": "sha256:2e36f437ab392d36749230de992261a521ab422780911b9b6834279a8e25a62f"
+    },
+    {
+      "path": "agent/checks/data-corrente.sh",
+      "managed": true,
+      "hash": "sha256:4c6e2e3bd128c67726edad45cb9b0bfe65772b6b80b035cc73d0938922330114",
+      "origin_hash": "sha256:4c6e2e3bd128c67726edad45cb9b0bfe65772b6b80b035cc73d0938922330114"
+    },
+    {
+      "path": "agent/checks/estado-fluxo.sh",
+      "managed": true,
+      "hash": "sha256:6a0a2ba779ea477fa6a17974eda1020db67f19fee2f7f9dd01d7c0650f8a3e21",
+      "origin_hash": "sha256:6a0a2ba779ea477fa6a17974eda1020db67f19fee2f7f9dd01d7c0650f8a3e21"
+    },
+    {
+      "path": "agent/checks/gitignore-baseline.sh",
+      "managed": true,
+      "hash": "sha256:3120120178f9aaf3079feec8af223c81c66a5e36e52d7e40d8558dccd2d0a771",
+      "origin_hash": "sha256:3120120178f9aaf3079feec8af223c81c66a5e36e52d7e40d8558dccd2d0a771"
+    },
+    {
+      "path": "agent/checks/no-agent-attribution.sh",
+      "managed": true,
+      "hash": "sha256:5ac0df5abe9402c3fff2fdcf6347d11bb41e7006460f908242ee9b939e889ab0",
+      "origin_hash": "sha256:5ac0df5abe9402c3fff2fdcf6347d11bb41e7006460f908242ee9b939e889ab0"
+    },
+    {
+      "path": "agent/checks/protect-paths.sh",
+      "managed": true,
+      "hash": "sha256:3dbded95fa531b81fc73db1beb78f874431a49ebc6d814adc4b9bfee6713fe72",
+      "origin_hash": "sha256:3dbded95fa531b81fc73db1beb78f874431a49ebc6d814adc4b9bfee6713fe72"
+    },
+    {
+      "path": "agent/checks/senior-baseline.sh",
+      "managed": true,
+      "hash": "sha256:57d00272a39a98e4ab623637ca1501fb321ae87a5a06921997e7613f5fa8e9e9",
+      "origin_hash": "sha256:57d00272a39a98e4ab623637ca1501fb321ae87a5a06921997e7613f5fa8e9e9"
+    },
+    {
+      "path": "agent/checks/verify.sh",
+      "managed": true,
+      "hash": "sha256:e7b2633675fff75e7665ff463e6c4c5255abb8d3a6484f802e7eca235e9d0f8a",
+      "origin_hash": "sha256:e7b2633675fff75e7665ff463e6c4c5255abb8d3a6484f802e7eca235e9d0f8a"
+    },
+    {
+      "path": "agent/skills/gdas-regressao/SKILL.md",
+      "managed": true,
+      "hash": "sha256:7f6936579476c637f0b90cdf783ffe9bc74490e29d83171930432eccea6d031a",
+      "origin_hash": "sha256:7f6936579476c637f0b90cdf783ffe9bc74490e29d83171930432eccea6d031a"
+    },
+    {
+      "path": "agent/skills/gdas-regressao/scripts/regressao-check.sh",
+      "managed": true,
+      "hash": "sha256:f2ab946dd682a73b2487e83bf04c2367bde5fa83b17c4300e4c2eadfdab39830",
+      "origin_hash": "sha256:f2ab946dd682a73b2487e83bf04c2367bde5fa83b17c4300e4c2eadfdab39830"
+    },
+    {
+      "path": "agent/skills/gdas-regressao/templates/BUG-Rn.tmpl",
+      "managed": true,
+      "hash": "sha256:2e13cee96359635d68d7bc8d25d18c6812b68b63a14ca4ef26ede44831a9c55f",
+      "origin_hash": "sha256:2e13cee96359635d68d7bc8d25d18c6812b68b63a14ca4ef26ede44831a9c55f"
+    },
+    {
+      "path": "agent/skills/gdas-stocktake/SKILL.md",
+      "managed": true,
+      "hash": "sha256:fb92bc2c3ec1eedcc8b214e210dd354f7fc1c7bc54d08d8921d89ed02f0badab",
+      "origin_hash": "sha256:fb92bc2c3ec1eedcc8b214e210dd354f7fc1c7bc54d08d8921d89ed02f0badab"
+    },
+    {
+      "path": "agent/skills/gdas-stocktake/scripts/diff.sh",
+      "managed": true,
+      "hash": "sha256:439f65f87b64f38379e189090ab99bec154199e6c1ba9cfecdc767165302529f",
+      "origin_hash": "sha256:439f65f87b64f38379e189090ab99bec154199e6c1ba9cfecdc767165302529f"
+    },
+    {
+      "path": "agent/skills/gdas-stocktake/scripts/scan.sh",
+      "managed": true,
+      "hash": "sha256:1035f3163fb515de6e3ccb7b93a7faa05a40f246f8a930b238a2792d0cd05291",
+      "origin_hash": "sha256:1035f3163fb515de6e3ccb7b93a7faa05a40f246f8a930b238a2792d0cd05291"
+    },
+    {
+      "path": "agent/skills/gdas-verificar/SKILL.md",
+      "managed": true,
+      "hash": "sha256:8f9dab4eb5de65a2818be72316b72112601e119ffda66c0b1e95fdfec0f7adb7",
+      "origin_hash": "sha256:8f9dab4eb5de65a2818be72316b72112601e119ffda66c0b1e95fdfec0f7adb7"
+    },
+    {
+      "path": "agent/skills/gdas-verificar/scripts/gate.sh",
+      "managed": true,
+      "hash": "sha256:ddc1327e1a08f91800dc07730d29978d0c9af7030f0bc56368be7019c90e3665",
+      "origin_hash": "sha256:ddc1327e1a08f91800dc07730d29978d0c9af7030f0bc56368be7019c90e3665"
+    },
+    {
+      "path": "agent/skills/gdas-verificar/templates/CAMPANHA.md.tmpl",
+      "managed": true,
+      "hash": "sha256:b48d95e58e177b9bb336030200aa38619b23ff354d1a33d9f536256b27c82727",
+      "origin_hash": "sha256:b48d95e58e177b9bb336030200aa38619b23ff354d1a33d9f536256b27c82727"
+    },
+    {
+      "path": "agent/skills/gdas-verificar/templates/EVIDENCIA.md.tmpl",
+      "managed": true,
+      "hash": "sha256:254dbba0e866977b78d8c7462d6bc22a3f1bf9bdf7aedb110690b8b3d2bbc7fc",
+      "origin_hash": "sha256:254dbba0e866977b78d8c7462d6bc22a3f1bf9bdf7aedb110690b8b3d2bbc7fc"
+    },
+    {
+      "path": "agent/templates/pen.md.tmpl",
+      "managed": true,
+      "hash": "sha256:5cc1e80ad94a74ed23714d4d06cc4eb42259878fa736d1f525ff73954fdb1d59",
+      "origin_hash": "sha256:5cc1e80ad94a74ed23714d4d06cc4eb42259878fa736d1f525ff73954fdb1d59"
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+# Template de CI — gate GDAS em modo ADVISORY (não bloqueia).
+#
+# Para um repo CONSUMIDOR adotar o gate sem travar merge enquanto valida o
+# sinal no mundo real. Fase 1 do rollout faseado (ver docs/integridade.md
+# §"Rollout faseado"): roda, comenta no PR, NUNCA falha o build.
+#
+# Como usar:
+#   1. Copie para `.github/workflows/gdas-advisory.yml` no repo consumidor.
+#   2. Ajuste o passo "Run gate" para apontar aos checks instalados pelo
+#      adapter (ex.: agent/checks/verify.sh, agent/checks/senior-baseline.sh).
+#   3. NÃO marque este workflow como required status check.
+#
+# Promover para enforce (fases 2-3): remover o `exit 0` final do passo
+# "Run gate" (e/ou trocar pelo gate em `--strict`) e, quando o time
+# confiar no sinal, marcar como required status check.
+#
+# Por que `exit 0` explícito e NÃO `continue-on-error: true`: o
+# continue-on-error marca o passo como neutro e some da vista — fácil
+# esquecer que o gate está mudo. O `exit 0` explícito é advisory honesto:
+# os findings continuam impressos no log, no Step Summary e no comentário
+# do PR; só a decisão de não-bloquear é que fica visível e proposital.
+# Para o gate da própria lib (gdas-audit.sh) existe a flag nativa
+# `--warn-only`, que faz o próprio script retornar 0 reportando tudo.
+
+name: gdas-advisory
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: gdas-advisory-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  advisory:
+    name: gdas gate (advisory — não bloqueia)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends jq gawk
+
+      - name: Run gate (advisory)
+        id: gate
+        run: |
+          # Troque pelos checks do seu repo (instalados pelo adapter).
+          # `set +e` + `exit 0` no fim = advisory honesto: roda tudo,
+          # imprime os findings, mas não bloqueia. Para enforce, remova
+          # o `exit 0` final.
+          set +e
+          bash agent/checks/senior-baseline.sh      | tee /tmp/gate.out
+          bash agent/checks/verify.sh               | tee -a /tmp/gate.out
+          bash agent/checks/no-agent-attribution.sh 2>&1 | tee -a /tmp/gate.out
+          exit 0
+
+      - name: Step summary
+        if: always()
+        run: |
+          {
+            echo "## gdas gate (advisory)"
+            echo
+            echo "> Modo advisory: este check **não bloqueia** o merge."
+            echo "> Corrija os findings antes de promover o gate para \`--strict\`."
+            echo
+            echo '```'
+            grep -E '^(CRITICO|ALTO|MEDIO|BAIXO|Resumo:|Advisory:|Tudo verde)' /tmp/gate.out || cat /tmp/gate.out
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Comment on PR (when findings)
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -e
+          if ! grep -qE '^(CRITICO|ALTO|MEDIO|BAIXO)' /tmp/gate.out; then
+            echo "Sem findings — não posta comentário."
+            exit 0
+          fi
+          {
+            echo "### gdas gate — advisory (não bloqueia)"
+            echo
+            echo "Findings abaixo são informativos enquanto o gate roda em fase de validação."
+            echo
+            echo '<details><summary>Findings</summary>'
+            echo
+            echo '```'
+            grep -E '^(CRITICO|ALTO|MEDIO|BAIXO)' /tmp/gate.out
+            echo '```'
+            echo '</details>'
+          } > /tmp/comment.md
+          gh pr comment "$PR_NUMBER" --body-file /tmp/comment.md

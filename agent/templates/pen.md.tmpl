@@ -1,0 +1,32 @@
+---
+id: pen-000
+origem: <demanda/teste/veredito que originou — ex.: #123, BUG-R4, stocktake>
+tipo: <remocao-de-teste | retire | merge | tentativa-de-adulteracao | escalacao>
+status: aberta
+data: <YYYY-MM-DD>
+---
+
+# PEN — <título em uma frase>
+
+> PEN (pendência de decisão): registro estruturado e append-only de uma
+> escalação que **propõe** uma ação destrutiva ou não-reversível; o humano
+> dispõe. A PEN nunca executa nada — ela habilita a decisão com evidência.
+> Mesmo padrão do contrato de verificação: decisão com evidência, nunca
+> veredito seco.
+
+## Evidência
+
+<fatos verificáveis que motivam a proposta — diff detectado, veredito de
+auditoria com reason auto-contido, defeito específico encontrado. Proibido
+"superseded"/"unchanged" seco: a evidência deve habilitar a decisão sem
+exigir reconstrução de contexto.>
+
+## Proposta
+
+<a ação proposta, específica: o que remover/fundir/decidir, e o que cobre
+a necessidade que o artefato removido cobria.>
+
+## Decisão (humano; append-only)
+
+- [ ] aprovada — executor: <quem>, commit/PR: <ref>
+- [ ] rejeitada — motivo:
