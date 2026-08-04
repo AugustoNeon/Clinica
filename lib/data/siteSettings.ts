@@ -3,30 +3,32 @@ import type { SiteSetting } from "@/types";
 /**
  * Camada de dados de `site_settings` (endereco, telefone, horario, redes).
  *
- * IMPLEMENTACAO ATUAL: dados de PLACEHOLDER em memoria — ver o comentario
- * de cabecalho de `lib/data/services.ts` para o contrato de substituicao.
+ * IMPLEMENTACAO ATUAL: dados em memoria — ver o comentario de cabecalho de
+ * `lib/data/services.ts` para o contrato de substituicao por Supabase.
  *
- * TODOS os valores abaixo sao placeholders declarados. Nenhum endereco,
- * telefone ou razao social plausivel foi inventado: o dado real vem do
- * questionario da cliente.
+ * CONTEUDO: dados REAIS, vindos do questionario respondido pela cliente em
+ * 2026-08-04. `facebook_url` e `maps_url` seguem vazios de proposito: a
+ * clinica nao informou esses links e nada plausivel pode ser inventado aqui.
+ * `opening_hours` traz so a faixa de horario porque os dias da semana nao
+ * foram informados.
  */
 
-const PLACEHOLDER_SETTINGS: SiteSetting[] = [
-  { key: "clinic_name", value: "Nome da Clinica (placeholder)" },
-  { key: "clinic_tagline", value: "Slogan da clinica (placeholder)" },
-  { key: "address", value: "Endereco (placeholder)" },
-  { key: "phone", value: "Telefone (placeholder)" },
-  { key: "whatsapp", value: "WhatsApp (placeholder)" },
-  { key: "email", value: "E-mail (placeholder)" },
-  { key: "opening_hours", value: "Horario de atendimento (placeholder)" },
-  { key: "instagram_url", value: "" },
+const SITE_SETTINGS: SiteSetting[] = [
+  { key: "clinic_name", value: "Dra. Ariane Vaz Storrer – Odontologia Clínica e Estética" },
+  { key: "clinic_tagline", value: "Te ajudo a sorrir com confiança" },
+  { key: "address", value: "Rua Pedro Druszcz, 195 — Araucária, PR" },
+  { key: "phone", value: "(41) 3031-6454" },
+  { key: "whatsapp", value: "(41) 3031-6454" },
+  { key: "email", value: "arianevstorrer@gmail.com" },
+  { key: "opening_hours", value: "09h00 às 19h00" },
+  { key: "instagram_url", value: "https://instagram.com/arianevstorrer" },
   { key: "facebook_url", value: "" },
   { key: "maps_url", value: "" },
 ];
 
 /** Todas as configuracoes institucionais. */
 export async function getSiteSettings(): Promise<SiteSetting[]> {
-  return PLACEHOLDER_SETTINGS;
+  return SITE_SETTINGS;
 }
 
 /**
