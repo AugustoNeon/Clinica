@@ -50,6 +50,13 @@ jobs:
       - name: Build
         run: npm run build
 
+      # Valida que o build tambem produz um Worker Cloudflare valido
+      # (adaptador @opennextjs/cloudflare). So build, sem deploy: nao
+      # exige CLOUDFLARE_API_TOKEN nem dominio, que ainda nao existem
+      # (AGENTS.md "Decisoes fechadas", 2026-08-04).
+      - name: Cloudflare build check
+        run: npx opennextjs-cloudflare build
+
       # PLANEJAMENTO.md secao 6 pede auditoria de dependencia no verify.
       # Advisory por enquanto: as vulnerabilidades abertas hoje sao
       # transitivas do proprio Next.js (postcss/sharp) e so somem quando o

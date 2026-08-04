@@ -52,8 +52,9 @@ Isso é esperado nesta fase — mas é o próximo grande gargalo depois das foto
 * ✅ Repositório Git inicializado, GDAS instalado, CI rodando (lint + typecheck + build bloqueia merge)
 * ❌ Projeto Supabase provisionado — hoje é 100% mock em memória
 * ❌ Domínio registrado
-* ❌ Deploy em produção (Vercel, previsto no plano)
-* ❌ Certificado SSL (vem automático com Vercel + domínio, mas só depois que existir domínio)
+* ✅ Configuração de hospedagem pronta (Cloudflare Workers via `@opennextjs/cloudflare` — `wrangler.jsonc`, build validado localmente)
+* ❌ Deploy em produção de fato (depende do domínio existir — Fase 8)
+* ❌ Certificado SSL (vem automático com Cloudflare + domínio, mas só depois que existir domínio)
 * ❌ E-mail institucional
 * ❌ Serviço de notificação de novo lead (Resend ou Cloudflare Email Routing) — hoje o formulário só grava em memória e "some" no restart
 * ❌ Backups automáticos do banco (depende do Supabase existir)

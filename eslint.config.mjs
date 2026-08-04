@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Build output do adaptador @opennextjs/cloudflare (gitignorado, mas
+    // o ESLint nao le .gitignore por padrao) — sem isso, `npm run lint`
+    // linta o bundle inteiro do Worker gerado por `opennextjs-cloudflare build`.
+    ".open-next/**",
+    ".wrangler/**",
   ]),
 ]);
 
