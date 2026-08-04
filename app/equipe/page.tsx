@@ -6,7 +6,7 @@ import { Section } from "@/components/ui/Section";
 import { getTeamMembers } from "@/lib/data/team";
 
 export const metadata: Metadata = {
-  title: "Equipe (placeholder)",
+  title: "Equipe",
 };
 
 export default async function EquipePage() {
@@ -16,14 +16,14 @@ export default async function EquipePage() {
     <>
       <Container className="pt-8">
         <PlaceholderNotice>
-          Nenhum profissional real esta listado. Nome, cargo, numero de CRO e
-          biografia so entram com material enviado e conferido pela clinica.
+          O nome da Dra. Ariane já é real. CRO, biografia e foto ainda não foram
+          enviados pela clínica — continuam placeholder até lá.
         </PlaceholderNotice>
       </Container>
 
       <Section
         title="Equipe"
-        description="Perfis de placeholder, servidos por lib/data/team.ts (dados em memoria)."
+        description="A Dra. Ariane Vaz Storrer é a única profissional da clínica."
       >
         <TeamGrid members={members} />
       </Section>
