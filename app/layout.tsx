@@ -10,14 +10,14 @@ import "./globals.css";
  */
 
 export const metadata: Metadata = {
-  // PLACEHOLDER: titulo e descricao reais entram com o conteudo da clinica.
+  // Titulo e descricao reais desde 2026-08-04 (questionario respondido).
   title: {
-    default: "Nome da Clinica (placeholder)",
-    template: "%s | Nome da Clinica (placeholder)",
+    default: "Dra. Ariane Vaz Storrer – Odontologia Clínica e Estética",
+    template: "%s | Dra. Ariane Vaz Storrer – Odontologia Clínica e Estética",
   },
   description:
-    "Site institucional em construcao. Conteudo de placeholder ate a definicao do material real da clinica.",
-  // Enquanto tudo e placeholder, o site nao pode ser indexado.
+    "Odontologia clínica e estética em Araucária (PR), com atendimento humanizado e personalizado em todas as especialidades.",
+  // O site segue fora dos indices ate ter as imagens reais da clinica.
   robots: { index: false, follow: false },
 };
 

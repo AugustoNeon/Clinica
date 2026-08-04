@@ -353,6 +353,15 @@ jamais a prosa:
 
 <!-- APPEND-ONLY DATA DESC: nova linha NO TOPO. -->
 
+- 2026-08-04: Questionário respondido pela cliente aplicado ao site — nome,
+  contato, lista de serviços e equipe deixam de ser placeholder. A equipe do
+  site é só a própria dentista: ela pediu explicitamente para não listar
+  terceiros. O blog virou escopo confirmado (pergunta 22 respondida "sim") e a
+  flag `FEATURES.blog` foi **removida** em vez de virar `true` — flag sem
+  decisão em aberto para guardar é sobre-engenharia. Custo: reativar o blog
+  atrás de flag exigiria reintroduzir a indireção. Imagens (logo, espaço,
+  equipe, antes/depois) e depoimentos seguem pendentes, e por isso o site
+  continua `noindex`.
 - 2026-08-03: Blog fica atrás de flag em `lib/config/features.ts`, em vez de
   link fixo no menu. Por que: a pergunta 22 do questionário ainda não voltou e
   a rota pode nunca ir a produção. Custo: uma indireção a mais na navegação.
@@ -374,7 +383,10 @@ jamais a prosa:
 
 | Flag | Criada | Remover até | PR |
 |------|--------|-------------|-----|
-| `FEATURES.blog` (`lib/config/features.ts`) | 2026-08-03 | ao fechar a Fase 2 (resposta da pergunta 22) | — |
+
+Nenhuma flag ativa no momento. `FEATURES.blog` foi removida em 2026-08-04
+(pergunta 22 respondida "sim" — decisão fechada, sem mais nada em aberto
+para guardar atrás de flag). Ver "Decisões fechadas" acima.
 
 ## Primeira sessão — protocolo do agente
 

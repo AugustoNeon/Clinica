@@ -1,20 +1,19 @@
-import { FEATURES } from "./features";
-
 export interface NavItem {
   href: string;
   label: string;
 }
 
 /**
- * Itens do menu principal. O blog entra so quando `FEATURES.blog` for
- * ligado — nada aqui pode assumir que a rota `/blog` vai a producao.
+ * Itens do menu principal. O blog e escopo confirmado desde 2026-08-04
+ * (pergunta 22 do questionario respondida "sim"), entao o link e fixo —
+ * nao ha mais flag controlando a presenca dele.
  */
 export const mainNav: NavItem[] = [
   { href: "/", label: "Inicio" },
   { href: "/sobre", label: "Sobre" },
   { href: "/servicos", label: "Servicos" },
   { href: "/equipe", label: "Equipe" },
-  ...(FEATURES.blog ? [{ href: "/blog", label: "Blog" }] : []),
+  { href: "/blog", label: "Blog" },
   { href: "/contato", label: "Contato" },
 ];
 

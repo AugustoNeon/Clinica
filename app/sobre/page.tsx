@@ -5,7 +5,7 @@ import { Section } from "@/components/ui/Section";
 import { getSiteSettingsMap } from "@/lib/data/siteSettings";
 
 export const metadata: Metadata = {
-  title: "Sobre a clinica (placeholder)",
+  title: "Sobre a clínica",
 };
 
 export default async function SobrePage() {
@@ -15,23 +15,28 @@ export default async function SobrePage() {
     <>
       <Container className="pt-8">
         <PlaceholderNotice>
-          Historia, missao e diferenciais da clinica sao texto provisorio ate a
-          resposta do questionario enviado a cliente.
+          Fotos do espaço físico (fachada, recepção, consultório) ainda não
+          foram enviadas pela clínica — entram assim que a Dra. Ariane mandar o
+          material.
         </PlaceholderNotice>
       </Container>
 
       <Section
-        title="Sobre a clinica"
-        description="Texto institucional de placeholder. Nenhuma informacao aqui foi fornecida pela clinica."
+        title="Sobre a clínica"
+        description="Apresentação da clínica e dados de atendimento."
       >
         <div className="max-w-2xl space-y-4 text-base leading-relaxed opacity-90">
           <p>
-            Paragrafo de placeholder 1: aqui entra a apresentacao da clinica —
-            historia, proposito e o que ela faz de diferente.
+            A Dra. Ariane Vaz Storrer oferece atendimento humanizado e
+            personalizado em odontologia clínica e estética, em Araucária (PR).
+            Em atividade há 1 ano na região, a clínica recebe pacientes de todos
+            os perfis — da rotina preventiva a tratamentos mais específicos —
+            com o objetivo de ajudar cada paciente a sorrir com confiança.
           </p>
           <p>
-            Paragrafo de placeholder 2: aqui entram estrutura, tecnologia e
-            protocolos de atendimento, conforme material enviado pela cliente.
+            O atendimento é particular, com atendimento também a pacientes
+            conveniados da SINTRACIMENTO. Fora do horário comum, casos de
+            urgência são atendidos diretamente pelo WhatsApp da clínica.
           </p>
         </div>
 
