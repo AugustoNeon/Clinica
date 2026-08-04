@@ -6,14 +6,14 @@ import { Section } from "@/components/ui/Section";
 import { getBlogPosts } from "@/lib/data/blogPosts";
 
 export const metadata: Metadata = {
-  title: "Blog (placeholder)",
+  title: "Blog",
 };
 
 /**
- * Rota OPCIONAL. O blog ainda nao foi decidido (pergunta 22 do
- * questionario). A pagina existe e funciona, mas o link no menu so aparece
- * quando `FEATURES.blog` (lib/config/features.ts) for ligado — nenhum
- * componente assume que esta rota vai a producao.
+ * Rota CONFIRMADA desde 2026-08-04: a pergunta 22 do questionario voltou
+ * "sim" e a Dra. Ariane pretende publicar 1x por semana. O link no menu e
+ * fixo (lib/config/navigation.ts) — nao ha mais flag controlando a rota.
+ * Falta o conteudo: nenhum post real foi escrito ainda.
  */
 export default async function BlogPage() {
   const posts = await getBlogPosts();
@@ -22,8 +22,9 @@ export default async function BlogPage() {
     <>
       <Container className="pt-8">
         <PlaceholderNotice>
-          O blog ainda nao foi confirmado como escopo. Esta pagina existe como
-          rota opcional; nenhum menu depende dela.
+          O blog é confirmado (a Dra. Ariane pretende publicar 1x por semana),
+          mas nenhum post real foi escrito ainda — a listagem abaixo é só um
+          exemplo.
         </PlaceholderNotice>
       </Container>
 
