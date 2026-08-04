@@ -24,7 +24,9 @@ resposta da cliente, o campo fica placeholder.
 - **Banco:** Postgres via Supabase — **ainda não provisionado** (`lib/data/*` é mock)
 - **Frontend:** React 19 + Tailwind CSS 4
 - **Validação:** Zod 4 (`lib/validation/`), schema único para cliente e servidor
-- **Deploy:** Vercel (previsto, ainda não configurado)
+- **Deploy:** Cloudflare Workers via `@opennextjs/cloudflare` (config em
+  `wrangler.jsonc`/`open-next.config.ts`; primeiro deploy real ainda não
+  feito — depende de domínio, Fase 8 do `PLANEJAMENTO.md`)
 - **Observabilidade:** nenhuma ainda — entra na Fase 7
 
 ## Como rodar localmente
@@ -94,7 +96,7 @@ comando antes de confiar no fato.
 
 | fato volátil | verificado em | como re-verificar (1 linha) |
 |---|---|---|
-| Stack e versões | 2026-08-03 | `node --version && npm ls next react typescript --depth=0` |
+| Stack e versões | 2026-08-04 | `node --version && npm ls next react typescript --depth=0` |
 | Comandos (build/lint) | 2026-08-03 | `npm run verify` |
 | Paths críticos | 2026-08-03 | `ls lib/supabase lib/validation app/contato/actions.ts next.config.ts` |
 | Vars obrigatórias | 2026-08-03 | `grep -c '=' .env.example` (nenhuma é exigida pelo build hoje) |
@@ -339,6 +341,20 @@ jamais a prosa:
 
 <!-- APPEND-ONLY DATA DESC: nova linha NO TOPO. Reduz merge conflict. -->
 
+- 2026-08-04: `npm install -D @opennextjs/cloudflare wrangler` introduz
+  vulnerabilidade ALTA transitiva de `undici` (via `wrangler` → `miniflare`).
+  Mesmo padrão do caso postcss/sharp abaixo: `npm audit fix --force`
+  "resolveria" rebaixando `wrangler` para 4.35.0 (a faixa vulnerável é
+  `>=4.36.0`, então o "fix" é sair da faixa auditada, não corrigir).
+  Inaceitável pelo mesmo motivo. `security: npm audit --audit-level=high`
+  continua advisory no CI (`if: always()` + `|| true`) até o upstream
+  publicar `wrangler`/`miniflare` com `undici` corrigido.
+- 2026-08-04: `opennextjs-cloudflare build` roda e produz `.open-next/`
+  corretamente no Windows (dev machine deste projeto), mas emite WARN
+  explícito de que o pacote "não é totalmente compatível com Windows" e
+  recomenda WSL para uso em produção. Build e `wrangler dev` local
+  funcionaram sem erro nesta sessão — sinal de atenção para revisitar se
+  algo relacionado a build/deploy falhar de forma não óbvia depois.
 - 2026-08-03: `jq` não está instalado na máquina de desenvolvimento (Windows).
   O `gdas init` degrada em silêncio-parcial: pula o adapter e o manifesto com
   WARN. `.claude/settings.json` e `agent/.gdas/manifest.json` foram gerados
@@ -353,6 +369,22 @@ jamais a prosa:
 
 <!-- APPEND-ONLY DATA DESC: nova linha NO TOPO. -->
 
+- 2026-08-04: Hospedagem de produção migra de Vercel para Cloudflare
+  Workers (via `@opennextjs/cloudflare`), mantendo Supabase como banco/
+  auth/storage — não reabre a decisão "stack 100% Cloudflare descartada"
+  do `PLANEJAMENTO.md` §4 (aquela era sobre D1/R2/Auth substituindo
+  Supabase; aqui só muda a camada de hospedagem). Por que: o plano
+  gratuito da Vercel (Hobby) proíbe uso comercial nos ToS e site de
+  clínica é uso comercial; o plano gratuito da Cloudflare Workers permite
+  isso explicitamente; o adaptador atingiu GA em fevereiro/2026 com
+  suporte completo a App Router, Server Actions, ISR e streaming.
+  `next/image` desligado (`images.unoptimized: true`) em vez de loader
+  Cloudflare Images: nenhum componente usa `next/image` ainda, loader
+  customizado seria flag para requisito que não existe. Cache incremental
+  (R2) também não entrou: nenhuma página usa `revalidate`/ISR hoje. Custo
+  aceito: uma camada de build a mais (OpenNext) entre o Next.js e o
+  runtime; nenhum ambiente Cloudflare real testado além de `wrangler dev`
+  local até o primeiro deploy manual (Fase 8, quando o domínio existir).
 - 2026-08-04: Questionário respondido pela cliente aplicado ao site — nome,
   contato, lista de serviços e equipe deixam de ser placeholder. A equipe do
   site é só a própria dentista: ela pediu explicitamente para não listar

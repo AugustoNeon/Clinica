@@ -79,15 +79,20 @@ Painel administrativo (`/admin`, autenticado):
 | Autenticação do painel | Supabase Auth (e-mail+senha, 1 ou poucos usuários) | Simples de operar, sem custo extra de manter servidor de sessão |
 | Anti-spam no formulário | Cloudflare Turnstile | Gratuito, sem captcha irritante para o paciente |
 | Envio de e-mail (notificação de novo contato) | Resend ou Cloudflare Email Routing | Notifica a cliente por e-mail quando alguém preenche o formulário |
-| Hospedagem do site | Vercel (nativo para Next.js) | Deploy simples, HTTPS automático, preview por PR — reduz fricção de DevOps no primeiro projeto |
+| Hospedagem do site | Cloudflare Workers (via `@opennextjs/cloudflare`) | Deploy automático, HTTPS gerenciado, proteção DDoS — mesma proposta de baixa fricção da Vercel. **Escolha original era Vercel** (registro abaixo); trocado em 2026-08-04 porque o plano gratuito da Vercel proíbe uso comercial nos ToS (site de clínica é uso comercial) e o plano gratuito da Cloudflare Workers permite — o adaptador atingiu GA em fev/2026 com suporte completo a App Router/Server Actions/ISR/streaming |
 | Imagens | Next/Image + Supabase Storage | Otimização automática de imagem (formato, tamanho, lazy load) |
 | CI/CD | GitHub Actions (via forge do GDAS) | Roda `verify` (lint, types, testes) antes de permitir merge |
 
-Alternativa descartada por ora: stack 100% Cloudflare (Workers + D1 + R2).
-Tecnicamente viável e mais barata em escala, mas exige montar
-autenticação e storage manualmente — mais superfície de erro para o
-primeiro projeto profissional. Fica registrado como opção futura se
-fizer sentido migrar depois.
+Alternativa descartada por ora: stack 100% Cloudflare (Workers + D1 + R2,
+substituindo TAMBÉM o banco/auth/storage do Supabase). Tecnicamente
+viável e mais barata em escala, mas exige montar autenticação e storage
+manualmente — mais superfície de erro para o primeiro projeto
+profissional. Fica registrado como opção futura se fizer sentido migrar
+depois. **Não confundir com a hospedagem** (linha "Hospedagem do site"
+acima): Workers como alvo de deploy, mantendo Supabase como banco/auth/
+storage, é uma decisão separada e já adotada em 2026-08-04 — trocar só a
+camada de hospedagem não reabre esta rejeição, que era especificamente
+sobre trocar o banco.
 
 ## 5. Modelagem de dados (rascunho)
 
