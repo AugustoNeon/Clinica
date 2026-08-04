@@ -1,0 +1,18 @@
+{
+  // Config do Worker de producao (adaptador @opennextjs/cloudflare).
+  // Ver AGENTS.md "Decisoes fechadas" (2026-08-04) para o porque da troca
+  // Vercel -> Cloudflare Workers.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "clinica-site",
+  "main": ".open-next/worker.js",
+  // >= 2025-04-01 e obrigatorio para process.env funcionar em runtime.
+  "compatibility_date": "2026-08-04",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  }
+  // Sem kv_namespaces/r2_buckets de proposito: nenhuma pagina usa
+  // revalidate/ISR hoje (grep confirmado em app/**). Adicionar cache
+  // incremental (R2) so quando isso passar a ser verdade.
+}

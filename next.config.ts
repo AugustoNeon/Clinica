@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
 const isDev = process.env.NODE_ENV === "development";
+
+// Da acesso a bindings do wrangler.jsonc (ex.: env vars) durante `next dev`.
+// So afeta o servidor de desenvolvimento local; nao muda o build de producao.
+initOpenNextCloudflareForDev();
 
 /**
  * Content-Security-Policy — checklist de seguranca do PLANEJAMENTO.md (secao 6).
@@ -48,6 +53,13 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
+  },
+  images: {
+    // O otimizador padrao do next/image e Vercel-only. Nenhum componente usa
+    // next/image hoje (site ainda e placeholder) — desligar aqui evita que o
+    // primeiro uso quebre em producao no Cloudflare Workers. Reavaliar loader
+    // customizado (Cloudflare Images) so quando houver volume real de imagem.
+    unoptimized: true,
   },
 };
 
