@@ -11,7 +11,7 @@ export function ServiceList({ services }: ServiceListProps) {
   }
 
   return (
-    <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {services.map((service) => (
         <li key={service.id}>
           <Card className="h-full">
