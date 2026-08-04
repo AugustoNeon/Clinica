@@ -7,7 +7,7 @@ import { getServices } from "@/lib/data/services";
 import { getSiteSettingsMap } from "@/lib/data/siteSettings";
 
 export const metadata: Metadata = {
-  title: "Contato (placeholder)",
+  title: "Contato",
 };
 
 export default async function ContatoPage() {
@@ -17,9 +17,9 @@ export default async function ContatoPage() {
     <>
       <Container className="pt-8">
         <PlaceholderNotice>
-          Endereco, telefone e horario abaixo sao placeholders. O formulario
-          funciona, mas ainda grava em memoria (mock) — nao ha banco de dados
-          conectado, e nenhuma mensagem enviada aqui chega a clinica.
+          O formulário abaixo funciona, mas ainda grava em memória (mock) — não
+          há banco de dados conectado, e nenhuma mensagem enviada aqui chega à
+          clínica de verdade ainda.
         </PlaceholderNotice>
       </Container>
 
