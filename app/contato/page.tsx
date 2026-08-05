@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/sections/ContactForm";
+import { LocationMap } from "@/components/sections/LocationMap";
 import { Container } from "@/components/ui/Container";
 import { PlaceholderNotice } from "@/components/ui/PlaceholderNotice";
 import { Section } from "@/components/ui/Section";
@@ -41,7 +42,19 @@ export default async function ContatoPage() {
             </div>
             <div>
               <p className="font-medium">WhatsApp</p>
-              <p className="mt-1 opacity-80">{settings.whatsapp}</p>
+              {/*
+               * `wa.me` exige o numero so com digitos e DDI: o valor exibido
+               * continua vindo de `settings.whatsapp` (formatado), mas o href
+               * e literal porque o mock nao guarda a versao E.164.
+               */}
+              <p className="mt-1">
+                <a
+                  href="https://wa.me/5541999981033"
+                  className="text-blue-dark underline-offset-4 hover:underline"
+                >
+                  {settings.whatsapp}
+                </a>
+              </p>
             </div>
             <div>
               <p className="font-medium">Horario de atendimento</p>
@@ -49,6 +62,10 @@ export default async function ContatoPage() {
             </div>
           </aside>
         </div>
+      </Section>
+
+      <Section title="Como chegar" description={settings.address}>
+        <LocationMap embedUrl={settings.maps_embed_url} />
       </Section>
     </>
   );

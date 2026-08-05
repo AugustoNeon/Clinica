@@ -134,6 +134,12 @@ segurança). Nunca tocar sem revisão dedicada. O check
 - **Não inventar dado de clínica.** Nome, endereço, telefone, razão social,
   serviço, nome/CRO/bio de dentista: sem resposta da cliente, é placeholder
   explicitamente rotulado (`"... (placeholder)"`), nunca um texto plausível.
+- **Exceção (2026-08-05):** descrição *genérica de especialidade odontológica*
+  (o que é Ortodontia, Endodontia, Implantodontia…) **não** é "dado de clínica"
+  para efeito da regra acima — é conhecimento padrão da área, do jeito que
+  qualquer site odontológico descreve, e foi autorizada pela doutora. O limite
+  segue valendo: nada específico desta clínica, nenhuma estatística, prazo,
+  preço ou promessa de resultado. Ver `Service.long_description`.
 - Todo bloco de conteúdo provisório carrega `<PlaceholderNotice>` visível.
 - O site está com `robots: noindex` no layout enquanto for placeholder.
 - Depoimento de paciente só é publicável com `consent_confirmed` — a função
@@ -356,6 +362,17 @@ jamais a prosa:
 
 <!-- APPEND-ONLY DATA DESC: nova linha NO TOPO. -->
 
+- 2026-08-05: Descrição genérica de especialidade odontológica é exceção
+  explícita à regra de "não inventar dado de clínica" (demanda #13) — o campo
+  `Service.long_description` recebe texto educacional padrão da área (o que é
+  a especialidade, para que serve, que tipo de procedimento envolve), sem
+  `<PlaceholderNotice>`. Por que: a página individual de serviço precisa de
+  corpo de texto, a doutora autorizou em 2026-08-05, e definição de
+  especialidade não é fato sobre esta clínica — é o mesmo conteúdo que
+  qualquer site odontológico publica. Custo: a fronteira entre "genérico" e
+  "sobre a clínica" passa a exigir julgamento em cada texto novo; o limite
+  fica registrado em "Regras de conteúdo" (nada específico da clínica,
+  nenhuma estatística, prazo, preço ou promessa de resultado).
 - 2026-08-05: Paleta e tipografia da Fase 3 fechadas (demanda #8) — azul da
   marca `#4590BF` (extraído do logo real) + acento terracota derivado
   `#E2805E` + tinta `#231F20`, todos com contraste AA documentado em

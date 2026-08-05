@@ -19,13 +19,15 @@ initOpenNextCloudflareForDev();
  * QUANDO ENTRAREM OS TERCEIROS, liberar explicitamente:
  * - Cloudflare Turnstile: `https://challenges.cloudflare.com` em script-src e frame-src
  * - Supabase Storage/API:  `https://<projeto>.supabase.co` em connect-src e img-src
- * - Google Maps embed:     `https://www.google.com` em frame-src
+ * - Google Maps embed:     LIBERADO em 2026-08-05 (Fase 4) — ver `frame-src` abaixo.
  */
 const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'self'",
   "form-action 'self'",
   "frame-ancestors 'none'",
+  // Unico terceiro embutido hoje: o iframe do mapa do Google (Fase 4).
+  "frame-src https://www.google.com",
   "object-src 'none'",
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
@@ -55,10 +57,11 @@ const nextConfig: NextConfig = {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
   images: {
-    // O otimizador padrao do next/image e Vercel-only. Nenhum componente usa
-    // next/image hoje (site ainda e placeholder) — desligar aqui evita que o
-    // primeiro uso quebre em producao no Cloudflare Workers. Reavaliar loader
-    // customizado (Cloudflare Images) so quando houver volume real de imagem.
+    // O otimizador padrao do next/image e Vercel-only, e a hospedagem aqui e
+    // Cloudflare Workers. Ja existe uso real de next/image desde a Fase 3
+    // (logo no SiteHeader e no SiteFooter) — sem esta linha o build otimizado
+    // quebraria em producao. Reavaliar loader customizado (Cloudflare Images)
+    // so quando houver volume real de imagem.
     unoptimized: true,
   },
 };

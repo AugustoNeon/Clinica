@@ -17,6 +17,8 @@ export interface Service {
   slug: string;
   title: string;
   description: string;
+  /** Texto mais longo pra pagina individual do servico — descricao generica da especialidade, nao especifica desta clinica. */
+  long_description: string | null;
   category: string | null;
   image_url: string | null;
   /** Coluna `order` — ordem de exibicao na listagem. */
