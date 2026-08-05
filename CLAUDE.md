@@ -12,22 +12,24 @@ para a cliente manter o conteúdo sozinha. Plano técnico completo em
 `PLANEJAMENTO.md`; conteúdo/negócio vêm do questionário em `docs/`.
 
 **Fase atual: 4 concluída (páginas institucionais); Fase 5 em andamento
-(PR1, issue #16) — schema+RLS+wiring de `lib/data/*`/`lib/supabase/*` para
-Supabase real.** `lib/data/*` chama o Supabase existente
-(`rjqeideajodwacumfiel.supabase.co`) via `lib/supabase/server.ts` desde
-2026-08-05; deixou de ser mock em memória. O conteúdo servido é o mesmo de
-antes (nome, endereço, telefone, serviços, tagline, mapa, convênio, formas
-de pagamento), só a fonte mudou — ver `supabase/migrations/0003_seed_conteudo_real.sql`
-para a proveniência. Alguns campos seguem placeholder porque a cliente não
-enviou (bio da equipe, fotos de espaço físico, antes/depois — ver demanda
-#10) — nesses casos o campo continua explicitamente marcado como
-placeholder, nunca inventado. Painel admin (auth + telas de CRUD) ainda não
-existe — entra nos PR2/PR3 da Fase 5. Paleta,
+(PR1 mergeado — issue #16; PR2 em progresso — issue #18).** `lib/data/*`
+chama o Supabase existente (`rjqeideajodwacumfiel.supabase.co`) via
+`lib/supabase/server.ts` desde 2026-08-05 (PR1); deixou de ser mock em
+memória. O conteúdo servido é o mesmo de antes (nome, endereço, telefone,
+serviços, tagline, mapa, convênio, formas de pagamento), só a fonte mudou —
+ver `supabase/migrations/0003_seed_conteudo_real.sql` para a proveniência.
+Alguns campos seguem placeholder porque a cliente não enviou (bio da
+equipe, fotos de espaço físico, antes/depois — ver demanda #10) — nesses
+casos o campo continua explicitamente marcado como placeholder, nunca
+inventado. `/admin` protegido por Supabase Auth desde 2026-08-05 (PR2,
+issue #18): login funcional, sessão via cookie (`@supabase/ssr`,
+`proxy.ts` na raiz — convenção Next.js 16, sucessora de `middleware.ts`);
+telas de CRUD de conteúdo ainda não existem, entram no PR3. Paleta,
 tipografia e logo aplicados nos componentes (Fase 3, demandas #8/#11); Home,
 Sobre, Serviços (com página por serviço), Equipe e Contato estruturados
-(Fase 4, demanda #13). Próximo passo: Fase 5 (painel admin, pode rodar em
-paralelo) ou Fase 6 (conteúdo real de imagem, travada até o material da
-demanda #10 chegar).
+(Fase 4, demanda #13). Próximo passo: PR3 da Fase 5 (telas de CRUD) ou
+Fase 6 (conteúdo real de imagem, travada até o material da demanda #10
+chegar).
 
 ## Stack
 
@@ -378,6 +380,16 @@ jamais a prosa:
 
 <!-- APPEND-ONLY DATA DESC: nova linha NO TOPO. -->
 
+- 2026-08-05: Usuário admin do painel (Fase 5 PR2, issue #18) criado com
+  e-mail temporário `augustoneonvazryba@gmail.com` (não o e-mail
+  institucional da clínica) e senha fraca `adm12345` — **ambos aceitos
+  explicitamente pelo usuário apesar do alerta de segurança** (o
+  `PLANEJAMENTO.md` §6 pede "senha forte" para o painel admin, que acessa
+  dado pessoal de paciente sob LGPD). Por que: domínio de e-mail
+  institucional ainda não existe; e-mail/senha definitivos ficam para
+  quando a clínica decidir. Custo aceito: painel com credencial fraca até
+  alguém trocar manualmente — reforçar antes de produção real com dado de
+  paciente de verdade.
 - 2026-08-05: Fase 5 (painel admin) fatiada em 3 PRs sequenciais — PR1
   schema+RLS+migrations no Supabase existente (`rjqeideajodwacumfiel.supabase.co`)
   e troca de `lib/data/*`/`lib/supabase/*` de mock para real; PR2 Supabase
