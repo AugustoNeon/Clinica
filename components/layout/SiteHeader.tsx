@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { buttonClasses } from "@/components/ui/Button";
@@ -8,17 +9,32 @@ export async function SiteHeader() {
   const settings = await getSiteSettingsMap();
 
   return (
-    <header className="border-b border-black/10 dark:border-white/15">
+    <header className="border-b border-ink/10 bg-surface">
       <Container className="flex flex-wrap items-center justify-between gap-4 py-4">
-        <Link href="/" className="text-base font-semibold tracking-tight">
-          {settings.clinic_name}
+        {/*
+          Versao colorida e horizontal, sem tagline (DESIGN.md → Logo → Header).
+          O nome da clinica continua acessivel pelo `alt` — trocou a
+          apresentacao, nao a informacao.
+        */}
+        <Link href="/" className="shrink-0">
+          <Image
+            src="/images/logo/logo-horizontal-color.png"
+            alt={settings.clinic_name}
+            width={1600}
+            height={480}
+            priority
+            className="h-10 w-auto sm:h-12"
+          />
         </Link>
 
         <nav aria-label="Navegacao principal">
           <ul className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
             {mainNav.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className="opacity-80 hover:opacity-100">
+                <Link
+                  href={item.href}
+                  className="text-ink-muted transition-colors ease-out hover:text-blue-dark"
+                >
                   {item.label}
                 </Link>
               </li>

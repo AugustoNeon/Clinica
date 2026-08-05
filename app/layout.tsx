@@ -1,13 +1,28 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import "./globals.css";
 
 /*
- * Tipografia: pilha de fontes do sistema de proposito. A fonte definitiva
- * entra na Fase 3 (identidade visual), junto da paleta. Evita tambem que o
- * build dependa de baixar fonte de terceiro.
+ * Tipografia (DESIGN.md): Fraunces nos titulos, Inter no corpo. Self-hosted
+ * com `next/font/local` a partir dos .woff2 versionados em `app/fonts/` — o
+ * build continua sem depender de rede de terceiro, que era a objecao que
+ * tinha barrado `next/font/google` em 2026-08-03.
  */
+const fraunces = localFont({
+  src: "./fonts/Fraunces-Variable.woff2",
+  variable: "--font-fraunces",
+  weight: "400 700",
+  display: "swap",
+});
+
+const inter = localFont({
+  src: "./fonts/Inter-Variable.woff2",
+  variable: "--font-inter",
+  weight: "400 700",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   // Titulo e descricao reais desde 2026-08-04 (questionario respondido).
@@ -27,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className="h-full antialiased">
+    <html lang="pt-BR" className={`${inter.variable} ${fraunces.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
         <SiteHeader />
         <main className="flex-1">{children}</main>

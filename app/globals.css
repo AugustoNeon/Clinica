@@ -1,32 +1,83 @@
 @import "tailwindcss";
 
 /*
- * Tokens PROVISORIOS. A paleta e a tipografia definitivas entram na Fase 3
- * (design visual), quando a identidade da clinica estiver definida.
+ * Identidade visual da clinica (Fase 3). Os valores abaixo saem da tabela de
+ * tokens do DESIGN.md, que ja traz o contraste WCAG AA verificado de cada par.
+ * Nao inventar combinacao nova: `--blue` nao serve para texto pequeno sobre
+ * branco (3.3:1) — para isso existe `--blue-dark`; mesma logica entre
+ * `--terracotta` (preenchimento) e `--terracotta-text` (texto/icone).
  */
 
+/*
+ * Sem dark mode — decisao fechada em DESIGN.md ("Tema"): o site e so claro.
+ * Ancorar a variante `dark:` numa classe que o projeto nunca aplica neutraliza
+ * as utilities `dark:` remanescentes em vez de deixa-las reagir ao tema do SO
+ * (o que, sem o bloco de cores escuras, produziria texto claro sobre fundo
+ * claro).
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --surface: #ffffff;
+  --surface-tint: #eaf5fd;
+  --ink: #231f20;
+  --ink-muted: #696160;
+  --blue: #4590bf;
+  --blue-dark: #1d6a96;
+  --terracotta: #e2805e;
+  --terracotta-text: #b8492e;
+  --terracotta-tint: #ffeae3;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-system);
-}
+  --color-surface: var(--surface);
+  --color-surface-tint: var(--surface-tint);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-blue: var(--blue);
+  --color-blue-dark: var(--blue-dark);
+  --color-terracotta: var(--terracotta);
+  --color-terracotta-text: var(--terracotta-text);
+  --color-terracotta-tint: var(--terracotta-tint);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* As duas variaveis vem do next/font/local em app/layout.tsx. */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family:
-    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
-    sans-serif;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Titulos em Fraunces (serifada) contra o corpo em Inter — DESIGN.md. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-fraunces), ui-serif, Georgia, serif;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+/*
+ * Acessibilidade: quem pede menos movimento nao recebe transicao nenhuma —
+ * a mudanca de cor acontece de forma instantanea (PRODUCT.md, DESIGN.md).
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
