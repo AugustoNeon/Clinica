@@ -11,14 +11,18 @@ públicas (serviços, equipe, contato) e, em fase posterior, um painel admin
 para a cliente manter o conteúdo sozinha. Plano técnico completo em
 `PLANEJAMENTO.md`; conteúdo/negócio vêm do questionário em `docs/`.
 
-**Fase atual: 3 (Design visual).** O questionário voltou em 2026-08-04 —
+**Fase atual: 4 concluída (páginas institucionais); Fase 5/6 em aberto.**
 `lib/data/*` já serve conteúdo real (nome, endereço, telefone, serviços,
-tagline) em vez de placeholder, embora ainda como **mock em memória**: não
-existe projeto Supabase criado. Alguns campos seguem placeholder porque a
-cliente não enviou (bio da equipe, fotos de espaço físico) — nesses casos o
-campo continua explicitamente marcado como placeholder, nunca inventado.
-Paleta, tipografia e uso do logo estão definidos em `PRODUCT.md`/`DESIGN.md`
-(demanda #8); aplicação nos componentes é a próxima demanda.
+tagline, mapa, convênio, formas de pagamento) em vez de placeholder, embora
+ainda como **mock em memória**: não existe projeto Supabase criado. Alguns
+campos seguem placeholder porque a cliente não enviou (bio da equipe, fotos
+de espaço físico, antes/depois — ver demanda #10) — nesses casos o campo
+continua explicitamente marcado como placeholder, nunca inventado. Paleta,
+tipografia e logo aplicados nos componentes (Fase 3, demandas #8/#11); Home,
+Sobre, Serviços (com página por serviço), Equipe e Contato estruturados
+(Fase 4, demanda #13). Próximo passo: Fase 5 (painel admin, pode rodar em
+paralelo) ou Fase 6 (conteúdo real de imagem, travada até o material da
+demanda #10 chegar).
 
 ## Stack
 
