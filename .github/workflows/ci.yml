@@ -5,10 +5,13 @@
 # Este aqui e o gate tecnico da stack Next.js e BLOQUEIA: build quebrado
 # nao entra na main.
 #
-# O job nao define nenhuma variavel de ambiente de proposito: `lib/data/*`
-# usa dados mock e os clientes Supabase sao criados sob demanda. Se algum
-# dia o build passar a exigir segredo, este workflow quebra — e esse e o
-# sinal certo, nao um problema a contornar com secret no CI.
+# O step de build recebe as 3 vars do Supabase via secret do repositorio
+# (Settings > Secrets and variables > Actions) desde 2026-08-05 (Fase 5
+# PR1, issue #16): `lib/data/*` deixou de ser mock e as paginas SSG
+# (ex.: /servicos/[slug]) consultam o banco durante o build — sem as
+# vars, o build falha (decisao registrada no CLAUDE.md, "Decisoes
+# fechadas"). `npm run lint`/`npm run typecheck` continuam sem nenhuma
+# env var.
 
 name: ci
 
@@ -48,6 +51,10 @@ jobs:
         run: npm run typecheck
 
       - name: Build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: npm run build
 
       # Valida que o build tambem produz um Worker Cloudflare valido
@@ -55,6 +62,10 @@ jobs:
       # exige CLOUDFLARE_API_TOKEN nem dominio, que ainda nao existem
       # (AGENTS.md "Decisoes fechadas", 2026-08-04).
       - name: Cloudflare build check
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: npx opennextjs-cloudflare build
 
       # PLANEJAMENTO.md secao 6 pede auditoria de dependencia no verify.

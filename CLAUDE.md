@@ -11,13 +11,18 @@ públicas (serviços, equipe, contato) e, em fase posterior, um painel admin
 para a cliente manter o conteúdo sozinha. Plano técnico completo em
 `PLANEJAMENTO.md`; conteúdo/negócio vêm do questionário em `docs/`.
 
-**Fase atual: 4 concluída (páginas institucionais); Fase 5/6 em aberto.**
-`lib/data/*` já serve conteúdo real (nome, endereço, telefone, serviços,
-tagline, mapa, convênio, formas de pagamento) em vez de placeholder, embora
-ainda como **mock em memória**: não existe projeto Supabase criado. Alguns
-campos seguem placeholder porque a cliente não enviou (bio da equipe, fotos
-de espaço físico, antes/depois — ver demanda #10) — nesses casos o campo
-continua explicitamente marcado como placeholder, nunca inventado. Paleta,
+**Fase atual: 4 concluída (páginas institucionais); Fase 5 em andamento
+(PR1, issue #16) — schema+RLS+wiring de `lib/data/*`/`lib/supabase/*` para
+Supabase real.** `lib/data/*` chama o Supabase existente
+(`rjqeideajodwacumfiel.supabase.co`) via `lib/supabase/server.ts` desde
+2026-08-05; deixou de ser mock em memória. O conteúdo servido é o mesmo de
+antes (nome, endereço, telefone, serviços, tagline, mapa, convênio, formas
+de pagamento), só a fonte mudou — ver `supabase/migrations/0003_seed_conteudo_real.sql`
+para a proveniência. Alguns campos seguem placeholder porque a cliente não
+enviou (bio da equipe, fotos de espaço físico, antes/depois — ver demanda
+#10) — nesses casos o campo continua explicitamente marcado como
+placeholder, nunca inventado. Painel admin (auth + telas de CRUD) ainda não
+existe — entra nos PR2/PR3 da Fase 5. Paleta,
 tipografia e logo aplicados nos componentes (Fase 3, demandas #8/#11); Home,
 Sobre, Serviços (com página por serviço), Equipe e Contato estruturados
 (Fase 4, demanda #13). Próximo passo: Fase 5 (painel admin, pode rodar em
@@ -28,7 +33,7 @@ demanda #10 chegar).
 
 - **Linguagem:** TypeScript 5
 - **Framework HTTP:** Next.js 16 (App Router) — Server Components + Server Actions
-- **Banco:** Postgres via Supabase — **ainda não provisionado** (`lib/data/*` é mock)
+- **Banco:** Postgres via Supabase — provisionado; `lib/data/*` consulta direto (Fase 5 PR1, issue #16)
 - **Frontend:** React 19 + Tailwind CSS 4
 - **Validação:** Zod 4 (`lib/validation/`), schema único para cliente e servidor
 - **Deploy:** Vercel (previsto, ainda não configurado)
@@ -45,10 +50,14 @@ npm run build       # build de produção
 npm run verify      # lint + typecheck + build
 ```
 
-Vars obrigatórias em `.env.local`: **nenhuma por enquanto**. O build e o lint
-passam sem nenhuma variável de ambiente, e essa propriedade é intencional —
-se algum dia `npm run build` passar a exigir segredo, isso é regressão, não
-configuração faltando. O contrato completo de variáveis (Supabase, Turnstile,
+Vars obrigatórias em `.env.local` desde 2026-08-05 (Fase 5 PR1, issue #16):
+**`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
+`SUPABASE_SERVICE_ROLE_KEY`**. `npm run build` passa por elas porque
+`/servicos/[slug]` (e as outras páginas que leem `lib/data/*`) são geradas
+estaticamente e agora consultam o Supabase real durante o build — deixou de
+ser mock em memória. Isso substitui a garantia antiga ("build sem nenhuma
+env var" — válida até a Fase 4). `npm run lint`/`npm run typecheck` seguem
+passando sem nenhuma variável. O contrato completo de variáveis (Turnstile,
 e-mail) está em `.env.example`.
 
 ## Comandos
@@ -62,12 +71,15 @@ aqui, nunca na skill.
 build: npm run build
 lint: npm run lint && npm run typecheck
 security: npm audit --audit-level=high
+schema-fingerprint: ls supabase/migrations/
 ```
 
 Chaves ausentes (`test`, `regressao`, `coverage-target`, `suite-dir`,
-`schema-fingerprint`, `sentinelas`, `isolamento`, `conta-testes`,
-`conta-executados`) são SKIP explícito: **não existe suíte de testes ainda**
-e não existe banco para tirar fingerprint. A lacuna é dado, não silêncio —
+`sentinelas`, `isolamento`, `conta-testes`, `conta-executados`) são SKIP
+explícito: **não existe suíte de testes ainda**. `schema-fingerprint`
+deixou de ser SKIP em 2026-08-05 (Fase 5 PR1, issue #16): o schema agora
+existe como migrations versionadas em `supabase/migrations/`. A lacuna é
+dado, não silêncio —
 testes entram junto com a primeira lógica de negócio real (Fase 4+).
 
 As seis últimas chaves são as **invariantes de ambiente** da fase de
@@ -104,7 +116,7 @@ comando antes de confiar no fato.
 | Stack e versões | 2026-08-03 | `node --version && npm ls next react typescript --depth=0` |
 | Comandos (build/lint) | 2026-08-03 | `npm run verify` |
 | Paths críticos | 2026-08-03 | `ls lib/supabase lib/validation app/contato/actions.ts next.config.ts` |
-| Vars obrigatórias | 2026-08-03 | `grep -c '=' .env.example` (nenhuma é exigida pelo build hoje) |
+| Vars obrigatórias | 2026-08-05 | `npm run build` sem `.env.local` (deve falhar pedindo as 3 vars Supabase) |
 
 ## Estrutura
 
@@ -120,7 +132,7 @@ app/                    # rotas — só casca de página, conteúdo placeholder 
 components/ui/          # primitivos (Button, Card, Container, Section)
 components/sections/    # blocos de página (Hero, ServiceList, TeamGrid, ContactForm)
 components/layout/      # SiteHeader, SiteFooter
-lib/data/               # PATH CRÍTICO — 1 arquivo por entidade; hoje MOCK em memória
+lib/data/               # PATH CRÍTICO — 1 arquivo por entidade; consulta Supabase real (Fase 5 PR1)
 lib/validation/         # PATH CRÍTICO — schemas Zod, compartilhados cliente+servidor
 lib/supabase/           # PATH CRÍTICO — clientes centralizados (ainda não ligados)
 lib/config/             # features.ts (escopo em aberto) + navigation.ts
@@ -366,6 +378,28 @@ jamais a prosa:
 
 <!-- APPEND-ONLY DATA DESC: nova linha NO TOPO. -->
 
+- 2026-08-05: Fase 5 (painel admin) fatiada em 3 PRs sequenciais — PR1
+  schema+RLS+migrations no Supabase existente (`rjqeideajodwacumfiel.supabase.co`)
+  e troca de `lib/data/*`/`lib/supabase/*` de mock para real; PR2 Supabase
+  Auth + `/admin` protegido; PR3 telas de CRUD (serviços, equipe, blog,
+  depoimentos, `site_settings`, leads). Por que: o contrato pede PR
+  ≤300 linhas e o escopo total (schema+wiring+auth+4 CRUDs) estoura isso
+  de longe. Custo: mais idas e vindas de review entre os três PRs, mas
+  cada um shippa algo verificável sozinho.
+- 2026-08-05: `npm run build` passa a EXIGIR `.env.local` preenchido com as
+  3 vars do Supabase — a garantia anterior ("build passa sem nenhuma env
+  var", válida até a Fase 4) é revogada. Por que: `/servicos/[slug]` e
+  demais páginas SSG que leem `lib/data/*` agora consultam o Supabase real
+  durante o build, e `lib/data/*` deixou de ser mock em memória; não tem
+  como gerar as páginas estáticas sem o banco responder. Custo aceito:
+  CI/dev sem `.env.local` não builda mais — mas em produção (Cloudflare
+  Workers) as env vars sempre estão setadas, então não afeta deploy real.
+- 2026-08-05: Storage do Supabase (bucket + upload de foto de equipe/blog)
+  adiado para depois da Fase 5 — as colunas `*_url` entram no schema como
+  texto simples. Por que: hoje todo `image_url`/`photo_url` é `null`
+  (fotos ainda não vieram da cliente, demanda #10), não há nada real pra
+  testar upload. Custo: schema/wiring de Storage volta a ser mexido quando
+  o material de imagem chegar.
 - 2026-08-05: Descrição genérica de especialidade odontológica é exceção
   explícita à regra de "não inventar dado de clínica" (demanda #13) — o campo
   `Service.long_description` recebe texto educacional padrão da área (o que é

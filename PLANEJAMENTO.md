@@ -94,17 +94,34 @@ storage, é uma decisão separada e já adotada em 2026-08-04 — trocar só a
 camada de hospedagem não reabre esta rejeição, que era especificamente
 sobre trocar o banco.
 
-## 5. Modelagem de dados (rascunho)
+## 5. Modelagem de dados
+
+Implementada em 2026-08-05 (Fase 5 PR1, issue #16) —
+`supabase/migrations/0001_schema_inicial.sql` e `0002_rls_policies.sql` são
+a fonte de verdade; este bloco é só um espelho legível. Re-verificar com
+`ls supabase/migrations/`.
 
 ```
-services        (id, slug, title, description, category, image_url, order, published)
+services        (id, slug, title, description, long_description, category, image_url, order, published)
 team_members    (id, name, role, cro_number, bio, photo_url, order, published)
 blog_posts      (id, slug, title, content, cover_image_url, author_id, status, published_at)
 testimonials    (id, patient_name, content, rating, photo_url, consent_confirmed, published)
-contact_leads   (id, name, phone, email, message, preferred_service, status, created_at)
+contact_leads   (id, name, phone, email, message, preferred_service, status, created_at, lgpd_consent)
 site_settings   (key, value)               -- endereço, telefone, horário, redes sociais
 admin_users     (gerenciado pelo Supabase Auth, sem tabela própria de senha)
 ```
+
+`lgpd_consent` (boolean, `contact_leads`) não estava no rascunho original
+desta seção mas já existia em `types/database.ts` — lacuna corrigida aqui
+para os dois pararem de divergir (`types/database.ts:88-94` documenta o
+porquê: a seção 7 abaixo exige registrar o consentimento, o formulário não
+pode perder esse dado).
+
+RLS (leitura pública ampla, sem filtro `published`/`status` na policy —
+filtro fica em `lib/data/*`): `services`, `team_members`, `blog_posts`,
+`testimonials`, `site_settings`. `contact_leads` não tem nenhuma policy
+para `anon`/`authenticated`; só o `service_role` (que ignora RLS) lê e
+grava — decisão registrada no AGENTS.md ("Decisões fechadas").
 
 `contact_leads` guarda dado pessoal de paciente em potencial — entra
 direto na seção de LGPD abaixo (retenção, consentimento, acesso restrito).

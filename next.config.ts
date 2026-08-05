@@ -18,9 +18,11 @@ initOpenNextCloudflareForDev();
  *
  * QUANDO ENTRAREM OS TERCEIROS, liberar explicitamente:
  * - Cloudflare Turnstile: `https://challenges.cloudflare.com` em script-src e frame-src
- * - Supabase Storage/API:  `https://<projeto>.supabase.co` em connect-src e img-src
+ * - Supabase Storage/API:  LIBERADO em 2026-08-05 (Fase 5 PR1, issue #16) — ver `connect-src` abaixo.
+ *   `img-src` ainda nao precisa: Storage entra so num PR futuro (colunas *_url sao texto simples por ora).
  * - Google Maps embed:     LIBERADO em 2026-08-05 (Fase 4) — ver `frame-src` abaixo.
  */
+const supabaseUrl = "https://rjqeideajodwacumfiel.supabase.co";
 const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'self'",
@@ -33,7 +35,7 @@ const contentSecurityPolicy = [
   "font-src 'self' data:",
   "style-src 'self' 'unsafe-inline'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
-  `connect-src 'self'${isDev ? " ws: wss:" : ""}`,
+  `connect-src 'self' ${supabaseUrl}${isDev ? " ws: wss:" : ""}`,
   "upgrade-insecure-requests",
 ].join("; ");
 
