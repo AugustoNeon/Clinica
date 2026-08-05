@@ -19,7 +19,7 @@ export function Section({ children, title, description, className = "", id }: Se
             {title && (
               <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{title}</h2>
             )}
-            {description && <p className="mt-3 text-base opacity-80">{description}</p>}
+            {description && <p className="mt-3 text-base text-ink-muted">{description}</p>}
           </header>
         )}
         {children}

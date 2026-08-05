@@ -9,7 +9,7 @@ interface CardProps {
 export function Card({ children, className = "" }: CardProps) {
   return (
     <div
-      className={`rounded-xl border border-black/10 p-6 dark:border-white/15 ${className}`}
+      className={`rounded-2xl border border-ink/10 bg-surface p-6 ${className}`}
     >
       {children}
     </div>
@@ -21,5 +21,5 @@ export function CardTitle({ children }: { children: ReactNode }) {
 }
 
 export function CardBody({ children }: { children: ReactNode }) {
-  return <p className="mt-2 text-sm leading-relaxed opacity-80">{children}</p>;
+  return <p className="mt-2 text-sm leading-relaxed text-ink-muted">{children}</p>;
 }

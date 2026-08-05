@@ -25,16 +25,20 @@ normal, ≥3:1 texto grande ≥18px ou bold ≥14px).
 | `--surface-tint` | `#EAF5FD` | Fundo de seção alternada, hero (azul bem diluído) | — |
 | `--ink` | `#231F20` | Texto primário, títulos | 16.1:1 sobre `--surface` |
 | `--ink-muted` | `#696160` | Texto secundário/legenda | 6.0:1 sobre `--surface` |
-| `--blue` | `#4590BF` | Cor da marca — CTA primário, links grandes, footer sólido | 3.3:1 sobre branco (só texto grande/ícone; não usar para texto pequeno) |
-| `--blue-dark` | `#1D6A96` | Hover/active de CTA, link de texto pequeno sobre branco | 5.9:1 sobre `--surface` |
+| `--blue` | `#4590BF` | Cor da marca — só decorativo/ícone grande ou fundo com texto ≥18px | 3.2:1 sobre branco, 3.2:1 com texto branco por cima (mesma direção, falha texto pequeno nos dois sentidos) |
+| `--blue-dark` | `#1D6A96` | **CTA primário, footer sólido, hover/active, link de texto pequeno** | 5.9:1 com branco ou com `--surface` |
 | `--terracotta` | `#E2805E` | Badge/tag preenchido (com `--ink` por cima, nunca texto branco) | 5.8:1 (`--ink` sobre terracotta) |
 | `--terracotta-text` | `#B8492E` | Link/ícone/texto pequeno terracota sobre branco | 5.2:1 sobre `--surface` |
 | `--terracotta-tint` | `#FFEAE3` | Fundo de badge/callout | — |
 
-Regra de uso: **`--blue` não é texto pequeno em fundo branco** (falha
-AA) — para link ou texto azul, usar `--blue-dark`. Mesma lógica pro
-terracota: `--terracotta` é fundo/preenchimento, `--terracotta-text` é
-a versão pra texto/ícone sobre branco.
+Regra de uso: **`--blue` não carrega texto pequeno em nenhuma
+direção** — nem como texto sobre branco, nem como fundo com texto
+branco em cima (14px/500 não é "texto grande" pelo WCAG, que exige
+18px regular ou 14px **bold**). `--blue-dark` é quem carrega botão
+primário, rodapé sólido e qualquer texto pequeno azul — é o par
+realmente usado na aplicação (Fase 3, demanda #11), não `--blue` puro.
+Mesma lógica pro terracota: `--terracotta` é fundo/preenchimento,
+`--terracotta-text` é a versão pra texto/ícone sobre branco.
 
 Como esses valores foram derivados: `--blue` veio direto do PNG do
 logo (`public/images/logo/logo-stacked-color.png`, cor dominante
