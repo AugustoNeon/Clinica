@@ -61,8 +61,6 @@ export async function submitContactForm(
   }
 
   try {
-    // MOCK: grava em memoria (lib/data/leads.ts). Vira insert no Supabase
-    // sem que este arquivo precise mudar.
     await createLead({
       name: result.data.name,
       phone: result.data.phone,

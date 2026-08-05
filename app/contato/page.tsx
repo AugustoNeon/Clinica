@@ -18,9 +18,10 @@ export default async function ContatoPage() {
     <>
       <Container className="pt-8">
         <PlaceholderNotice>
-          O formulário abaixo funciona, mas ainda grava em memória (mock) — não
-          há banco de dados conectado, e nenhuma mensagem enviada aqui chega à
-          clínica de verdade ainda.
+          O formulário abaixo grava a mensagem no banco de dados real, mas
+          ainda falta a notificação por e-mail para a clínica (Resend/Turnstile,
+          Fase 7) — a mensagem fica salva, só não avisa ninguém automaticamente
+          ainda.
         </PlaceholderNotice>
       </Container>
 

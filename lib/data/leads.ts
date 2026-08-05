@@ -1,46 +1,37 @@
+import { getSupabaseAdminClient } from "@/lib/supabase/server";
 import type { ContactLead, NewContactLead } from "@/types";
 
 /**
  * Camada de dados de `contact_leads`.
  *
- * IMPLEMENTACAO ATUAL: armazenamento EM MEMORIA (mock). Nao existe projeto
- * Supabase ainda. O array vive no processo do servidor e some a cada
- * restart/deploy — e proposital: enquanto nao ha banco, nenhum dado pessoal
- * fica persistido em lugar nenhum.
- *
- * Troca futura (unico arquivo que muda):
- *   const supabase = getSupabaseServerClient();
- *   const { data, error } = await supabase
- *     .from("contact_leads").insert({ ...input, status: "novo" }).select().single();
+ * IMPLEMENTACAO: query real no Supabase (Fase 5 PR1, issue #16), via o
+ * cliente PRIVILEGIADO (`service_role`) porque a tabela nao tem nenhuma
+ * policy de RLS para `anon`/`authenticated` — nem leitura nem escrita
+ * (`supabase/migrations/0002_rls_policies.sql`). Dado pessoal (LGPD):
+ * acesso restrito ao painel admin autenticado e a esta Server Action.
  *
  * REGRAS QUE VALEM DESDE JA (PLANEJAMENTO.md secoes 6 e 7):
  * - Nunca logar o conteudo do lead: nome, telefone, e-mail e mensagem sao
  *   dado pessoal. Log de erro so com id/tipo de falha.
- * - Leitura de leads e exclusiva do painel admin autenticado (RLS no
- *   Supabase). Nao criar rota publica de listagem.
+ * - Leitura de leads e exclusiva do painel admin autenticado. Nao criar
+ *   rota publica de listagem.
  * - Definir politica de retencao/anonimizacao antes de ir para producao.
  */
-
-const leads: ContactLead[] = [];
-
-/** Gera um id opaco para o registro mock. Substituido pelo default do banco. */
-function generateId(): string {
-  return globalThis.crypto.randomUUID();
-}
 
 /**
  * Cria um lead de contato. A validacao (Zod) acontece antes, na Server
  * Action — esta funcao assume um payload ja validado.
  */
 export async function createLead(input: NewContactLead): Promise<ContactLead> {
-  const lead: ContactLead = {
-    ...input,
-    id: generateId(),
-    status: "novo",
-    created_at: new Date().toISOString(),
-  };
-  leads.push(lead);
-  return lead;
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("contact_leads")
+    .insert({ ...input, status: "novo" })
+    .select()
+    .single();
+
+  if (error) throw new Error(`Falha ao criar contact_lead: ${error.message}`);
+  return data as ContactLead;
 }
 
 /**
@@ -50,5 +41,12 @@ export async function createLead(input: NewContactLead): Promise<ContactLead> {
  * admin. Enquanto o painel nao existe, nenhuma rota consome esta funcao.
  */
 export async function getLeads(): Promise<ContactLead[]> {
-  return [...leads].sort((a, b) => b.created_at.localeCompare(a.created_at));
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("contact_leads")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error(`Falha ao buscar contact_leads: ${error.message}`);
+  return data as ContactLead[];
 }
