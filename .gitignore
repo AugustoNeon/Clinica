@@ -26,6 +26,11 @@
 # production
 /build
 
+# material bruto da cliente (fotos WhatsApp, PSB de placa ~2.4G, PDFs de
+# grafica) — nunca commitar; imagens web-ready vao para public/ quando
+# selecionadas e otimizadas
+/Clinica-Material/
+
 # misc
 .DS_Store
 *.pem

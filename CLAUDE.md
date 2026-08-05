@@ -11,11 +11,14 @@ públicas (serviços, equipe, contato) e, em fase posterior, um painel admin
 para a cliente manter o conteúdo sozinha. Plano técnico completo em
 `PLANEJAMENTO.md`; conteúdo/negócio vêm do questionário em `docs/`.
 
-**Fase atual: 1 (Setup).** O questionário ainda não voltou. Todo conteúdo do
-site é **placeholder declarado** e `lib/data/*` serve dados **mock em
-memória** — não existe projeto Supabase criado. Nenhum dado real de clínica
-(nome, endereço, telefone, serviço, dentista) pode ser inventado: sem
-resposta da cliente, o campo fica placeholder.
+**Fase atual: 3 (Design visual).** O questionário voltou em 2026-08-04 —
+`lib/data/*` já serve conteúdo real (nome, endereço, telefone, serviços,
+tagline) em vez de placeholder, embora ainda como **mock em memória**: não
+existe projeto Supabase criado. Alguns campos seguem placeholder porque a
+cliente não enviou (bio da equipe, fotos de espaço físico) — nesses casos o
+campo continua explicitamente marcado como placeholder, nunca inventado.
+Paleta, tipografia e uso do logo estão definidos em `PRODUCT.md`/`DESIGN.md`
+(demanda #8); aplicação nos componentes é a próxima demanda.
 
 ## Stack
 
@@ -353,6 +356,18 @@ jamais a prosa:
 
 <!-- APPEND-ONLY DATA DESC: nova linha NO TOPO. -->
 
+- 2026-08-05: Paleta e tipografia da Fase 3 fechadas (demanda #8) — azul da
+  marca `#4590BF` (extraído do logo real) + acento terracota derivado
+  `#E2805E` + tinta `#231F20`, todos com contraste AA documentado em
+  `DESIGN.md`; Fraunces (títulos) + Inter (corpo), self-hosted via
+  `next/font/local` (não `next/font/google` — mantém a decisão de
+  2026-08-03 de não depender de rede de terceiro no build, sem ficar preso
+  à pilha de sistema pra sempre). Site fica só no tema claro, sem dark
+  mode. Por que: personalidade de marca definida como acolhedora/humana +
+  alegre/acessível; site de saúde ganha mais com fundo claro e fotografia
+  fiel do que perderia sem modo escuro. Custo: nenhum token de dark mode
+  documentado — se a decisão mudar depois, a paleta precisa de um par
+  escuro por token.
 - 2026-08-03: Blog fica atrás de flag em `lib/config/features.ts`, em vez de
   link fixo no menu. Por que: a pergunta 22 do questionário ainda não voltou e
   a rota pode nunca ir a produção. Custo: uma indireção a mais na navegação.
@@ -372,9 +387,10 @@ jamais a prosa:
 
 ## Feature flags ativas
 
-| Flag | Criada | Remover até | PR |
-|------|--------|-------------|-----|
-| `FEATURES.blog` (`lib/config/features.ts`) | 2026-08-03 | ao fechar a Fase 2 (resposta da pergunta 22) | — |
+Nenhuma hoje. `FEATURES.blog` foi removida em 2026-08-04: a pergunta 22 do
+questionário voltou "sim" e o blog virou escopo confirmado (link fixo no
+menu, `lib/config/navigation.ts`), não flag condicional. `lib/config/features.ts`
+fica de propósito, pronto pra próxima decisão de escopo pendente.
 
 ## Primeira sessão — protocolo do agente
 
