@@ -12,9 +12,10 @@ para a cliente manter o conteúdo sozinha. Plano técnico completo em
 `PLANEJAMENTO.md`; conteúdo/negócio vêm do questionário em `docs/`.
 
 **Fase atual: 4 concluída (páginas institucionais); Fase 5 em andamento
-(PR1 mergeado — issue #16; PR2 em progresso — issue #18).** `lib/data/*`
-chama o Supabase existente (`rjqeideajodwacumfiel.supabase.co`) via
-`lib/supabase/server.ts` desde 2026-08-05 (PR1); deixou de ser mock em
+(PR1 mergeado — issue #16; PR2 mergeado — issue #18; PR3 fatiado em 6
+sub-PRs por entidade, issue #20 — PR3a de serviços em progresso).**
+`lib/data/*` chama o Supabase existente (`rjqeideajodwacumfiel.supabase.co`)
+via `lib/supabase/server.ts` desde 2026-08-05 (PR1); deixou de ser mock em
 memória. O conteúdo servido é o mesmo de antes (nome, endereço, telefone,
 serviços, tagline, mapa, convênio, formas de pagamento), só a fonte mudou —
 ver `supabase/migrations/0003_seed_conteudo_real.sql` para a proveniência.
@@ -23,12 +24,15 @@ equipe, fotos de espaço físico, antes/depois — ver demanda #10) — nesses
 casos o campo continua explicitamente marcado como placeholder, nunca
 inventado. `/admin` protegido por Supabase Auth desde 2026-08-05 (PR2,
 issue #18): login funcional, sessão via cookie (`@supabase/ssr`,
-`proxy.ts` na raiz — convenção Next.js 16, sucessora de `middleware.ts`);
-telas de CRUD de conteúdo ainda não existem, entram no PR3. Paleta,
-tipografia e logo aplicados nos componentes (Fase 3, demandas #8/#11); Home,
-Sobre, Serviços (com página por serviço), Equipe e Contato estruturados
-(Fase 4, demanda #13). Próximo passo: PR3 da Fase 5 (telas de CRUD) ou
-Fase 6 (conteúdo real de imagem, travada até o material da demanda #10
+`middleware.ts` — convenção legada aceita de propósito, ver Decisões
+fechadas). CRUD de serviços (`/admin/servicos`) funcionando desde
+2026-08-06 (PR3a, issue #20): criar/editar/publicar/excluir, via RLS
+`authenticated` (não `service_role`) — próximas entidades (equipe, blog,
+depoimentos, site_settings, leads) repetem o mesmo padrão em PRs
+separados. Paleta, tipografia e logo aplicados nos componentes (Fase 3,
+demandas #8/#11); Home, Sobre, Serviços (com página por serviço), Equipe e
+Contato estruturados (Fase 4, demanda #13). Próximo passo: PR3b (equipe)
+ou Fase 6 (conteúdo real de imagem, travada até o material da demanda #10
 chegar).
 
 ## Stack
@@ -380,6 +384,26 @@ jamais a prosa:
 
 <!-- APPEND-ONLY DATA DESC: nova linha NO TOPO. -->
 
+- 2026-08-06: Mutations do admin (Fase 5 PR3, issue #20) passam por RLS
+  `authenticated` via cliente cookie-aware (`getSupabaseServerComponentClient`),
+  não por `service_role` — vale pra todas as entidades do PR3 (serviços,
+  equipe, blog, depoimentos, site_settings), não só a primeira. Policy sem
+  filtro por usuário (`using (true)`), porque o schema não tem coluna de
+  "dono" e há 1 admin só. Por que: manter a RLS como camada de defesa
+  real, coerente com o resto do projeto (`PLANEJAMENTO.md` §6) — usar
+  `service_role` pra tudo esvaziaria esse propósito. Custo aceito: uma
+  migration de `GRANT`+policy a mais por entidade (lição do PR1: RLS
+  sozinha não basta, precisa do `GRANT` de tabela também, senão dá
+  "permission denied for table" antes mesmo de avaliar a policy).
+- 2026-08-05: `middleware.ts` (convenção legada, não `proxy.ts`) com
+  `runtime: "experimental-edge"` explícito no `config`, mesmo com o aviso
+  de deprecation do Next 16. Por que: o adaptador `@opennextjs/cloudflare`
+  (alvo de deploy) recusa Node.js middleware, e o Next 16 diz
+  explicitamente que `proxy.ts` SEMPRE roda em runtime Node.js — não dá
+  pra forçar edge nele. `middleware.ts` ainda aceita edge runtime
+  explícito. Custo aceito: aviso de deprecation no build até o
+  `@opennextjs/cloudflare` suportar Node.js middleware (ou o Next remover
+  de vez a opção de edge em `middleware.ts`).
 - 2026-08-05: Usuário admin do painel (Fase 5 PR2, issue #18) criado com
   e-mail temporário `augustoneonvazryba@gmail.com` (não o e-mail
   institucional da clínica) e senha fraca `adm12345` — **ambos aceitos
