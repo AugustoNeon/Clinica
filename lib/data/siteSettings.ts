@@ -1,4 +1,4 @@
-import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { getSupabaseServerClient, getSupabaseServerComponentClient } from "@/lib/supabase/server";
 import type { SiteSetting } from "@/types";
 
 /**
@@ -38,4 +38,25 @@ export async function getSiteSetting(key: string): Promise<SiteSetting | null> {
 
   if (error) throw new Error(`Falha ao buscar site_setting por key: ${error.message}`);
   return data as SiteSetting | null;
+}
+
+/**
+ * MUTATION DO PAINEL ADMIN (Fase 5 PR3e, issue #20).
+ *
+ * Usa `getSupabaseServerComponentClient()` (cookie-aware), NAO
+ * `getSupabaseAdminClient()`: a RLS de `site_settings_admin_write`
+ * (`supabase/migrations/0009_admin_write_policies_site_settings.sql`) e a
+ * camada de autorizacao real — o cliente precisa carregar a sessao do
+ * usuario logado pra RLS autorizar.
+ *
+ * `upsert` (nao `update`) porque a tela edita todas as chaves de uma vez
+ * num unico form — trata o caso raro de uma chave seedada faltando sem
+ * precisar de uma tela separada de "criar configuracao".
+ */
+export async function updateSiteSettings(values: Record<string, string>): Promise<void> {
+  const supabase = await getSupabaseServerComponentClient();
+  const rows = Object.entries(values).map(([key, value]) => ({ key, value }));
+  const { error } = await supabase.from("site_settings").upsert(rows, { onConflict: "key" });
+
+  if (error) throw new Error(`Falha ao atualizar site_settings: ${error.message}`);
 }
