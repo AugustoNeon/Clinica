@@ -1,5 +1,5 @@
 import { getSupabaseAdminClient } from "@/lib/supabase/server";
-import type { ContactLead, NewContactLead } from "@/types";
+import type { ContactLead, ContactLeadStatus, NewContactLead } from "@/types";
 
 /**
  * Camada de dados de `contact_leads`.
@@ -49,4 +49,32 @@ export async function getLeads(): Promise<ContactLead[]> {
 
   if (error) throw new Error(`Falha ao buscar contact_leads: ${error.message}`);
   return data as ContactLead[];
+}
+
+/**
+ * MUTATION DO PAINEL ADMIN (Fase 5 PR3f, issue #20).
+ *
+ * Diferente das outras entidades do PR3 (servicos/equipe/blog/depoimentos/
+ * site_settings): usa `service_role` (`getSupabaseAdminClient`), NAO o
+ * cliente cookie-aware com RLS `authenticated` — `contact_leads` nao tem
+ * NENHUMA policy de RLS para `anon`/`authenticated` (0002_rls_policies.sql),
+ * de proposito, por ser dado pessoal (LGPD). O controle de acesso e feito
+ * pela rota `/admin/leads` estar atras do middleware de autenticacao, nao
+ * por RLS. Unico campo mutavel: `status` — nome/telefone/e-mail/mensagem
+ * sao o que o paciente enviou, nunca editados.
+ */
+export async function updateLeadStatus(
+  id: string,
+  status: ContactLeadStatus,
+): Promise<ContactLead> {
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("contact_leads")
+    .update({ status })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw new Error(`Falha ao atualizar status do contact_lead: ${error.message}`);
+  return data as ContactLead;
 }
