@@ -374,6 +374,23 @@ jamais a prosa:
 
 <!-- APPEND-ONLY DATA DESC: nova linha NO TOPO. Reduz merge conflict. -->
 
+- 2026-08-07: `ci.yml` dispara duas vezes por push numa branch com PR aberto
+  (`on: push: branches: ["**"]` + `on: pull_request` simultâneos). O
+  `concurrency` group usa `github.ref`, que é diferente entre os dois
+  eventos (`refs/heads/<branch>` no push vs `refs/pull/<n>/merge` no
+  pull_request) — `cancel-in-progress` não deduplica entre eles. Ainda não
+  corrigido; conserto provável é restringir o `push` a `branches: [main]`
+  (cobertura de PR já vem do `pull_request`). Descoberto durante o merge
+  do PR #27, quando um outage do GitHub Actions (ver linha abaixo) expôs o
+  padrão: dois runs do mesmo commit competindo, um deles perdendo o slot.
+- 2026-08-07: Outage do GitHub Actions/Pages (`major_outage`, impacto
+  `critical`, ~15:22–00:05 UTC, ver githubstatus.com/incidents/qcvjkzcs7j74)
+  bloqueou o merge do PR #27 por ~8h — jobs ficavam presos em fila sem
+  runner (`runner_id: 0`) e eram auto-cancelados após ~15min. Nada a
+  corrigir do lado do projeto; resolveu sozinho quando o GitHub normalizou.
+  Evidência de `npm run verify` local limpo foi coletada durante a espera
+  como plano B (bypass de branch protection), mas não precisou ser usado —
+  o outage resolveu antes.
 - 2026-08-03: `jq` não está instalado na máquina de desenvolvimento (Windows).
   O `gdas init` degrada em silêncio-parcial: pula o adapter e o manifesto com
   WARN. `.claude/settings.json` e `agent/.gdas/manifest.json` foram gerados
