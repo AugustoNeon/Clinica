@@ -11,9 +11,9 @@ públicas (serviços, equipe, contato) e, em fase posterior, um painel admin
 para a cliente manter o conteúdo sozinha. Plano técnico completo em
 `PLANEJAMENTO.md`; conteúdo/negócio vêm do questionário em `docs/`.
 
-**Fase atual: 4 concluída (páginas institucionais); Fase 5 em andamento
-(PR1 mergeado — issue #16; PR2 mergeado — issue #18; PR3 fatiado em 6
-sub-PRs por entidade, issue #20 — PR3a de serviços em progresso).**
+**Fase atual: 4 e 5 concluídas. Fase 5 (painel admin) fechou a issue #20
+em 2026-08-06 — PR1 (#16), PR2 (#18) e as 6 fatias do PR3 (#20: serviços,
+equipe, blog, depoimentos, site_settings, leads) todas mergeadas.**
 `lib/data/*` chama o Supabase existente (`rjqeideajodwacumfiel.supabase.co`)
 via `lib/supabase/server.ts` desde 2026-08-05 (PR1); deixou de ser mock em
 memória. O conteúdo servido é o mesmo de antes (nome, endereço, telefone,
@@ -25,15 +25,19 @@ casos o campo continua explicitamente marcado como placeholder, nunca
 inventado. `/admin` protegido por Supabase Auth desde 2026-08-05 (PR2,
 issue #18): login funcional, sessão via cookie (`@supabase/ssr`,
 `middleware.ts` — convenção legada aceita de propósito, ver Decisões
-fechadas). CRUD de serviços (`/admin/servicos`) funcionando desde
-2026-08-06 (PR3a, issue #20): criar/editar/publicar/excluir, via RLS
-`authenticated` (não `service_role`) — próximas entidades (equipe, blog,
-depoimentos, site_settings, leads) repetem o mesmo padrão em PRs
-separados. Paleta, tipografia e logo aplicados nos componentes (Fase 3,
-demandas #8/#11); Home, Sobre, Serviços (com página por serviço), Equipe e
-Contato estruturados (Fase 4, demanda #13). Próximo passo: PR3b (equipe)
-ou Fase 6 (conteúdo real de imagem, travada até o material da demanda #10
-chegar).
+fechadas). CRUD completo no admin para as 5 entidades de conteúdo público
+(serviços, equipe, blog, depoimentos) via RLS `authenticated` (não
+`service_role`) + migration própria por entidade (`0005`–`0008`);
+`site_settings` (`/admin/configuracoes`, migration `0009`) é edição dos
+pares chave-valor num formulário único, sem criar/excluir; `leads`
+(`/admin/leads`) é listagem read-only com status editável, usando
+`service_role` (não RLS `authenticated`) porque `contact_leads` é dado
+pessoal sem policy nenhuma para `authenticated` — única entidade do PR3
+sem migration nova. Paleta, tipografia e logo aplicados nos componentes
+(Fase 3, demandas #8/#11); Home, Sobre, Serviços (com página por
+serviço), Equipe e Contato estruturados (Fase 4, demanda #13). Próximo
+passo: Fase 6 (conteúdo real de imagem, travada até o material da
+demanda #10 chegar) — sem bloqueador técnico conhecido além disso.
 
 ## Stack
 
