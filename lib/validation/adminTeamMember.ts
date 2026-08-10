@@ -18,7 +18,10 @@ export const adminTeamMemberSchema = z.object({
     .string()
     .trim()
     .max(500, "URL muito longa.")
-    .refine((value) => value === "" || z.url().safeParse(value).success, "URL invalida.")
+    .refine(
+      (value) => value === "" || value.startsWith("/") || z.url().safeParse(value).success,
+      "URL invalida.",
+    )
     .transform((value) => (value === "" ? null : value)),
   order: z.coerce.number().int("Ordem precisa ser um numero inteiro.").min(0, "Ordem nao pode ser negativa."),
   published: z.boolean(),

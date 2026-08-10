@@ -24,8 +24,8 @@ export default async function EquipePage() {
     <>
       <Container className="pt-8">
         <PlaceholderNotice>
-          O nome da Dra. Ariane já é real. CRO, biografia e foto ainda não foram
-          enviados pela clínica — continuam placeholder até lá.
+          O nome e a foto da Dra. Ariane já são reais. CRO e biografia ainda não
+          foram enviados pela clínica — continuam placeholder até lá.
         </PlaceholderNotice>
       </Container>
 
