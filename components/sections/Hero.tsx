@@ -1,13 +1,15 @@
 import Link from "next/link";
 import { buttonClasses } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
+import { WhatsAppCta } from "@/components/ui/WhatsAppCta";
 
 interface HeroProps {
   title: string;
   subtitle: string;
+  whatsapp: string;
 }
 
-export function Hero({ title, subtitle }: HeroProps) {
+export function Hero({ title, subtitle, whatsapp }: HeroProps) {
   return (
     <section className="py-16 sm:py-24">
       <Container>
@@ -18,6 +20,7 @@ export function Hero({ title, subtitle }: HeroProps) {
             <Link href="/contato" className={buttonClasses("primary")}>
               Agendar avaliacao
             </Link>
+            <WhatsAppCta whatsapp={whatsapp} />
             <Link href="/servicos" className={buttonClasses("secondary")}>
               Ver servicos
             </Link>

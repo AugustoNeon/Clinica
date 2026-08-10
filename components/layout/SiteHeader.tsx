@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { buttonClasses } from "@/components/ui/Button";
+import { WhatsAppCta } from "@/components/ui/WhatsAppCta";
 import { mainNav } from "@/lib/config/navigation";
 import { getSiteSettingsMap } from "@/lib/data/siteSettings";
 
@@ -42,9 +43,12 @@ export async function SiteHeader() {
           </ul>
         </nav>
 
-        <Link href="/contato" className={buttonClasses("primary")}>
-          Agendar avaliacao
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <WhatsAppCta whatsapp={settings.whatsapp} />
+          <Link href="/contato" className={buttonClasses("primary")}>
+            Agendar avaliacao
+          </Link>
+        </div>
       </Container>
     </header>
   );

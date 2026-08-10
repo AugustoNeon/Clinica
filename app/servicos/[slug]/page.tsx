@@ -3,7 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { buttonClasses } from "@/components/ui/Button";
 import { Section } from "@/components/ui/Section";
+import { WhatsAppCta } from "@/components/ui/WhatsAppCta";
 import { getServiceBySlug, getServices } from "@/lib/data/services";
+import { getSiteSettingsMap } from "@/lib/data/siteSettings";
 
 interface ServicoPageProps {
   params: Promise<{ slug: string }>;
@@ -31,7 +33,10 @@ export async function generateMetadata({ params }: ServicoPageProps): Promise<Me
 
 export default async function ServicoPage({ params }: ServicoPageProps) {
   const { slug } = await params;
-  const service = await getServiceBySlug(slug);
+  const [service, settings] = await Promise.all([
+    getServiceBySlug(slug),
+    getSiteSettingsMap(),
+  ]);
 
   if (!service) {
     notFound();
@@ -65,10 +70,14 @@ export default async function ServicoPage({ params }: ServicoPageProps) {
           {service.long_description ?? service.description}
         </p>
 
-        <div className="mt-8">
+        <div className="mt-8 flex flex-wrap gap-3">
           <Link href="/contato" className={buttonClasses("primary")}>
             Agendar avaliação
           </Link>
+          <WhatsAppCta
+            whatsapp={settings.whatsapp}
+            message={`Olá! Gostaria de agendar uma avaliação de ${service.title}.`}
+          />
         </div>
       </div>
     </Section>

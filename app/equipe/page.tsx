@@ -5,6 +5,8 @@ import { buttonClasses } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { PlaceholderNotice } from "@/components/ui/PlaceholderNotice";
 import { Section } from "@/components/ui/Section";
+import { WhatsAppCta } from "@/components/ui/WhatsAppCta";
+import { getSiteSettingsMap } from "@/lib/data/siteSettings";
 import { getTeamMembers } from "@/lib/data/team";
 
 export const metadata: Metadata = {
@@ -12,7 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default async function EquipePage() {
-  const members = await getTeamMembers();
+  const [members, settings] = await Promise.all([getTeamMembers(), getSiteSettingsMap()]);
   /*
    * A clinica tem UMA profissional (PRODUCT.md) — por isso esta pagina nao usa
    * o `TeamGrid`: uma grade de um card so parece lista incompleta. O layout
@@ -62,10 +64,11 @@ export default async function EquipePage() {
                 {professional.bio}
               </p>
 
-              <div className="mt-8">
+              <div className="mt-8 flex flex-wrap gap-3">
                 <Link href="/contato" className={buttonClasses("primary")}>
                   Agendar avaliação
                 </Link>
+                <WhatsAppCta whatsapp={settings.whatsapp} />
               </div>
             </div>
           </div>

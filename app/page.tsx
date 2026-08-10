@@ -21,7 +21,11 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero title={settings.clinic_name} subtitle={settings.clinic_tagline} />
+      <Hero
+        title={settings.clinic_name}
+        subtitle={settings.clinic_tagline}
+        whatsapp={settings.whatsapp}
+      />
 
       <Section
         title="Servicos"
