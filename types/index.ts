@@ -3,6 +3,7 @@ export type {
   BlogPostStatus,
   ContactLead,
   ContactLeadStatus,
+  GoogleCalendarTokens,
   NewContactLead,
   ScheduleException,
   Service,
