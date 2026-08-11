@@ -11,22 +11,53 @@ públicas (serviços, equipe, contato) e, em fase posterior, um painel admin
 para a cliente manter o conteúdo sozinha. Plano técnico completo em
 `PLANEJAMENTO.md`; conteúdo/negócio vêm do questionário em `docs/`.
 
-**Fase atual: 1 (Setup).** O questionário ainda não voltou. Todo conteúdo do
-site é **placeholder declarado** e `lib/data/*` serve dados **mock em
-memória** — não existe projeto Supabase criado. Nenhum dado real de clínica
-(nome, endereço, telefone, serviço, dentista) pode ser inventado: sem
-resposta da cliente, o campo fica placeholder.
+**Fase atual: 4 e 5 concluídas. Fase 5 (painel admin) fechou a issue #20
+em 2026-08-06 — PR1 (#16), PR2 (#18) e as 6 fatias do PR3 (#20: serviços,
+equipe, blog, depoimentos, site_settings, leads) todas mergeadas.**
+`lib/data/*` chama o Supabase existente (`rjqeideajodwacumfiel.supabase.co`)
+via `lib/supabase/server.ts` desde 2026-08-05 (PR1); deixou de ser mock em
+memória. O conteúdo servido é o mesmo de antes (nome, endereço, telefone,
+serviços, tagline, mapa, convênio, formas de pagamento), só a fonte mudou —
+ver `supabase/migrations/0003_seed_conteudo_real.sql` para a proveniência.
+Alguns campos seguem placeholder porque a cliente não enviou (bio da
+equipe, fotos de espaço físico, antes/depois — ver demanda #10) — nesses
+casos o campo continua explicitamente marcado como placeholder, nunca
+inventado. `/admin` protegido por Supabase Auth desde 2026-08-05 (PR2,
+issue #18): login funcional, sessão via cookie (`@supabase/ssr`,
+`middleware.ts` — convenção legada aceita de propósito, ver Decisões
+fechadas). CRUD completo no admin para as 5 entidades de conteúdo público
+(serviços, equipe, blog, depoimentos) via RLS `authenticated` (não
+`service_role`) + migration própria por entidade (`0005`–`0008`);
+`site_settings` (`/admin/configuracoes`, migration `0009`) é edição dos
+pares chave-valor num formulário único, sem criar/excluir; `leads`
+(`/admin/leads`) é listagem read-only com status editável, usando
+`service_role` (não RLS `authenticated`) porque `contact_leads` é dado
+pessoal sem policy nenhuma para `authenticated` — única entidade do PR3
+sem migration nova. Paleta, tipografia e logo aplicados nos componentes
+(Fase 3, demandas #8/#11); Home, Sobre, Serviços (com página por
+serviço), Equipe e Contato estruturados (Fase 4, demanda #13). **Fase 6
+(conteúdo real de imagem) parcial desde 2026-08-10:** logo e foto real da
+Dra. Ariane já aplicados (PR #30); antes/depois foi tentado, revertido a
+pedido do usuário e **pausado até o fim do projeto** (não retomar
+sozinho); fotos de espaço físico ainda não chegaram — issue #10
+continua aberta e é o único bloqueador dessa fase. **Roadmap de
+agendamento em andamento desde 2026-08-10** (fatiado em Fase 0–D, issues
+#33–#37): Fase 0 (nav do admin, #33) e Fase A (CTA WhatsApp, #34)
+concluídas (PRs #38/#39); Fase B (#35, admin define dias de trabalho) é
+a próxima, ainda não iniciada; Fase C (#36, Google Calendar OAuth) e
+Fase D (#37, formulário de agendamento no site) dependem das anteriores.
 
 ## Stack
 
 - **Linguagem:** TypeScript 5
 - **Framework HTTP:** Next.js 16 (App Router) — Server Components + Server Actions
-- **Banco:** Postgres via Supabase — **ainda não provisionado** (`lib/data/*` é mock)
+- **Banco:** Postgres via Supabase — provisionado; `lib/data/*` consulta direto (Fase 5 PR1, issue #16)
 - **Frontend:** React 19 + Tailwind CSS 4
 - **Validação:** Zod 4 (`lib/validation/`), schema único para cliente e servidor
-- **Deploy:** Cloudflare Workers via `@opennextjs/cloudflare` (config em
-  `wrangler.jsonc`/`open-next.config.ts`; primeiro deploy real ainda não
-  feito — depende de domínio, Fase 8 do `PLANEJAMENTO.md`)
+- **Deploy:** Cloudflare Workers via `@opennextjs/cloudflare` (`wrangler.jsonc`/
+  `open-next.config.ts`) — única hospedagem real desde 2026-08-10, no ar em
+  https://clinica-site.augustoneonvazryba.workers.dev; a Vercel (hospedagem
+  anterior) foi apagada nessa mesma data, ver Decisões fechadas
 - **Observabilidade:** nenhuma ainda — entra na Fase 7
 
 ## Como rodar localmente
@@ -40,10 +71,14 @@ npm run build       # build de produção
 npm run verify      # lint + typecheck + build
 ```
 
-Vars obrigatórias em `.env.local`: **nenhuma por enquanto**. O build e o lint
-passam sem nenhuma variável de ambiente, e essa propriedade é intencional —
-se algum dia `npm run build` passar a exigir segredo, isso é regressão, não
-configuração faltando. O contrato completo de variáveis (Supabase, Turnstile,
+Vars obrigatórias em `.env.local` desde 2026-08-05 (Fase 5 PR1, issue #16):
+**`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
+`SUPABASE_SERVICE_ROLE_KEY`**. `npm run build` passa por elas porque
+`/servicos/[slug]` (e as outras páginas que leem `lib/data/*`) são geradas
+estaticamente e agora consultam o Supabase real durante o build — deixou de
+ser mock em memória. Isso substitui a garantia antiga ("build sem nenhuma
+env var" — válida até a Fase 4). `npm run lint`/`npm run typecheck` seguem
+passando sem nenhuma variável. O contrato completo de variáveis (Turnstile,
 e-mail) está em `.env.example`.
 
 ## Comandos
@@ -57,12 +92,15 @@ aqui, nunca na skill.
 build: npm run build
 lint: npm run lint && npm run typecheck
 security: npm audit --audit-level=high
+schema-fingerprint: ls supabase/migrations/
 ```
 
 Chaves ausentes (`test`, `regressao`, `coverage-target`, `suite-dir`,
-`schema-fingerprint`, `sentinelas`, `isolamento`, `conta-testes`,
-`conta-executados`) são SKIP explícito: **não existe suíte de testes ainda**
-e não existe banco para tirar fingerprint. A lacuna é dado, não silêncio —
+`sentinelas`, `isolamento`, `conta-testes`, `conta-executados`) são SKIP
+explícito: **não existe suíte de testes ainda**. `schema-fingerprint`
+deixou de ser SKIP em 2026-08-05 (Fase 5 PR1, issue #16): o schema agora
+existe como migrations versionadas em `supabase/migrations/`. A lacuna é
+dado, não silêncio —
 testes entram junto com a primeira lógica de negócio real (Fase 4+).
 
 As seis últimas chaves são as **invariantes de ambiente** da fase de
@@ -96,10 +134,11 @@ comando antes de confiar no fato.
 
 | fato volátil | verificado em | como re-verificar (1 linha) |
 |---|---|---|
-| Stack e versões | 2026-08-04 | `node --version && npm ls next react typescript --depth=0` |
+| Stack e versões | 2026-08-03 | `node --version && npm ls next react typescript --depth=0` |
 | Comandos (build/lint) | 2026-08-03 | `npm run verify` |
 | Paths críticos | 2026-08-03 | `ls lib/supabase lib/validation app/contato/actions.ts next.config.ts` |
-| Vars obrigatórias | 2026-08-03 | `grep -c '=' .env.example` (nenhuma é exigida pelo build hoje) |
+| Vars obrigatórias | 2026-08-05 | `npm run build` sem `.env.local` (deve falhar pedindo as 3 vars Supabase) |
+| Deploy (Cloudflare, não Vercel) | 2026-08-10 | `grep -c '"deploy"' package.json && test -f wrangler.jsonc && test ! -f vercel.json && echo ok` |
 
 ## Estrutura
 
@@ -115,7 +154,7 @@ app/                    # rotas — só casca de página, conteúdo placeholder 
 components/ui/          # primitivos (Button, Card, Container, Section)
 components/sections/    # blocos de página (Hero, ServiceList, TeamGrid, ContactForm)
 components/layout/      # SiteHeader, SiteFooter
-lib/data/               # PATH CRÍTICO — 1 arquivo por entidade; hoje MOCK em memória
+lib/data/               # PATH CRÍTICO — 1 arquivo por entidade; consulta Supabase real (Fase 5 PR1)
 lib/validation/         # PATH CRÍTICO — schemas Zod, compartilhados cliente+servidor
 lib/supabase/           # PATH CRÍTICO — clientes centralizados (ainda não ligados)
 lib/config/             # features.ts (escopo em aberto) + navigation.ts
@@ -133,6 +172,12 @@ segurança). Nunca tocar sem revisão dedicada. O check
 - **Não inventar dado de clínica.** Nome, endereço, telefone, razão social,
   serviço, nome/CRO/bio de dentista: sem resposta da cliente, é placeholder
   explicitamente rotulado (`"... (placeholder)"`), nunca um texto plausível.
+- **Exceção (2026-08-05):** descrição *genérica de especialidade odontológica*
+  (o que é Ortodontia, Endodontia, Implantodontia…) **não** é "dado de clínica"
+  para efeito da regra acima — é conhecimento padrão da área, do jeito que
+  qualquer site odontológico descreve, e foi autorizada pela doutora. O limite
+  segue valendo: nada específico desta clínica, nenhuma estatística, prazo,
+  preço ou promessa de resultado. Ver `Service.long_description`.
 - Todo bloco de conteúdo provisório carrega `<PlaceholderNotice>` visível.
 - O site está com `robots: noindex` no layout enquanto for placeholder.
 - Depoimento de paciente só é publicável com `consent_confirmed` — a função
@@ -150,7 +195,7 @@ segurança). Nunca tocar sem revisão dedicada. O check
 | **serviço** | Linha de `services` — procedimento/especialidade divulgado no site. | consulta agendada |
 | **placeholder** | Conteúdo provisório **rotulado como tal**, para ser substituído. | conteúdo de exemplo plausível — proibido aqui |
 | **camada de dados** | `lib/data/*`: única fronteira que sabe de onde vem o dado. | ORM ou repositório com abstração genérica |
-| **painel admin** | Área autenticada `/admin`, ainda não implementada (Fase 5). | dashboard do Supabase |
+| **painel admin** | Área autenticada `/admin`, implementada na Fase 5 (auth + CRUD das 6 entidades). | dashboard do Supabase |
 
 <!-- Adicionar termo aqui sempre que houver confusão em PR ou postmortem. -->
 
@@ -165,6 +210,14 @@ segurança). Nunca tocar sem revisão dedicada. O check
   feature evoluem juntos (co-obsolescência): atualizar um e deixar o irmão
   para trás é dívida. O agente **rascunha e recomenda** documentação; não
   publica nem abre uma unidade de revisão por conta própria. *(Fluxo: `/documentar`.)*
+- **AGENTS.md é canônico; CLAUDE.md é derivado.** Edite sempre o `AGENTS.md`.
+  O hook `.githooks/pre-commit` (instalado sozinho via `npm install` →
+  script `prepare` → `git config core.hooksPath .githooks`, sem symlink de
+  SO nem privilégio de admin) copia `AGENTS.md` para `CLAUDE.md` no mesmo
+  commit e **bloqueia** o commit se `CLAUDE.md` for editado sozinho e os
+  dois ficarem diferentes. Histórico: os dois arquivos divergiram em
+  silêncio por meses (2026-08-04 a 2026-08-11, ver Lições aprendidas) até
+  esse mecanismo existir — antes disso a regra vivia só na prosa.
 
 ## Fluxo de trabalho — a espinha (obrigatório)
 
@@ -341,20 +394,43 @@ jamais a prosa:
 
 <!-- APPEND-ONLY DATA DESC: nova linha NO TOPO. Reduz merge conflict. -->
 
-- 2026-08-04: `npm install -D @opennextjs/cloudflare wrangler` introduz
-  vulnerabilidade ALTA transitiva de `undici` (via `wrangler` → `miniflare`).
-  Mesmo padrão do caso postcss/sharp abaixo: `npm audit fix --force`
-  "resolveria" rebaixando `wrangler` para 4.35.0 (a faixa vulnerável é
-  `>=4.36.0`, então o "fix" é sair da faixa auditada, não corrigir).
-  Inaceitável pelo mesmo motivo. `security: npm audit --audit-level=high`
-  continua advisory no CI (`if: always()` + `|| true`) até o upstream
-  publicar `wrangler`/`miniflare` com `undici` corrigido.
-- 2026-08-04: `opennextjs-cloudflare build` roda e produz `.open-next/`
-  corretamente no Windows (dev machine deste projeto), mas emite WARN
-  explícito de que o pacote "não é totalmente compatível com Windows" e
-  recomenda WSL para uso em produção. Build e `wrangler dev` local
-  funcionaram sem erro nesta sessão — sinal de atenção para revisitar se
-  algo relacionado a build/deploy falhar de forma não óbvia depois.
+- 2026-08-11: `AGENTS.md` e `CLAUDE.md` divergiram silenciosamente entre
+  2026-08-04 e 2026-08-11 — só `CLAUDE.md` vinha sendo atualizado sessão
+  após sessão, e `AGENTS.md` ficou parado descrevendo a Fase 1. No meio do
+  caminho `CLAUDE.md` também regrediu sozinho (Stack passou a dizer "Deploy:
+  Vercel", já errado desde que a Vercel foi apagada em 2026-08-10) e perdeu
+  uma entrada de "Decisões fechadas" (violação do próprio append-only).
+  Nenhum mecanismo detectava isso — só prosa pedindo pra manter os dois
+  sincronizados. Fix: hook `.githooks/pre-commit` (ver Convenções) torna a
+  sincronia um gatilho, não mais um lembrete.
+- 2026-08-10: `npm run deploy` (`opennextjs-cloudflare build`) dá
+  `EPERM`/`Device or resource busy` tentando apagar `.open-next/` no
+  Windows se o servidor de dev local (`next dev`) estiver rodando — ele
+  mantém `.open-next/assets` aberto via `initOpenNextCloudflareForDev()`.
+  Fix: sempre parar o preview/dev server antes de rodar `npm run deploy`.
+- 2026-08-10: Depois de reverter uma feature (rota removida), `npm run
+  typecheck` isolado pode falhar citando um módulo que não existe mais —
+  é `.next/types/validator.ts` desatualizado (cache de build antigo), não
+  um erro real de código. Fix: rodar `npm run build` uma vez (regenera o
+  manifesto) antes de confiar no typecheck isolado; não precisa apagar
+  `.next/` manualmente.
+- 2026-08-07: `ci.yml` dispara duas vezes por push numa branch com PR aberto
+  (`on: push: branches: ["**"]` + `on: pull_request` simultâneos). O
+  `concurrency` group usa `github.ref`, que é diferente entre os dois
+  eventos (`refs/heads/<branch>` no push vs `refs/pull/<n>/merge` no
+  pull_request) — `cancel-in-progress` não deduplica entre eles. Ainda não
+  corrigido; conserto provável é restringir o `push` a `branches: [main]`
+  (cobertura de PR já vem do `pull_request`). Descoberto durante o merge
+  do PR #27, quando um outage do GitHub Actions (ver linha abaixo) expôs o
+  padrão: dois runs do mesmo commit competindo, um deles perdendo o slot.
+- 2026-08-07: Outage do GitHub Actions/Pages (`major_outage`, impacto
+  `critical`, ~15:22–00:05 UTC, ver githubstatus.com/incidents/qcvjkzcs7j74)
+  bloqueou o merge do PR #27 por ~8h — jobs ficavam presos em fila sem
+  runner (`runner_id: 0`) e eram auto-cancelados após ~15min. Nada a
+  corrigir do lado do projeto; resolveu sozinho quando o GitHub normalizou.
+  Evidência de `npm run verify` local limpo foi coletada durante a espera
+  como plano B (bypass de branch protection), mas não precisou ser usado —
+  o outage resolveu antes.
 - 2026-08-03: `jq` não está instalado na máquina de desenvolvimento (Windows).
   O `gdas init` degrada em silêncio-parcial: pula o adapter e o manifesto com
   WARN. `.claude/settings.json` e `agent/.gdas/manifest.json` foram gerados
@@ -369,6 +445,26 @@ jamais a prosa:
 
 <!-- APPEND-ONLY DATA DESC: nova linha NO TOPO. -->
 
+- 2026-08-10: Roadmap de agendamento fatiado em 5 fases sequenciais (issues
+  #33–#37) — Fase 0 (nav do admin), Fase A (CTA WhatsApp), Fase B (admin
+  define dias de trabalho), Fase C (integração Google Calendar OAuth, conta
+  pessoal da doutora), Fase D (formulário de agendamento no site, slot fixo
+  de 1h). Por que: escopo grande demais pra uma unidade só; Google Calendar
+  pessoal (não uma conta nova) foi decisão explícita apesar do trade-off de
+  expor todo compromisso pessoal como "ocupado"; duração variável por
+  categoria de serviço ficou fora do v1 de propósito, pra não misturar com
+  "mostra só horário livre de verdade" e arriscar conflito de agenda. Custo
+  aceito: Fase D só entrega valor real depois de B e C completas — nada
+  agendável no site até lá.
+- 2026-08-10: Vercel apagada de vez (`clinica-psi-lake.vercel.app` não
+  existe mais) — Cloudflare Workers passa a ser a **única** hospedagem real,
+  com primeiro deploy de produção feito nesta data
+  (`clinica-site.augustoneonvazryba.workers.dev`). Por que: motivo original
+  da migração (Vercel Hobby proíbe uso comercial nos ToS) só ficava
+  resolvido de fato quando o Cloudflare fosse pra produção e o Vercel fosse
+  desconectado — os dois ficaram no ar em paralelo por semanas até este
+  ponto. Custo aceito: nenhum domínio próprio configurado ainda, site segue
+  no subdomínio `*.workers.dev` até a doutora decidir sobre domínio.
 - 2026-08-04: Hospedagem de produção migra de Vercel para Cloudflare
   Workers (via `@opennextjs/cloudflare`), mantendo Supabase como banco/
   auth/storage — não reabre a decisão "stack 100% Cloudflare descartada"
@@ -383,17 +479,91 @@ jamais a prosa:
   customizado seria flag para requisito que não existe. Cache incremental
   (R2) também não entrou: nenhuma página usa `revalidate`/ISR hoje. Custo
   aceito: uma camada de build a mais (OpenNext) entre o Next.js e o
-  runtime; nenhum ambiente Cloudflare real testado além de `wrangler dev`
-  local até o primeiro deploy manual (Fase 8, quando o domínio existir).
-- 2026-08-04: Questionário respondido pela cliente aplicado ao site — nome,
-  contato, lista de serviços e equipe deixam de ser placeholder. A equipe do
-  site é só a própria dentista: ela pediu explicitamente para não listar
-  terceiros. O blog virou escopo confirmado (pergunta 22 respondida "sim") e a
-  flag `FEATURES.blog` foi **removida** em vez de virar `true` — flag sem
-  decisão em aberto para guardar é sobre-engenharia. Custo: reativar o blog
-  atrás de flag exigiria reintroduzir a indireção. Imagens (logo, espaço,
-  equipe, antes/depois) e depoimentos seguem pendentes, e por isso o site
-  continua `noindex`.
+  runtime — confirmado em 2026-08-10 com o primeiro deploy real (ver
+  decisão acima).
+- 2026-08-10: Antes/depois (Fase 6) implementado e revertido na mesma
+  sessão — usuário confirmou autorização de uso de imagem para 7 casos
+  curados, página `/resultados` chegou a existir em PR aberto, mas o
+  usuário não gostou do resultado visual e pediu reversão completa antes
+  do merge. Nada chegou a `main`; bucket e fotos apagados do Supabase
+  Storage. Por que: decisão de gosto/produto da cliente, não technical
+  debt. Custo aceito: antes/depois fica **pausado até o fim do projeto** —
+  não retomar essa demanda sozinho numa sessão futura sem o usuário pedir.
+- 2026-08-06: Mutations do admin (Fase 5 PR3, issue #20) passam por RLS
+  `authenticated` via cliente cookie-aware (`getSupabaseServerComponentClient`),
+  não por `service_role` — vale pra todas as entidades do PR3 (serviços,
+  equipe, blog, depoimentos, site_settings), não só a primeira. Policy sem
+  filtro por usuário (`using (true)`), porque o schema não tem coluna de
+  "dono" e há 1 admin só. Por que: manter a RLS como camada de defesa
+  real, coerente com o resto do projeto (`PLANEJAMENTO.md` §6) — usar
+  `service_role` pra tudo esvaziaria esse propósito. Custo aceito: uma
+  migration de `GRANT`+policy a mais por entidade (lição do PR1: RLS
+  sozinha não basta, precisa do `GRANT` de tabela também, senão dá
+  "permission denied for table" antes mesmo de avaliar a policy).
+- 2026-08-05: `middleware.ts` (convenção legada, não `proxy.ts`) com
+  `runtime: "experimental-edge"` explícito no `config`, mesmo com o aviso
+  de deprecation do Next 16. Por que: o adaptador `@opennextjs/cloudflare`
+  (alvo de deploy) recusa Node.js middleware, e o Next 16 diz
+  explicitamente que `proxy.ts` SEMPRE roda em runtime Node.js — não dá
+  pra forçar edge nele. `middleware.ts` ainda aceita edge runtime
+  explícito. Custo aceito: aviso de deprecation no build até o
+  `@opennextjs/cloudflare` suportar Node.js middleware (ou o Next remover
+  de vez a opção de edge em `middleware.ts`).
+- 2026-08-05: Usuário admin do painel (Fase 5 PR2, issue #18) criado com
+  e-mail temporário `augustoneonvazryba@gmail.com` (não o e-mail
+  institucional da clínica) e senha fraca `adm12345` — **ambos aceitos
+  explicitamente pelo usuário apesar do alerta de segurança** (o
+  `PLANEJAMENTO.md` §6 pede "senha forte" para o painel admin, que acessa
+  dado pessoal de paciente sob LGPD). Por que: domínio de e-mail
+  institucional ainda não existe; e-mail/senha definitivos ficam para
+  quando a clínica decidir. Custo aceito: painel com credencial fraca até
+  alguém trocar manualmente — reforçar antes de produção real com dado de
+  paciente de verdade.
+- 2026-08-05: Fase 5 (painel admin) fatiada em 3 PRs sequenciais — PR1
+  schema+RLS+migrations no Supabase existente (`rjqeideajodwacumfiel.supabase.co`)
+  e troca de `lib/data/*`/`lib/supabase/*` de mock para real; PR2 Supabase
+  Auth + `/admin` protegido; PR3 telas de CRUD (serviços, equipe, blog,
+  depoimentos, `site_settings`, leads). Por que: o contrato pede PR
+  ≤300 linhas e o escopo total (schema+wiring+auth+4 CRUDs) estoura isso
+  de longe. Custo: mais idas e vindas de review entre os três PRs, mas
+  cada um shippa algo verificável sozinho.
+- 2026-08-05: `npm run build` passa a EXIGIR `.env.local` preenchido com as
+  3 vars do Supabase — a garantia anterior ("build passa sem nenhuma env
+  var", válida até a Fase 4) é revogada. Por que: `/servicos/[slug]` e
+  demais páginas SSG que leem `lib/data/*` agora consultam o Supabase real
+  durante o build, e `lib/data/*` deixou de ser mock em memória; não tem
+  como gerar as páginas estáticas sem o banco responder. Custo aceito:
+  CI/dev sem `.env.local` não builda mais — mas em produção (Cloudflare
+  Workers) as env vars sempre estão setadas, então não afeta deploy real.
+- 2026-08-05: Storage do Supabase (bucket + upload de foto de equipe/blog)
+  adiado para depois da Fase 5 — as colunas `*_url` entram no schema como
+  texto simples. Por que: hoje todo `image_url`/`photo_url` é `null`
+  (fotos ainda não vieram da cliente, demanda #10), não há nada real pra
+  testar upload. Custo: schema/wiring de Storage volta a ser mexido quando
+  o material de imagem chegar.
+- 2026-08-05: Descrição genérica de especialidade odontológica é exceção
+  explícita à regra de "não inventar dado de clínica" (demanda #13) — o campo
+  `Service.long_description` recebe texto educacional padrão da área (o que é
+  a especialidade, para que serve, que tipo de procedimento envolve), sem
+  `<PlaceholderNotice>`. Por que: a página individual de serviço precisa de
+  corpo de texto, a doutora autorizou em 2026-08-05, e definição de
+  especialidade não é fato sobre esta clínica — é o mesmo conteúdo que
+  qualquer site odontológico publica. Custo: a fronteira entre "genérico" e
+  "sobre a clínica" passa a exigir julgamento em cada texto novo; o limite
+  fica registrado em "Regras de conteúdo" (nada específico da clínica,
+  nenhuma estatística, prazo, preço ou promessa de resultado).
+- 2026-08-05: Paleta e tipografia da Fase 3 fechadas (demanda #8) — azul da
+  marca `#4590BF` (extraído do logo real) + acento terracota derivado
+  `#E2805E` + tinta `#231F20`, todos com contraste AA documentado em
+  `DESIGN.md`; Fraunces (títulos) + Inter (corpo), self-hosted via
+  `next/font/local` (não `next/font/google` — mantém a decisão de
+  2026-08-03 de não depender de rede de terceiro no build, sem ficar preso
+  à pilha de sistema pra sempre). Site fica só no tema claro, sem dark
+  mode. Por que: personalidade de marca definida como acolhedora/humana +
+  alegre/acessível; site de saúde ganha mais com fundo claro e fotografia
+  fiel do que perderia sem modo escuro. Custo: nenhum token de dark mode
+  documentado — se a decisão mudar depois, a paleta precisa de um par
+  escuro por token.
 - 2026-08-03: Blog fica atrás de flag em `lib/config/features.ts`, em vez de
   link fixo no menu. Por que: a pergunta 22 do questionário ainda não voltou e
   a rota pode nunca ir a produção. Custo: uma indireção a mais na navegação.
@@ -413,12 +583,10 @@ jamais a prosa:
 
 ## Feature flags ativas
 
-| Flag | Criada | Remover até | PR |
-|------|--------|-------------|-----|
-
-Nenhuma flag ativa no momento. `FEATURES.blog` foi removida em 2026-08-04
-(pergunta 22 respondida "sim" — decisão fechada, sem mais nada em aberto
-para guardar atrás de flag). Ver "Decisões fechadas" acima.
+Nenhuma hoje. `FEATURES.blog` foi removida em 2026-08-04: a pergunta 22 do
+questionário voltou "sim" e o blog virou escopo confirmado (link fixo no
+menu, `lib/config/navigation.ts`), não flag condicional. `lib/config/features.ts`
+fica de propósito, pronto pra próxima decisão de escopo pendente.
 
 ## Primeira sessão — protocolo do agente
 

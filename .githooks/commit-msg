@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# .githooks/commit-msg
+#
+# Delegador fino para agent/checks/no-agent-attribution.sh (GDAS) — mantem
+# o check de "sem mencao ao agente" funcionando depois que o hooksPath do
+# repo passou a ser .githooks (versionado) em vez de .git/hooks (local,
+# nao versionado, reinstalado a mao por `gdas init` em cada maquina).
+
+set -e
+
+ROOT="$(git rev-parse --show-toplevel)"
+CHECK="$ROOT/agent/checks/no-agent-attribution.sh"
+
+[ -x "$CHECK" ] || exit 0
+
+"$CHECK" "$1"
