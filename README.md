@@ -1,24 +1,33 @@
 # clinica-site
 
-Site institucional de clínica odontológica. **Fase 1 (Setup)** — esqueleto
-técnico no ar, conteúdo ainda 100% placeholder.
+Site institucional de clínica odontológica. **Fases 1–5 concluídas** —
+Supabase real (não mock), páginas institucionais com conteúdo real, painel
+admin autenticado em `/admin`. Em produção na Cloudflare Workers:
+https://clinica-site.augustoneonvazryba.workers.dev. Fase 6 (imagens) segue
+parcial — logo e foto da equipe aplicados, fotos de espaço físico e
+antes/depois pendentes/pausadas. Roadmap de agendamento (painel define dias
+de trabalho → Google Calendar → formulário no site) em andamento.
 
 - Plano técnico completo: [`PLANEJAMENTO.md`](PLANEJAMENTO.md)
 - Contrato de trabalho do repositório (stack, convenções, paths críticos):
-  [`AGENTS.md`](AGENTS.md)
+  [`AGENTS.md`](AGENTS.md) — Claude Code lê a cópia idêntica [`CLAUDE.md`](CLAUDE.md)
 
 ## Estado atual — leia antes de mexer
 
-- **Nada aqui é conteúdo real.** Nome da clínica, serviços, equipe, endereço
-  e telefone são placeholders explicitamente rotulados, à espera das respostas
-  do questionário enviado à cliente (`docs/`). Não substituir por texto
-  "plausível": ou é material enviado pela clínica, ou continua placeholder.
-- **Não existe banco de dados.** `lib/data/*` devolve arrays em memória com a
-  mesma assinatura assíncrona que as queries do Supabase terão. Trocar mock
-  por integração real é editar só esses arquivos.
-- **O formulário de contato não notifica ninguém.** A Server Action valida e
-  grava em memória; a mensagem some no próximo restart.
-- **O site está `noindex`** enquanto for placeholder.
+- **A maior parte do conteúdo é real** (nome da clínica, endereço, telefone,
+  serviços, tagline, mapa, convênio). Alguns campos seguem placeholder porque
+  a cliente ainda não enviou o material (bio da equipe, fotos de espaço
+  físico, antes/depois) — nesses casos o campo continua explicitamente
+  rotulado como placeholder, nunca inventado.
+- **O banco é Supabase real**, não mock. `lib/data/*` consulta
+  `rjqeideajodwacumfiel.supabase.co` via `lib/supabase/*`; o schema vive em
+  `supabase/migrations/`.
+- **O formulário de contato grava em `contact_leads`** (Supabase) e aparece
+  em `/admin/leads`. Dado pessoal: nunca logado, nunca exposto em rota
+  pública.
+- **`/admin` é autenticado** (Supabase Auth) e tem CRUD para serviços,
+  equipe, blog, depoimentos, configurações do site e listagem de leads.
+- **O site está `noindex`** enquanto Fase 6 (fotos) não fechar.
 
 ## Rodando
 
@@ -27,10 +36,12 @@ npm install
 npm run dev        # http://localhost:3000
 ```
 
-Nenhuma variável de ambiente é necessária para rodar, buildar ou lintar.
-Isso é intencional: se `npm run build` passar a exigir segredo, é regressão.
-O contrato de variáveis futuras está em [`.env.example`](.env.example) —
-copie para `.env.local` (gitignorado) quando as integrações entrarem.
+`npm run build` **exige** `.env.local` com `NEXT_PUBLIC_SUPABASE_URL`,
+`NEXT_PUBLIC_SUPABASE_ANON_KEY` e `SUPABASE_SERVICE_ROLE_KEY` — as páginas
+estáticas consultam o Supabase real durante o build. `npm run lint`/
+`npm run typecheck` seguem passando sem nenhuma variável. O contrato
+completo de variáveis (Turnstile, e-mail) está em
+[`.env.example`](.env.example) — copie para `.env.local` (gitignorado).
 
 ## Verificação
 
@@ -52,9 +63,9 @@ app/                 rotas do App Router (casca de página)
 components/ui/       primitivos de interface
 components/sections/ blocos de página
 components/layout/   header e footer
-lib/data/            camada de dados — 1 arquivo por entidade (hoje mock)
+lib/data/            camada de dados — 1 arquivo por entidade; consulta Supabase real
 lib/validation/      schemas Zod, compartilhados entre cliente e servidor
-lib/supabase/        clientes centralizados (existem, ainda não ligados)
+lib/supabase/        clientes centralizados (servidor, browser, admin)
 lib/config/          flags de escopo em aberto + navegação
 types/               interfaces do schema (PLANEJAMENTO.md §5)
 agent/               artefatos do GDAS (playbooks, checks, policy)
@@ -69,4 +80,6 @@ banco** — só chamam `lib/data/*`.
 - Rate limiting da Server Action: precisa entrar na camada de borda.
 - CSP com `'unsafe-inline'`: endurecer com nonce na Fase 7.
 - Política de privacidade é esqueleto, **não** texto jurídico válido.
-- Painel administrativo (`/admin`) e autenticação: Fase 5.
+- Fase 6 (imagens): fotos de espaço físico ainda não chegaram; antes/depois
+  pausado a pedido da cliente até o fim do projeto.
+- Domínio próprio: site segue em `*.workers.dev`, sem DNS/domínio decidido.
