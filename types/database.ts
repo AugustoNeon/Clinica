@@ -102,3 +102,19 @@ export interface SiteSetting {
   key: string;
   value: string;
 }
+
+/**
+ * Tabela `schedule_exceptions` (Fase B, issue #35) — excecoes ao padrao de
+ * dias de trabalho (segunda a sexta, constante em
+ * `lib/data/scheduleExceptions.ts`, nao coluna do banco). Um dia SEM linha
+ * aqui segue o padrao; uma linha aqui SEMPRE inverte o padrao daquele dia.
+ */
+export interface ScheduleException {
+  id: string;
+  /** formato YYYY-MM-DD. */
+  date: string;
+  /** true = disponibilidade extra (ex.: sabado); false = folga num dia util. */
+  is_available: boolean;
+  /** ISO 8601. */
+  created_at: string;
+}
