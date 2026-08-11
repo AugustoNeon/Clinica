@@ -4,6 +4,7 @@ export type {
   ContactLead,
   ContactLeadStatus,
   NewContactLead,
+  ScheduleException,
   Service,
   SiteSetting,
   TeamMember,

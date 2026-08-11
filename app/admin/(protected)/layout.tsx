@@ -9,6 +9,7 @@ export const adminSections = [
   { href: "/admin/equipe", label: "Equipe" },
   { href: "/admin/blog", label: "Blog" },
   { href: "/admin/depoimentos", label: "Depoimentos" },
+  { href: "/admin/agenda", label: "Agenda" },
   { href: "/admin/configuracoes", label: "Configurações" },
   { href: "/admin/leads", label: "Mensagens recebidas" },
 ];
