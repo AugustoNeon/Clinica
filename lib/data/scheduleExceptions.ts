@@ -30,6 +30,23 @@ function monthRange(year: number, month: number): { start: string; end: string }
   return { start, end };
 }
 
+/**
+ * Se um dia especifico e de trabalho (padrao OU excecao) — usado pela Fase C
+ * (issue #36) pra decidir se vale a pena consultar o Google Calendar antes
+ * de gastar uma chamada de API num dia que ja e folga por definicao.
+ */
+export async function isDateAvailable(dateStr: string): Promise<boolean> {
+  const supabase = await getSupabaseServerComponentClient();
+  const { data, error } = await supabase
+    .from("schedule_exceptions")
+    .select("is_available")
+    .eq("date", dateStr)
+    .maybeSingle();
+
+  if (error) throw new Error(`Falha ao buscar excecao: ${error.message}`);
+  return data ? data.is_available : isDefaultWorkday(dateStr);
+}
+
 /** Excecoes do mes (1-12), ordenadas por data — intervalo do mes ja limita o resultado. */
 export async function getScheduleExceptionsForMonth(
   year: number,
