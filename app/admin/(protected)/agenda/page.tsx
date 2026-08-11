@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getScheduleExceptionsForMonth, isDefaultWorkday } from "@/lib/data/scheduleExceptions";
+import { getConnectionStatus, getFreeSlotsForDate } from "@/lib/data/googleCalendar";
 import { toggleScheduleExceptionAction } from "./actions";
 
 export const metadata: Metadata = {
@@ -9,8 +10,10 @@ export const metadata: Metadata = {
 };
 
 interface AgendaPageProps {
-  searchParams: Promise<{ mes?: string }>;
+  searchParams: Promise<{ mes?: string; google?: string; data?: string }>;
 }
+
+const DATE_PARAM_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 const WEEKDAY_LABELS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 
@@ -56,8 +59,23 @@ function buildCalendarWeeks(year: number, month: number): (string | null)[][] {
 }
 
 export default async function AdminAgendaPage({ searchParams }: AgendaPageProps) {
-  const { mes } = await searchParams;
+  const { mes, google, data: selectedDate } = await searchParams;
   const { year, month } = resolveYearMonth(mes);
+
+  const connected = await getConnectionStatus();
+
+  const validSelectedDate =
+    selectedDate && DATE_PARAM_PATTERN.test(selectedDate) ? selectedDate : null;
+  let freeSlots: string[] | null = null;
+  let freeSlotsError = false;
+  if (validSelectedDate && connected) {
+    try {
+      freeSlots = await getFreeSlotsForDate(validSelectedDate);
+    } catch (error) {
+      console.error("Falha ao calcular horarios livres:", error);
+      freeSlotsError = true;
+    }
+  }
 
   const exceptions = await getScheduleExceptionsForMonth(year, month);
   const exceptionByDate = new Map(exceptions.map((exception) => [exception.date, exception]));
@@ -78,6 +96,71 @@ export default async function AdminAgendaPage({ searchParams }: AgendaPageProps)
         Padrão: trabalha de segunda a sexta. Clique num dia pra marcar uma exceção (folga num dia
         útil, ou disponibilidade extra num fim de semana); clique de novo pra desfazer.
       </p>
+
+      <section className="mt-6 rounded-md border border-black/10 p-4 dark:border-white/15">
+        <h2 className="font-medium">Google Calendar</h2>
+        {google === "conectado" && (
+          <p className="mt-2 text-sm text-green-700 dark:text-green-400">Conectado com sucesso.</p>
+        )}
+        {google === "erro" && (
+          <p className="mt-2 text-sm text-red-700 dark:text-red-400">
+            Não foi possível conectar. Tente de novo.
+          </p>
+        )}
+        <p className="mt-2 text-sm opacity-80">
+          {connected
+            ? "Conectado — os horários livres abaixo já cruzam com a agenda pessoal dela."
+            : "Não conectado. Sem isso, a lista de horários livres não funciona."}
+        </p>
+        {!connected && (
+          <Link
+            href="/admin/agenda/google/conectar"
+            prefetch={false}
+            className="mt-2 inline-block text-sm underline underline-offset-2"
+          >
+            Conectar Google Calendar
+          </Link>
+        )}
+      </section>
+
+      <section className="mt-6 rounded-md border border-black/10 p-4 dark:border-white/15">
+        <h2 className="font-medium">Horários livres</h2>
+        <form method="get" className="mt-2 flex flex-wrap items-end gap-2">
+          <input type="hidden" name="mes" value={`${year}-${pad2(month)}`} />
+          <label className="text-sm">
+            <span className="block opacity-80">Data</span>
+            <input
+              type="date"
+              name="data"
+              defaultValue={validSelectedDate ?? undefined}
+              className="mt-1 rounded-md border border-black/20 px-2 py-1 dark:border-white/25 dark:bg-transparent"
+            />
+          </label>
+          <button type="submit" className="text-sm underline underline-offset-2">
+            Ver horários
+          </button>
+        </form>
+        {validSelectedDate && !connected && (
+          <p className="mt-2 text-sm opacity-80">Conecte o Google Calendar acima primeiro.</p>
+        )}
+        {validSelectedDate && connected && freeSlotsError && (
+          <p className="mt-2 text-sm text-red-700 dark:text-red-400">
+            Falha ao consultar o Google Calendar. Tente de novo.
+          </p>
+        )}
+        {validSelectedDate && connected && !freeSlotsError && freeSlots && freeSlots.length === 0 && (
+          <p className="mt-2 text-sm opacity-80">Nenhum horário livre nesse dia.</p>
+        )}
+        {validSelectedDate && connected && !freeSlotsError && freeSlots && freeSlots.length > 0 && (
+          <ul className="mt-2 flex flex-wrap gap-2 text-sm">
+            {freeSlots.map((slot) => (
+              <li key={slot} className="rounded-md border border-black/10 px-2 py-1 dark:border-white/15">
+                {slot}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       <div className="mt-6 flex items-center justify-between">
         <Link

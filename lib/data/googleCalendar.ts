@@ -75,7 +75,8 @@ async function requestGoogleToken(params: Record<string, string>): Promise<Googl
   });
 
   if (!response.ok) {
-    throw new Error(`Falha na autenticacao com o Google: ${response.status}`);
+    const body = await response.text();
+    throw new Error(`Falha na autenticacao com o Google: ${response.status} ${body}`);
   }
 
   const parsed = googleTokenResponseSchema.safeParse(await response.json());
@@ -223,7 +224,8 @@ export async function getFreeSlotsForDate(dateStr: string): Promise<string[]> {
   });
 
   if (!response.ok) {
-    throw new Error(`Falha ao consultar disponibilidade no Google Calendar: ${response.status}`);
+    const body = await response.text();
+    throw new Error(`Falha ao consultar disponibilidade no Google Calendar: ${response.status} ${body}`);
   }
 
   const parsed = freeBusyResponseSchema.safeParse(await response.json());
