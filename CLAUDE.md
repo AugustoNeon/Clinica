@@ -35,9 +35,17 @@ pares chave-valor num formulário único, sem criar/excluir; `leads`
 pessoal sem policy nenhuma para `authenticated` — única entidade do PR3
 sem migration nova. Paleta, tipografia e logo aplicados nos componentes
 (Fase 3, demandas #8/#11); Home, Sobre, Serviços (com página por
-serviço), Equipe e Contato estruturados (Fase 4, demanda #13). Próximo
-passo: Fase 6 (conteúdo real de imagem, travada até o material da
-demanda #10 chegar) — sem bloqueador técnico conhecido além disso.
+serviço), Equipe e Contato estruturados (Fase 4, demanda #13). **Fase 6
+(conteúdo real de imagem) parcial desde 2026-08-10:** logo e foto real da
+Dra. Ariane já aplicados (PR #30); antes/depois foi tentado, revertido a
+pedido do usuário e **pausado até o fim do projeto** (não retomar
+sozinho); fotos de espaço físico ainda não chegaram — issue #10
+continua aberta e é o único bloqueador dessa fase. **Roadmap de
+agendamento em andamento desde 2026-08-10** (fatiado em Fase 0–D, issues
+#33–#37): Fase 0 (nav do admin, #33) e Fase A (CTA WhatsApp, #34)
+concluídas (PRs #38/#39); Fase B (#35, admin define dias de trabalho) é
+a próxima, ainda não iniciada; Fase C (#36, Google Calendar OAuth) e
+Fase D (#37, formulário de agendamento no site) dependem das anteriores.
 
 ## Stack
 
@@ -46,7 +54,10 @@ demanda #10 chegar) — sem bloqueador técnico conhecido além disso.
 - **Banco:** Postgres via Supabase — provisionado; `lib/data/*` consulta direto (Fase 5 PR1, issue #16)
 - **Frontend:** React 19 + Tailwind CSS 4
 - **Validação:** Zod 4 (`lib/validation/`), schema único para cliente e servidor
-- **Deploy:** Vercel (previsto, ainda não configurado)
+- **Deploy:** Cloudflare Workers via `@opennextjs/cloudflare` (`wrangler.jsonc`/
+  `open-next.config.ts`) — única hospedagem real desde 2026-08-10, no ar em
+  https://clinica-site.augustoneonvazryba.workers.dev; a Vercel (hospedagem
+  anterior) foi apagada nessa mesma data, ver Decisões fechadas
 - **Observabilidade:** nenhuma ainda — entra na Fase 7
 
 ## Como rodar localmente
@@ -127,6 +138,7 @@ comando antes de confiar no fato.
 | Comandos (build/lint) | 2026-08-03 | `npm run verify` |
 | Paths críticos | 2026-08-03 | `ls lib/supabase lib/validation app/contato/actions.ts next.config.ts` |
 | Vars obrigatórias | 2026-08-05 | `npm run build` sem `.env.local` (deve falhar pedindo as 3 vars Supabase) |
+| Deploy (Cloudflare, não Vercel) | 2026-08-10 | `grep -c '"deploy"' package.json && test -f wrangler.jsonc && test ! -f vercel.json && echo ok` |
 
 ## Estrutura
 
@@ -183,7 +195,7 @@ segurança). Nunca tocar sem revisão dedicada. O check
 | **serviço** | Linha de `services` — procedimento/especialidade divulgado no site. | consulta agendada |
 | **placeholder** | Conteúdo provisório **rotulado como tal**, para ser substituído. | conteúdo de exemplo plausível — proibido aqui |
 | **camada de dados** | `lib/data/*`: única fronteira que sabe de onde vem o dado. | ORM ou repositório com abstração genérica |
-| **painel admin** | Área autenticada `/admin`, ainda não implementada (Fase 5). | dashboard do Supabase |
+| **painel admin** | Área autenticada `/admin`, implementada na Fase 5 (auth + CRUD das 6 entidades). | dashboard do Supabase |
 
 <!-- Adicionar termo aqui sempre que houver confusão em PR ou postmortem. -->
 
@@ -374,6 +386,17 @@ jamais a prosa:
 
 <!-- APPEND-ONLY DATA DESC: nova linha NO TOPO. Reduz merge conflict. -->
 
+- 2026-08-10: `npm run deploy` (`opennextjs-cloudflare build`) dá
+  `EPERM`/`Device or resource busy` tentando apagar `.open-next/` no
+  Windows se o servidor de dev local (`next dev`) estiver rodando — ele
+  mantém `.open-next/assets` aberto via `initOpenNextCloudflareForDev()`.
+  Fix: sempre parar o preview/dev server antes de rodar `npm run deploy`.
+- 2026-08-10: Depois de reverter uma feature (rota removida), `npm run
+  typecheck` isolado pode falhar citando um módulo que não existe mais —
+  é `.next/types/validator.ts` desatualizado (cache de build antigo), não
+  um erro real de código. Fix: rodar `npm run build` uma vez (regenera o
+  manifesto) antes de confiar no typecheck isolado; não precisa apagar
+  `.next/` manualmente.
 - 2026-08-07: `ci.yml` dispara duas vezes por push numa branch com PR aberto
   (`on: push: branches: ["**"]` + `on: pull_request` simultâneos). O
   `concurrency` group usa `github.ref`, que é diferente entre os dois
@@ -405,6 +428,50 @@ jamais a prosa:
 
 <!-- APPEND-ONLY DATA DESC: nova linha NO TOPO. -->
 
+- 2026-08-10: Roadmap de agendamento fatiado em 5 fases sequenciais (issues
+  #33–#37) — Fase 0 (nav do admin), Fase A (CTA WhatsApp), Fase B (admin
+  define dias de trabalho), Fase C (integração Google Calendar OAuth, conta
+  pessoal da doutora), Fase D (formulário de agendamento no site, slot fixo
+  de 1h). Por que: escopo grande demais pra uma unidade só; Google Calendar
+  pessoal (não uma conta nova) foi decisão explícita apesar do trade-off de
+  expor todo compromisso pessoal como "ocupado"; duração variável por
+  categoria de serviço ficou fora do v1 de propósito, pra não misturar com
+  "mostra só horário livre de verdade" e arriscar conflito de agenda. Custo
+  aceito: Fase D só entrega valor real depois de B e C completas — nada
+  agendável no site até lá.
+- 2026-08-10: Vercel apagada de vez (`clinica-psi-lake.vercel.app` não
+  existe mais) — Cloudflare Workers passa a ser a **única** hospedagem real,
+  com primeiro deploy de produção feito nesta data
+  (`clinica-site.augustoneonvazryba.workers.dev`). Por que: motivo original
+  da migração (Vercel Hobby proíbe uso comercial nos ToS) só ficava
+  resolvido de fato quando o Cloudflare fosse pra produção e o Vercel fosse
+  desconectado — os dois ficaram no ar em paralelo por semanas até este
+  ponto. Custo aceito: nenhum domínio próprio configurado ainda, site segue
+  no subdomínio `*.workers.dev` até a doutora decidir sobre domínio.
+- 2026-08-04: Hospedagem de produção migra de Vercel para Cloudflare
+  Workers (via `@opennextjs/cloudflare`), mantendo Supabase como banco/
+  auth/storage — não reabre a decisão "stack 100% Cloudflare descartada"
+  do `PLANEJAMENTO.md` §4 (aquela era sobre D1/R2/Auth substituindo
+  Supabase; aqui só muda a camada de hospedagem). Por que: o plano
+  gratuito da Vercel (Hobby) proíbe uso comercial nos ToS e site de
+  clínica é uso comercial; o plano gratuito da Cloudflare Workers permite
+  isso explicitamente; o adaptador atingiu GA em fevereiro/2026 com
+  suporte completo a App Router, Server Actions, ISR e streaming.
+  `next/image` desligado (`images.unoptimized: true`) em vez de loader
+  Cloudflare Images: nenhum componente usa `next/image` ainda, loader
+  customizado seria flag para requisito que não existe. Cache incremental
+  (R2) também não entrou: nenhuma página usa `revalidate`/ISR hoje. Custo
+  aceito: uma camada de build a mais (OpenNext) entre o Next.js e o
+  runtime — confirmado em 2026-08-10 com o primeiro deploy real (ver
+  decisão acima).
+- 2026-08-10: Antes/depois (Fase 6) implementado e revertido na mesma
+  sessão — usuário confirmou autorização de uso de imagem para 7 casos
+  curados, página `/resultados` chegou a existir em PR aberto, mas o
+  usuário não gostou do resultado visual e pediu reversão completa antes
+  do merge. Nada chegou a `main`; bucket e fotos apagados do Supabase
+  Storage. Por que: decisão de gosto/produto da cliente, não technical
+  debt. Custo aceito: antes/depois fica **pausado até o fim do projeto** —
+  não retomar essa demanda sozinho numa sessão futura sem o usuário pedir.
 - 2026-08-06: Mutations do admin (Fase 5 PR3, issue #20) passam por RLS
   `authenticated` via cliente cookie-aware (`getSupabaseServerComponentClient`),
   não por `service_role` — vale pra todas as entidades do PR3 (serviços,
