@@ -210,6 +210,14 @@ segurança). Nunca tocar sem revisão dedicada. O check
   feature evoluem juntos (co-obsolescência): atualizar um e deixar o irmão
   para trás é dívida. O agente **rascunha e recomenda** documentação; não
   publica nem abre uma unidade de revisão por conta própria. *(Fluxo: `/documentar`.)*
+- **AGENTS.md é canônico; CLAUDE.md é derivado.** Edite sempre o `AGENTS.md`.
+  O hook `.githooks/pre-commit` (instalado sozinho via `npm install` →
+  script `prepare` → `git config core.hooksPath .githooks`, sem symlink de
+  SO nem privilégio de admin) copia `AGENTS.md` para `CLAUDE.md` no mesmo
+  commit e **bloqueia** o commit se `CLAUDE.md` for editado sozinho e os
+  dois ficarem diferentes. Histórico: os dois arquivos divergiram em
+  silêncio por meses (2026-08-04 a 2026-08-11, ver Lições aprendidas) até
+  esse mecanismo existir — antes disso a regra vivia só na prosa.
 
 ## Fluxo de trabalho — a espinha (obrigatório)
 
@@ -386,6 +394,15 @@ jamais a prosa:
 
 <!-- APPEND-ONLY DATA DESC: nova linha NO TOPO. Reduz merge conflict. -->
 
+- 2026-08-11: `AGENTS.md` e `CLAUDE.md` divergiram silenciosamente entre
+  2026-08-04 e 2026-08-11 — só `CLAUDE.md` vinha sendo atualizado sessão
+  após sessão, e `AGENTS.md` ficou parado descrevendo a Fase 1. No meio do
+  caminho `CLAUDE.md` também regrediu sozinho (Stack passou a dizer "Deploy:
+  Vercel", já errado desde que a Vercel foi apagada em 2026-08-10) e perdeu
+  uma entrada de "Decisões fechadas" (violação do próprio append-only).
+  Nenhum mecanismo detectava isso — só prosa pedindo pra manter os dois
+  sincronizados. Fix: hook `.githooks/pre-commit` (ver Convenções) torna a
+  sincronia um gatilho, não mais um lembrete.
 - 2026-08-10: `npm run deploy` (`opennextjs-cloudflare build`) dá
   `EPERM`/`Device or resource busy` tentando apagar `.open-next/` no
   Windows se o servidor de dev local (`next dev`) estiver rodando — ele

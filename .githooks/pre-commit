@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# .githooks/pre-commit
+#
+# AGENTS.md e CLAUDE.md precisam ter o MESMO conteudo (AGENTS.md e o
+# contrato canonico gerenciado pelo GDAS; CLAUDE.md e a copia que o Claude
+# Code le por convencao propria da ferramenta). Ate 2026-08-11 os dois
+# divergiram silenciosamente por meses porque so um dos dois era editado
+# por sessao (ver AGENTS.md, secao "Convencoes"). Este hook fecha a lacuna
+# como MECANISMO, nao como prosa: convencao sozinha decai, gatilho nao.
+#
+# Regra:
+#   - AGENTS.md e a fonte. Se ele mudou no commit, CLAUDE.md e sobrescrito
+#     com o mesmo conteudo e re-adicionado ao mesmo commit automaticamente.
+#   - Se so o CLAUDE.md foi editado (AGENTS.md nao mudou) e os dois ficaram
+#     diferentes, o commit e BLOQUEADO: edite o AGENTS.md, nao o CLAUDE.md.
+#
+# Instalado via `git config core.hooksPath .githooks` (ver package.json,
+# script "prepare" — roda sozinho em todo `npm install`, sem symlink de SO
+# e sem precisar de privilegio de admin).
+
+set -e
+
+ROOT="$(git rev-parse --show-toplevel)"
+AGENTS="$ROOT/AGENTS.md"
+CLAUDE="$ROOT/CLAUDE.md"
+
+[ -f "$AGENTS" ] || exit 0
+[ -f "$CLAUDE" ] || exit 0
+
+AGENTS_STAGED="$(git diff --cached --name-only -- AGENTS.md)"
+
+if [ -n "$AGENTS_STAGED" ]; then
+  if ! cmp -s "$AGENTS" "$CLAUDE"; then
+    cp "$AGENTS" "$CLAUDE"
+    git add "$CLAUDE"
+  fi
+  exit 0
+fi
+
+if ! cmp -s "$AGENTS" "$CLAUDE"; then
+  {
+    echo "BLOQUEADO: AGENTS.md e CLAUDE.md estao diferentes e este commit nao"
+    echo "muda o AGENTS.md. AGENTS.md e o arquivo canonico — edite ele, nao o"
+    echo "CLAUDE.md diretamente. O hook sincroniza o CLAUDE.md sozinho quando"
+    echo "o AGENTS.md mudar."
+  } >&2
+  exit 2
+fi
+
+exit 0
