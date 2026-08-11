@@ -42,10 +42,11 @@ pedido do usuário e **pausado até o fim do projeto** (não retomar
 sozinho); fotos de espaço físico ainda não chegaram — issue #10
 continua aberta e é o único bloqueador dessa fase. **Roadmap de
 agendamento em andamento desde 2026-08-10** (fatiado em Fase 0–D, issues
-#33–#37): Fase 0 (nav do admin, #33) e Fase A (CTA WhatsApp, #34)
-concluídas (PRs #38/#39); Fase B (#35, admin define dias de trabalho) é
-a próxima, ainda não iniciada; Fase C (#36, Google Calendar OAuth) e
-Fase D (#37, formulário de agendamento no site) dependem das anteriores.
+#33–#37): Fase 0 (nav do admin, #33), Fase A (CTA WhatsApp, #34) e Fase B
+(#35, admin define dias de trabalho — tela `/admin/agenda`, tabela
+`schedule_exceptions`) concluídas (PRs #38/#39/#42); Fase C (#36, Google
+Calendar OAuth) é a próxima, ainda não iniciada; Fase D (#37, formulário
+de agendamento no site) depende da C.
 
 ## Stack
 
