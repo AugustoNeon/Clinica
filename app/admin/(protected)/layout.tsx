@@ -13,6 +13,7 @@ export const adminSections = [
   { href: "/admin/agenda", label: "Agenda" },
   { href: "/admin/configuracoes", label: "Configurações" },
   { href: "/admin/leads", label: "Mensagens recebidas" },
+  { href: "/admin/seguranca", label: "Segurança" },
 ];
 
 /**

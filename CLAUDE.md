@@ -165,12 +165,14 @@ components/layout/      # SiteHeader, SiteFooter
 lib/data/               # PATH CRÍTICO — 1 arquivo por entidade; consulta Supabase real (Fase 5 PR1)
 lib/validation/         # PATH CRÍTICO — schemas Zod, compartilhados cliente+servidor
 lib/supabase/           # PATH CRÍTICO — clientes centralizados (ainda não ligados)
+lib/adminAuth/          # PATH CRÍTICO — TOTP + timeout de sessão do /admin (issue #47)
 lib/config/             # features.ts (escopo em aberto) + navigation.ts
 types/                  # interfaces espelhando o schema de PLANEJAMENTO.md §5
 ```
 
 **Paths críticos:** `lib/supabase/` (segredos e RLS), `lib/validation/`
 (barreira de entrada), `lib/data/` (acesso a dado pessoal),
+`lib/adminAuth/` (TOTP + assinatura de cookie de sessão do admin),
 `app/contato/actions.ts` (endpoint público) e `next.config.ts` (cabeçalhos de
 segurança). Nunca tocar sem revisão dedicada. O check
 `agent/checks/protect-paths.sh` reforça isso em pré-edição.
@@ -473,6 +475,26 @@ jamais a prosa:
 
 <!-- APPEND-ONLY DATA DESC: nova linha NO TOPO. -->
 
+- 2026-08-12: MFA (TOTP) e timeout de sessão do painel admin (issue #47)
+  implementados por conta própria, sem Supabase Pro — o Dashboard confirmou
+  que os dois recursos nativos exigem plano pago. `lib/adminAuth/totp.ts`
+  usa a biblioteca `otpauth` (Web Crypto, mesmo algoritmo RFC 6238 do Google
+  Authenticator), segredo guardado em `user_metadata` do Supabase Auth (sem
+  tabela nova, sem `service_role` — o usuário atualiza a própria conta via
+  `auth.updateUser`). Cookie de "MFA verificado" assinado via HMAC-SHA256
+  usando o próprio `totp_secret` do usuário como chave — se o TOTP for
+  desativado/trocado, qualquer cookie antigo invalida sozinho, sem precisar
+  de segredo de app novo. Timeout: cookies `admin_session_started`/
+  `admin_last_activity` próprios (30 min de inatividade, 12h de timebox
+  absoluto), checados em `lib/supabase/middleware.ts` a cada request —
+  contador em cookie porque o Worker roda em várias instâncias de borda.
+  Por que: pagar Pro só por isso não se justificava ainda (painel de 1
+  usuário só), e o algoritmo TOTP em si não é proprietário da Supabase —
+  outros times fazem esse mesmo contorno. Testado ponta a ponta de verdade
+  (cadastro, desafio de login, desativação, timeout de inatividade
+  forçado com prazo reduzido temporariamente) — não só a tela carregando.
+  Custo aceito: mais uma peça de auth pra manter (antes era 100% Supabase);
+  se o projeto virar Pro no futuro por outro motivo, dá pra reavaliar.
 - 2026-08-10: Roadmap de agendamento fatiado em 5 fases sequenciais (issues
   #33–#37) — Fase 0 (nav do admin), Fase A (CTA WhatsApp), Fase B (admin
   define dias de trabalho), Fase C (integração Google Calendar OAuth, conta

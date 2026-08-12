@@ -1,7 +1,9 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getSupabaseServerComponentClient } from "@/lib/supabase/server";
+import { SESSION_STARTED_COOKIE, sessionCookieOptions } from "@/lib/adminAuth/constants";
 import {
   adminLoginInputFromFormData,
   validateAdminLogin,
@@ -44,6 +46,11 @@ export async function loginAction(
       errors: {},
     };
   }
+
+  // Marca o inicio da sessao (issue #47) - middleware usa isso pro timeout
+  // de sessao (timebox) e pra invalidar o cookie de MFA de um login anterior.
+  const cookieStore = await cookies();
+  cookieStore.set(SESSION_STARTED_COOKIE, String(Date.now()), sessionCookieOptions());
 
   redirect("/admin");
 }
