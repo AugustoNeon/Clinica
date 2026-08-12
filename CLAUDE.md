@@ -408,6 +408,18 @@ jamais a prosa:
 
 <!-- APPEND-ONLY DATA DESC: nova linha NO TOPO. Reduz merge conflict. -->
 
+- 2026-08-12: `npm ci` no CI (Linux) falhava com `EUSAGE` mesmo depois de
+  regenerar `package-lock.json` do zero no Windows (issue #50, ao
+  adicionar Vitest) — `esbuild` é peer dependency OPCIONAL do `vite`
+  (`^0.27.0 || ^0.28.0`), e o npm local resolvia 0.28.1 (mesma versão já
+  usada pelo `wrangler`) enquanto o npm do CI resolvia 0.28.2, cada
+  ambiente re-resolvendo o peer opcional por conta própria em vez de
+  confiar cegamente no lockfile. Fix definitivo: `"overrides": {
+  "esbuild": "0.28.1" }` no `package.json`, forçando UMA versão só em
+  toda a árvore — regenerar o lockfile sem isso não resolve, porque o
+  problema é a resolução ficar aberta a cada ambiente, não o conteúdo do
+  lockfile em si. Vale lembrar disso se outra dependência trouxer
+  `esbuild`/`vite` como peer opcional no futuro.
 - 2026-08-11: `AGENTS.md` e `CLAUDE.md` divergiram silenciosamente entre
   2026-08-04 e 2026-08-11 — só `CLAUDE.md` vinha sendo atualizado sessão
   após sessão, e `AGENTS.md` ficou parado descrevendo a Fase 1. No meio do
