@@ -5,6 +5,7 @@ export type {
   BlogPostStatus,
   ContactLead,
   ContactLeadStatus,
+  GoogleCalendarTokens,
   NewContactLead,
   Patient,
   ScheduleException,

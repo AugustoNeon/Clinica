@@ -120,6 +120,23 @@ export interface ScheduleException {
 }
 
 /**
+ * Tabela `google_calendar_tokens` (Fase C, issue #36) — SINGLETON (sempre
+ * `id: true`, ver migration 0011). Token OAuth de acesso ao Google
+ * Calendar PESSOAL da doutora; RLS so `service_role` (sem policy pra
+ * `authenticated`, mesma excecao de `ContactLead`).
+ */
+export interface GoogleCalendarTokens {
+  id: true;
+  access_token: string;
+  refresh_token: string;
+  /** ISO 8601 — quando `access_token` expira. */
+  expires_at: string;
+  scope: string;
+  /** ISO 8601. */
+  updated_at: string;
+}
+
+/**
  * Tabela `patients` (issue #37 revisada) — cadastro de pacientes da
  * clinica, gerenciado pela doutora no admin. Dado pessoal: mesma regra de
  * `contact_leads` (nunca logar nome/telefone/e-mail/observacoes).
