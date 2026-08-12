@@ -13,8 +13,9 @@ export const metadata: Metadata = {
  *
  * O texto abaixo e ESQUELETO DE PLACEHOLDER: marca quais secoes a politica
  * precisa ter. NAO e texto juridico e nao pode ir para producao como esta —
- * a versao final precisa dos dados reais do controlador (razao social, CNPJ,
- * encarregado/DPO, canal de titular) e de revisao juridica.
+ * a versao final precisa dos dados reais do controlador (nome + CRO, ja que
+ * a clinica opera como pessoa fisica sem CNPJ — issue #48), canal do titular
+ * e revisao juridica.
  */
 export default function PrivacidadePage() {
   return (
@@ -33,8 +34,20 @@ export default function PrivacidadePage() {
           <div>
             <h3 className="text-lg font-medium">1. Quem e o controlador (placeholder)</h3>
             <p className="mt-2">
-              Razao social, CNPJ, endereco e canal de contato do controlador dos
-              dados. Preencher com os dados reais da clinica.
+              A clinica ainda nao tem CNPJ constituido — a Dra. Ariane Vaz
+              Storrer atua como profissional autonoma (pessoa fisica). A LGPD
+              (art. 5o) trata pessoa fisica e juridica igualmente como possivel
+              controladora de dados, entao isso nao dispensa nenhuma obrigacao.
+              Identificacao do controlador: nome completo da profissional,
+              numero de registro no CRO, endereco da clinica e canal de
+              contato (telefone/e-mail) — nao o CPF, que e dado pessoal
+              sensivel e nao deve ser publicado aqui (diferente do CNPJ, que e
+              registro publico).
+            </p>
+            <p className="mt-2">
+              Falta ainda: numero de CRO real (hoje placeholder em
+              `team_members`) e confirmar o canal de contato preferido para o
+              titular exercer direitos — ver issue #48.
             </p>
           </div>
 
