@@ -185,6 +185,10 @@ segurança). Nunca tocar sem revisão dedicada. O check
   `getTestimonials()` filtra por isso, não confia em lembrança de ninguém.
 - Dado de `contact_leads` é dado pessoal: **nunca logar** nome, telefone,
   e-mail ou mensagem; nunca expor listagem em rota pública.
+- **Mesma regra vale pra `patients`/`appointments`** (issue #37 revisada,
+  2026-08-12): **nunca logar** nome, telefone, e-mail ou observações do
+  paciente/consulta. Diferente de `contact_leads`, essas duas têm RLS
+  `authenticated` (não `service_role`) e nenhuma tem consumidor público.
 
 ## Vocabulário de domínio
 
@@ -193,6 +197,8 @@ segurança). Nunca tocar sem revisão dedicada. O check
 | Termo | Significado neste projeto | Não confundir com |
 |-------|---------------------------|-------------------|
 | **lead** | Registro em `contact_leads`: alguém que preencheu o formulário. Dado pessoal. | paciente (quem já é atendido pela clínica) |
+| **paciente** | Registro em `patients` (issue #37 revisada): pessoa cadastrada pela doutora no admin, atendida ou a ser atendida pela clínica. Dado pessoal. | lead (contato ainda não confirmado, vindo do formulário público) |
+| **consulta** | Registro em `appointments` (issue #37 revisada): compromisso marcado pela doutora, vinculado a um paciente, com data/hora/status. | lead; dia de trabalho (`schedule_exceptions`, que é regra de disponibilidade, não compromisso marcado) |
 | **serviço** | Linha de `services` — procedimento/especialidade divulgado no site. | consulta agendada |
 | **placeholder** | Conteúdo provisório **rotulado como tal**, para ser substituído. | conteúdo de exemplo plausível — proibido aqui |
 | **camada de dados** | `lib/data/*`: única fronteira que sabe de onde vem o dado. | ORM ou repositório com abstração genérica |
