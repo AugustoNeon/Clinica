@@ -69,7 +69,8 @@ npm run dev         # servidor de desenvolvimento
 npm run lint        # eslint
 npm run typecheck   # tsc --noEmit
 npm run build       # build de produção
-npm run verify      # lint + typecheck + build
+npm run test        # vitest (suíte de testes)
+npm run verify      # lint + typecheck + test + build
 ```
 
 Vars obrigatórias em `.env.local` desde 2026-08-05 (Fase 5 PR1, issue #16):
@@ -92,17 +93,23 @@ aqui, nunca na skill.
 ```
 build: npm run build
 lint: npm run lint && npm run typecheck
+test: npm run test
 security: npm audit --audit-level=high
 schema-fingerprint: ls supabase/migrations/
 ```
 
-Chaves ausentes (`test`, `regressao`, `coverage-target`, `suite-dir`,
-`sentinelas`, `isolamento`, `conta-testes`, `conta-executados`) são SKIP
-explícito: **não existe suíte de testes ainda**. `schema-fingerprint`
-deixou de ser SKIP em 2026-08-05 (Fase 5 PR1, issue #16): o schema agora
-existe como migrations versionadas em `supabase/migrations/`. A lacuna é
-dado, não silêncio —
-testes entram junto com a primeira lógica de negócio real (Fase 4+).
+`test` deixou de ser SKIP em 2026-08-12 (issue #50): primeira suíte real
+do projeto (Vitest), cobrindo a regra de conflito de horário de
+`appointments` (`lib/data/appointments.test.ts`) — cliente Supabase
+mockado de propósito, não existe banco de teste separado do de produção.
+Chaves ausentes (`regressao`, `coverage-target`, `suite-dir`,
+`sentinelas`, `isolamento`, `conta-testes`, `conta-executados`) seguem
+SKIP explícito: a suíte existe mas ainda é de 1 arquivo, sem meta de
+cobertura nem convenção de regressão formal — cresce conforme mais
+lógica de negócio real aparecer. `schema-fingerprint` deixou de ser SKIP
+em 2026-08-05 (Fase 5 PR1, issue #16): o schema agora existe como
+migrations versionadas em `supabase/migrations/`. A lacuna é dado, não
+silêncio.
 
 As seis últimas chaves são as **invariantes de ambiente** da fase de
 integridade do gate (isolamento estrutural da verificação): capturadas
@@ -403,6 +410,18 @@ jamais a prosa:
 
 <!-- APPEND-ONLY DATA DESC: nova linha NO TOPO. Reduz merge conflict. -->
 
+- 2026-08-12: `npm ci` no CI (Linux) falhava com `EUSAGE` mesmo depois de
+  regenerar `package-lock.json` do zero no Windows (issue #50, ao
+  adicionar Vitest) — `esbuild` é peer dependency OPCIONAL do `vite`
+  (`^0.27.0 || ^0.28.0`), e o npm local resolvia 0.28.1 (mesma versão já
+  usada pelo `wrangler`) enquanto o npm do CI resolvia 0.28.2, cada
+  ambiente re-resolvendo o peer opcional por conta própria em vez de
+  confiar cegamente no lockfile. Fix definitivo: `"overrides": {
+  "esbuild": "0.28.1" }` no `package.json`, forçando UMA versão só em
+  toda a árvore — regenerar o lockfile sem isso não resolve, porque o
+  problema é a resolução ficar aberta a cada ambiente, não o conteúdo do
+  lockfile em si. Vale lembrar disso se outra dependência trouxer
+  `esbuild`/`vite` como peer opcional no futuro.
 - 2026-08-11: `AGENTS.md` e `CLAUDE.md` divergiram silenciosamente entre
   2026-08-04 e 2026-08-11 — só `CLAUDE.md` vinha sendo atualizado sessão
   após sessão, e `AGENTS.md` ficou parado descrevendo a Fase 1. No meio do
