@@ -13,7 +13,8 @@ const sectionDescriptions: Record<string, string> = {
   "/admin/equipe": "Editar nome, cargo, CRO, bio e foto da profissional.",
   "/admin/blog": "Criar, editar e publicar posts do blog.",
   "/admin/depoimentos": "Gerenciar depoimentos de pacientes (com consentimento).",
-  "/admin/agenda": "Marcar folgas e disponibilidade extra nos dias de trabalho.",
+  "/admin/pacientes": "Cadastro de pacientes da clínica.",
+  "/admin/agenda": "Dias de trabalho, consultas marcadas e horários livres.",
   "/admin/configuracoes": "Endereço, telefone, horário, redes sociais e outros dados fixos.",
   "/admin/leads": "Ver e atualizar o status das mensagens recebidas pelo formulário de contato.",
 };
