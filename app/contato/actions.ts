@@ -1,6 +1,8 @@
 "use server";
 
+import { headers } from "next/headers";
 import { createLead } from "@/lib/data/leads";
+import { hashIp, isRateLimited } from "@/lib/data/rateLimit";
 import {
   contactFormInputFromFormData,
   validateContactForm,
@@ -15,40 +17,83 @@ import {
  *   do browser e conveniencia; esta e a barreira (PLANEJAMENTO.md secao 6).
  * - Nenhum dado pessoal em log. Falha inesperada vira mensagem generica
  *   para o usuario — sem stack trace, sem eco do payload.
+ * - RATE LIMITING por IP (issue #51, `lib/data/rateLimit.ts`): 5
+ *   submissoes por 10 minutos, guardado em Postgres (nao em memoria — o
+ *   Worker roda em varias instancias de borda, contador local nao
+ *   sobreviveria). Roda ANTES da validacao Zod, pra bloquear tambem
+ *   payload invalido em loop.
+ * - TURNSTILE (issue #51): verificado se `TURNSTILE_SECRET_KEY` estiver
+ *   setada — liga sozinho quando a env var existir, sem precisar editar
+ *   codigo. Sem a env var (dev local, ou enquanto a chave nao foi criada
+ *   no Cloudflare), a verificacao e pulada e o formulario segue
+ *   funcionando normalmente.
  *
  * O QUE FALTA (nao da para fazer nesta fase):
  *
- * 1. TURNSTILE (anti-bot). Nao ha site key nem secret key ainda: o projeto
- *    Cloudflare Turnstile so e criado quando o dominio da clinica existir.
- *    Quando existir, o widget injeta o campo `cf-turnstile-response` no
- *    formulario e a verificacao entra AQUI, antes de qualquer gravacao:
- *
- *      const token = formData.get("cf-turnstile-response");
- *      const verify = await fetch(
- *        "https://challenges.cloudflare.com/turnstile/v0/siteverify",
- *        { method: "POST", body: new URLSearchParams({
- *            secret: process.env.TURNSTILE_SECRET_KEY ?? "",
- *            response: String(token ?? ""),
- *          }) },
- *      );
- *      // token invalido => devolve erro generico e NAO grava o lead.
- *
- *    Lembrar de liberar `challenges.cloudflare.com` no CSP (next.config.ts).
- *
- * 2. RATE LIMITING. Falta e nao esta coberto por Turnstile. Server Action
- *    e um endpoint POST publico: sem limite, um script grava lead em loop.
- *    O limite tem que morar na camada de API/borda de verdade (middleware
- *    do Next, ou regra de rate limit da hospedagem/Cloudflare), com chave
- *    por IP + janela curta. Contador em memoria NAO serve: nao sobrevive a
- *    ambiente serverless com varias instancias.
- *
- * 3. NOTIFICACAO POR E-MAIL para a clinica (Resend / Email Routing),
- *    depois que a caixa de entrada institucional existir.
+ * 1. NOTIFICACAO POR E-MAIL para a clinica (Resend / Email Routing),
+ *    depois que a caixa de entrada institucional existir (issue #49).
  */
+
+/** Cloudflare injeta o IP real do cliente neste header; `x-forwarded-for` cobre outros proxies/dev local. */
+async function getClientIp(): Promise<string> {
+  const headerList = await headers();
+  const cfIp = headerList.get("cf-connecting-ip");
+  if (cfIp) return cfIp;
+  const forwardedFor = headerList.get("x-forwarded-for");
+  if (forwardedFor) return forwardedFor.split(",")[0].trim();
+  return "unknown";
+}
+
+/** `false` se o token for invalido. Pulada (retorna `true`) se a secret key nao estiver configurada. */
+async function verifyTurnstile(formData: FormData): Promise<boolean> {
+  const secret = process.env.TURNSTILE_SECRET_KEY;
+  if (!secret) return true;
+
+  const token = formData.get("cf-turnstile-response");
+  if (!token) return false;
+
+  const response = await fetch(
+    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+    {
+      method: "POST",
+      body: new URLSearchParams({ secret, response: String(token) }),
+    },
+  );
+  const result = (await response.json()) as { success: boolean };
+  return result.success;
+}
+
 export async function submitContactForm(
   _prevState: ContactFormState,
   formData: FormData,
 ): Promise<ContactFormState> {
+  const genericError: ContactFormState = {
+    status: "error",
+    message: "Nao foi possivel enviar sua mensagem agora. Tente novamente em instantes.",
+    errors: {},
+  };
+
+  // Falha aqui (ex.: migration da tabela ainda nao aplicada) NAO pode
+  // derrubar o formulario publico -- rate limit fecha em ABERTO (permite
+  // a tentativa) em vez de quebrar o unico canal de contato do site.
+  try {
+    const ipHash = await hashIp(await getClientIp());
+    if (await isRateLimited(ipHash)) {
+      return {
+        status: "error",
+        message: "Muitas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente.",
+        errors: {},
+      };
+    }
+  } catch {
+    // Sem log de erro aqui de proposito: sem observabilidade real ainda
+    // (issue #54), console.error so viraria ruido sem consumidor.
+  }
+
+  if (!(await verifyTurnstile(formData))) {
+    return genericError;
+  }
+
   const input = contactFormInputFromFormData(formData);
   const result = validateContactForm(input);
 
@@ -78,10 +123,6 @@ export async function submitContactForm(
   } catch {
     // Erro nao pode vazar detalhe interno para o usuario final
     // (PLANEJAMENTO.md secao 6). Observabilidade real entra na Fase 7.
-    return {
-      status: "error",
-      message: "Nao foi possivel enviar sua mensagem agora. Tente novamente em instantes.",
-      errors: {},
-    };
+    return genericError;
   }
 }

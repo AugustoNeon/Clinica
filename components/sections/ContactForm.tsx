@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Script from "next/script";
 import { useActionState, useState, type FormEvent } from "react";
 import { submitContactForm } from "@/app/contato/actions";
 import { Button } from "@/components/ui/Button";
@@ -175,18 +176,22 @@ export function ContactForm({ services }: ContactFormProps) {
       </div>
 
       {/*
-        TURNSTILE (Cloudflare) — ainda NAO ligado.
-        Nao existe site key: o widget so pode ser criado depois que o dominio
-        da clinica estiver definido. Quando existir, o widget entra aqui e
-        injeta o campo `cf-turnstile-response`, verificado no servidor em
-        app/contato/actions.ts.
-
-        <div
-          className="cf-turnstile"
-          data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-        />
-        <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer />
+        TURNSTILE (Cloudflare, issue #51) — liga sozinho quando
+        NEXT_PUBLIC_TURNSTILE_SITE_KEY existir (embutida no build, e
+        publica por natureza: e so o identificador do widget, nao um
+        segredo). Sem a key, nada e renderizado e o formulario segue
+        funcionando normal — a verificacao no servidor
+        (app/contato/actions.ts) tambem e pulada nesse caso.
       */}
+      {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
+        <>
+          <div
+            className="cf-turnstile"
+            data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+          />
+          <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer />
+        </>
+      )}
 
       <div>
         <Button type="submit" disabled={isPending}>
