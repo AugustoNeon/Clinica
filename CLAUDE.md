@@ -180,7 +180,9 @@ segurança). Nunca tocar sem revisão dedicada. O check
   segue valendo: nada específico desta clínica, nenhuma estatística, prazo,
   preço ou promessa de resultado. Ver `Service.long_description`.
 - Todo bloco de conteúdo provisório carrega `<PlaceholderNotice>` visível.
-- O site está com `robots: noindex` no layout enquanto for placeholder.
+- Indexação liberada desde 2026-08-12 (issue #52) — decisão do usuário de
+  não esperar as fotos pendentes (#10). `/admin` continua `noindex`
+  (override próprio em `app/admin/layout.tsx`).
 - Depoimento de paciente só é publicável com `consent_confirmed` — a função
   `getTestimonials()` filtra por isso, não confia em lembrança de ninguém.
 - Dado de `contact_leads` é dado pessoal: **nunca logar** nome, telefone,

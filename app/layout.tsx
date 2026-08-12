@@ -32,8 +32,12 @@ export const metadata: Metadata = {
   },
   description:
     "Odontologia clínica e estética em Araucária (PR), com atendimento humanizado e personalizado em todas as especialidades.",
-  // O site segue fora dos indices ate ter as imagens reais da clinica.
-  robots: { index: false, follow: false },
+  // Indexacao liberada em 2026-08-12 (issue #52): o conteudo institucional
+  // ja e real (nome, endereco, servicos, equipe) desde a Fase 5 PR1 -
+  // decisao do usuario de nao esperar as fotos pendentes (#10) pra
+  // indexar. `/admin` continua noindex (override proprio em
+  // app/admin/layout.tsx, o Metadata de rota filha vence o da raiz).
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({
