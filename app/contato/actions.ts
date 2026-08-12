@@ -1,6 +1,7 @@
 "use server";
 
 import { createLead } from "@/lib/data/leads";
+import { notifyNewLead } from "@/lib/email/notifyLead";
 import {
   contactFormInputFromFormData,
   validateContactForm,
@@ -15,6 +16,11 @@ import {
  *   do browser e conveniencia; esta e a barreira (PLANEJAMENTO.md secao 6).
  * - Nenhum dado pessoal em log. Falha inesperada vira mensagem generica
  *   para o usuario — sem stack trace, sem eco do payload.
+ * - NOTIFICACAO POR E-MAIL (issue #49, `lib/email/notifyLead.ts`): liga
+ *   sozinho quando RESEND_API_KEY/CONTACT_NOTIFICATION_FROM/
+ *   CONTACT_NOTIFICATION_TO existirem. `notifyNewLead` nunca lanca — o
+ *   lead ja foi salvo antes dela ser chamada, uma falha de e-mail nao
+ *   pode fazer a submissao parecer que falhou pro paciente.
  *
  * O QUE FALTA (nao da para fazer nesta fase):
  *
@@ -41,9 +47,6 @@ import {
  *    do Next, ou regra de rate limit da hospedagem/Cloudflare), com chave
  *    por IP + janela curta. Contador em memoria NAO serve: nao sobrevive a
  *    ambiente serverless com varias instancias.
- *
- * 3. NOTIFICACAO POR E-MAIL para a clinica (Resend / Email Routing),
- *    depois que a caixa de entrada institucional existir.
  */
 export async function submitContactForm(
   _prevState: ContactFormState,
@@ -68,6 +71,14 @@ export async function submitContactForm(
       message: result.data.message,
       preferred_service: result.data.preferred_service,
       lgpd_consent: result.data.lgpd_consent,
+    });
+
+    await notifyNewLead({
+      name: result.data.name,
+      phone: result.data.phone,
+      email: result.data.email,
+      message: result.data.message,
+      preferredService: result.data.preferred_service,
     });
 
     return {
