@@ -1,9 +1,12 @@
 export type {
+  Appointment,
+  AppointmentStatus,
   BlogPost,
   BlogPostStatus,
   ContactLead,
   ContactLeadStatus,
   NewContactLead,
+  Patient,
   ScheduleException,
   Service,
   SiteSetting,

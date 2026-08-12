@@ -118,3 +118,41 @@ export interface ScheduleException {
   /** ISO 8601. */
   created_at: string;
 }
+
+/**
+ * Tabela `patients` (issue #37 revisada) — cadastro de pacientes da
+ * clinica, gerenciado pela doutora no admin. Dado pessoal: mesma regra de
+ * `contact_leads` (nunca logar nome/telefone/e-mail/observacoes).
+ */
+export interface Patient {
+  id: string;
+  name: string;
+  phone: string;
+  email: string | null;
+  notes: string | null;
+  /** ISO 8601. */
+  created_at: string;
+}
+
+export type AppointmentStatus = "confirmada" | "cancelada" | "concluida";
+
+/**
+ * Tabela `appointments` (issue #37 revisada) — consulta marcada pela
+ * doutora no admin. `time` no formato HH:mm, sempre hora cheia (slots de
+ * `lib/data/appointments.ts`). `(date, time)` e unico entre consultas nao
+ * canceladas (indice parcial na migration 0013) — garante no banco que
+ * nao da pra marcar duas consultas ativas no mesmo horario.
+ */
+export interface Appointment {
+  id: string;
+  patient_id: string;
+  service_id: string | null;
+  /** formato YYYY-MM-DD. */
+  date: string;
+  /** formato HH:mm. */
+  time: string;
+  status: AppointmentStatus;
+  notes: string | null;
+  /** ISO 8601. */
+  created_at: string;
+}
