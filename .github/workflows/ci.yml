@@ -1,4 +1,4 @@
-# CI da aplicacao: lint + typecheck + build.
+# CI da aplicacao: lint + typecheck + test + build.
 #
 # Complementar ao gdas-advisory.yml, que roda os checks de GOVERNANCA do
 # GDAS (senior-baseline, verify, no-agent-attribution) em modo advisory.
@@ -29,7 +29,7 @@ concurrency:
 
 jobs:
   verify:
-    name: lint + typecheck + build
+    name: lint + typecheck + test + build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -49,6 +49,9 @@ jobs:
 
       - name: Typecheck
         run: npm run typecheck
+
+      - name: Test
+        run: npm run test
 
       - name: Build
         env:
