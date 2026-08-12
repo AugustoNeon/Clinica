@@ -17,7 +17,8 @@ initOpenNextCloudflareForDev();
  * fechar antes de saber quais terceiros o site realmente carrega.
  *
  * QUANDO ENTRAREM OS TERCEIROS, liberar explicitamente:
- * - Cloudflare Turnstile: `https://challenges.cloudflare.com` em script-src e frame-src
+ * - Cloudflare Turnstile: LIBERADO em 2026-08-12 (issue #51) — ver script-src/frame-src abaixo.
+ *   Widget so renderiza de fato quando NEXT_PUBLIC_TURNSTILE_SITE_KEY existir (ContactForm.tsx).
  * - Supabase Storage/API:  LIBERADO em 2026-08-05 (Fase 5 PR1, issue #16) — ver `connect-src` abaixo.
  *   `img-src` ainda nao precisa: Storage entra so num PR futuro (colunas *_url sao texto simples por ora).
  * - Google Maps embed:     LIBERADO em 2026-08-05 (Fase 4) — ver `frame-src` abaixo.
@@ -28,13 +29,13 @@ const contentSecurityPolicy = [
   "base-uri 'self'",
   "form-action 'self'",
   "frame-ancestors 'none'",
-  // Unico terceiro embutido hoje: o iframe do mapa do Google (Fase 4).
-  "frame-src https://www.google.com",
+  // Mapa do Google (Fase 4) + widget de desafio do Turnstile (issue #51).
+  "frame-src https://www.google.com https://challenges.cloudflare.com",
   "object-src 'none'",
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
   "style-src 'self' 'unsafe-inline'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  `script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com${isDev ? " 'unsafe-eval'" : ""}`,
   `connect-src 'self' ${supabaseUrl}${isDev ? " ws: wss:" : ""}`,
   "upgrade-insecure-requests",
 ].join("; ");
