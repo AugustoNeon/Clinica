@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { createLead } from "@/lib/data/leads";
 import { hashIp, isRateLimited } from "@/lib/data/rateLimit";
+import { notifyNewLead } from "@/lib/email/notifyLead";
 import {
   contactFormInputFromFormData,
   validateContactForm,
@@ -27,11 +28,11 @@ import {
  *   codigo. Sem a env var (dev local, ou enquanto a chave nao foi criada
  *   no Cloudflare), a verificacao e pulada e o formulario segue
  *   funcionando normalmente.
- *
- * O QUE FALTA (nao da para fazer nesta fase):
- *
- * 1. NOTIFICACAO POR E-MAIL para a clinica (Resend / Email Routing),
- *    depois que a caixa de entrada institucional existir (issue #49).
+ * - NOTIFICACAO POR E-MAIL (issue #49, `lib/email/notifyLead.ts`): liga
+ *   sozinho quando RESEND_API_KEY/CONTACT_NOTIFICATION_FROM/
+ *   CONTACT_NOTIFICATION_TO existirem. `notifyNewLead` nunca lanca — o
+ *   lead ja foi salvo antes dela ser chamada, uma falha de e-mail nao
+ *   pode fazer a submissao parecer que falhou pro paciente.
  */
 
 /** Cloudflare injeta o IP real do cliente neste header; `x-forwarded-for` cobre outros proxies/dev local. */
@@ -113,6 +114,14 @@ export async function submitContactForm(
       message: result.data.message,
       preferred_service: result.data.preferred_service,
       lgpd_consent: result.data.lgpd_consent,
+    });
+
+    await notifyNewLead({
+      name: result.data.name,
+      phone: result.data.phone,
+      email: result.data.email,
+      message: result.data.message,
+      preferredService: result.data.preferred_service,
     });
 
     return {
