@@ -29,7 +29,7 @@ concurrency:
 
 jobs:
   verify:
-    name: lint + typecheck + test + build
+    name: lint + typecheck + build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
