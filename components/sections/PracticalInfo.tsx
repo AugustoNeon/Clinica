@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Container } from "@/components/ui/Container";
 import { IconClock, IconMail, IconMapPin, IconPhone, IconShield, IconWhatsApp } from "@/components/ui/icons";
 import { buildWhatsAppUrl } from "@/lib/utils/whatsapp";
@@ -10,10 +11,26 @@ interface PracticalInfoProps {
   compact?: boolean;
 }
 
+function InfoRow({ icon, label, children }: { icon: ReactNode; label: string; children: ReactNode }) {
+  return (
+    <div className="flex gap-4 rounded-2xl bg-surface p-5 shadow-sm shadow-blue-deep/5">
+      <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-terracotta-tint text-terracotta-text">
+        {icon}
+      </span>
+      <div className="min-w-0">
+        <dt className="text-sm font-medium text-ink-muted">{label}</dt>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 /**
  * "Ficha" pratica da clinica: endereco (com link de rota), horario,
  * convenio/pagamento e canais — tudo de `site_settings`, nada fixo no
- * codigo — ao lado do mapa.
+ * codigo — ao lado do mapa. Camada rica (issue #71): fundo azul diluido
+ * com a textura da marca, cada dado num bloco branco com icone terracota,
+ * e o mapa emoldurado.
  */
 export function PracticalInfo({ settings, title = "Onde e quando", compact = false }: PracticalInfoProps) {
   const whatsappHref = settings.whatsapp
@@ -21,106 +38,91 @@ export function PracticalInfo({ settings, title = "Onde e quando", compact = fal
     : null;
 
   return (
-    <section className="py-14 sm:py-20 lg:py-24" id="localizacao">
-      <Container className="grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-16">
+    <section className="relative overflow-hidden bg-surface-tint py-16 sm:py-20 lg:py-28" id="localizacao">
+      <div aria-hidden className="pattern-arcs-blue pointer-events-none absolute inset-0" />
+      <Container className="relative grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-16">
         <div>
-          <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h2>
-          <dl className="reveal mt-8 space-y-7">
+          <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">{title}</h2>
+          <dl className="reveal mt-8 grid gap-3">
             {settings.address && (
-              <div className="flex gap-4">
-                <IconMapPin className="mt-1 shrink-0 text-terracotta-text" width={22} height={22} />
-                <div>
-                  <dt className="text-sm font-medium text-ink-muted">Endereço</dt>
-                  <dd className="mt-1 text-lg leading-snug">{settings.address}</dd>
-                  {settings.maps_url && (
-                    <dd className="mt-1.5">
-                      <a
-                        href={settings.maps_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-block py-1 text-sm font-medium text-blue-dark underline-offset-4 hover:underline"
-                      >
-                        Abrir rota no Google Maps
-                      </a>
-                    </dd>
-                  )}
-                </div>
-              </div>
+              <InfoRow icon={<IconMapPin width={22} height={22} />} label="Endereço">
+                <dd className="mt-1 text-lg leading-snug">{settings.address}</dd>
+                {settings.maps_url && (
+                  <dd className="mt-1.5">
+                    <a
+                      href={settings.maps_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block py-1 text-sm font-medium text-blue-dark underline-offset-4 hover:underline"
+                    >
+                      Abrir rota no Google Maps
+                    </a>
+                  </dd>
+                )}
+              </InfoRow>
             )}
 
             {settings.opening_hours && (
-              <div className="flex gap-4">
-                <IconClock className="mt-1 shrink-0 text-terracotta-text" width={22} height={22} />
-                <div>
-                  <dt className="text-sm font-medium text-ink-muted">Horário de atendimento</dt>
-                  <dd className="mt-1 text-lg leading-snug">{settings.opening_hours}</dd>
-                  <dd className="mt-1.5 text-sm text-ink-muted">
-                    Urgências fora desse horário: direto pelo WhatsApp.
-                  </dd>
-                </div>
-              </div>
+              <InfoRow icon={<IconClock width={22} height={22} />} label="Horário de atendimento">
+                <dd className="mt-1 text-lg leading-snug">{settings.opening_hours}</dd>
+                <dd className="mt-1.5 text-sm text-ink-muted">
+                  Urgências fora desse horário: direto pelo WhatsApp.
+                </dd>
+              </InfoRow>
             )}
 
             {(settings.insurance || settings.payment_methods) && (
-              <div className="flex gap-4">
-                <IconShield className="mt-1 shrink-0 text-terracotta-text" width={22} height={22} />
-                <div>
-                  <dt className="text-sm font-medium text-ink-muted">Convênio e pagamento</dt>
-                  {settings.insurance && (
-                    <dd className="mt-1 text-lg leading-snug">
-                      Particular e convênio {settings.insurance}
-                    </dd>
-                  )}
-                  {settings.payment_methods && (
-                    <dd className="mt-1.5 text-sm text-ink-muted">{settings.payment_methods}</dd>
-                  )}
-                </div>
-              </div>
+              <InfoRow icon={<IconShield width={22} height={22} />} label="Convênio e pagamento">
+                {settings.insurance && (
+                  <dd className="mt-1 text-lg leading-snug">Particular e convênio {settings.insurance}</dd>
+                )}
+                {settings.payment_methods && (
+                  <dd className="mt-1.5 text-sm text-ink-muted">{settings.payment_methods}</dd>
+                )}
+              </InfoRow>
             )}
 
             {!compact && (
-              <div className="flex gap-4">
-                <IconPhone className="mt-1 shrink-0 text-terracotta-text" width={22} height={22} />
-                <div>
-                  <dt className="text-sm font-medium text-ink-muted">Contato</dt>
-                  <dd className="mt-1 flex flex-col gap-1 text-lg leading-snug">
-                    {settings.phone && (
-                      <a
-                        href={`tel:${settings.phone.replace(/\D/g, "")}`}
-                        className="inline-block py-1 underline-offset-4 hover:underline"
-                      >
-                        {settings.phone}
-                      </a>
-                    )}
-                    {whatsappHref && (
-                      <a
-                        href={whatsappHref}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 py-1 underline-offset-4 hover:underline"
-                      >
-                        <IconWhatsApp width={18} height={18} className="text-blue-dark" />
-                        {settings.whatsapp}
-                      </a>
-                    )}
-                    {settings.email && (
-                      <a
-                        href={`mailto:${settings.email}`}
-                        className="inline-flex items-center gap-2 break-all py-1 text-base underline-offset-4 hover:underline"
-                      >
-                        <IconMail width={18} height={18} className="text-blue-dark" />
-                        {settings.email}
-                      </a>
-                    )}
-                  </dd>
-                </div>
-              </div>
+              <InfoRow icon={<IconPhone width={22} height={22} />} label="Contato">
+                <dd className="mt-1 flex flex-col gap-1 text-lg leading-snug">
+                  {settings.phone && (
+                    <a
+                      href={`tel:${settings.phone.replace(/\D/g, "")}`}
+                      className="inline-block py-1 underline-offset-4 hover:underline"
+                    >
+                      {settings.phone}
+                    </a>
+                  )}
+                  {whatsappHref && (
+                    <a
+                      href={whatsappHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 py-1 underline-offset-4 hover:underline"
+                    >
+                      <IconWhatsApp width={18} height={18} className="text-blue-dark" />
+                      {settings.whatsapp}
+                    </a>
+                  )}
+                  {settings.email && (
+                    <a
+                      href={`mailto:${settings.email}`}
+                      className="inline-flex items-center gap-2 break-all py-1 text-base underline-offset-4 hover:underline"
+                    >
+                      <IconMail width={18} height={18} className="text-blue-dark" />
+                      {settings.email}
+                    </a>
+                  )}
+                </dd>
+              </InfoRow>
             )}
           </dl>
         </div>
 
-        <div className="reveal overflow-hidden rounded-3xl border border-ink/10 bg-surface-tint">
-          <LocationMap embedUrl={settings.maps_embed_url} />
+        <div className="reveal overflow-hidden rounded-3xl bg-surface p-2 shadow-xl shadow-blue-deep/15 lg:p-3">
+          <div className="overflow-hidden rounded-2xl">
+            <LocationMap embedUrl={settings.maps_embed_url} />
+          </div>
         </div>
       </Container>
     </section>

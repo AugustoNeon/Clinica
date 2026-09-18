@@ -16,9 +16,12 @@ import { getTeamMembers } from "@/lib/data/team";
 import { getTestimonials } from "@/lib/data/testimonials";
 
 /**
- * Home (issue #65). Ordem das secoes segue o funil de quem procura dentista
- * pelo celular (PRODUCT.md): quem e / o que faz / como e / prova social /
- * onde fica / chamada final. Cada bloco le do banco via `lib/data/*`.
+ * Home (issue #65; camada rica na #71). Ordem das secoes segue o funil de
+ * quem procura dentista pelo celular (PRODUCT.md): quem e / o que faz /
+ * como e / prova social / onde fica / chamada final. Cada bloco le do
+ * banco via `lib/data/*`. O ritmo de cor e deliberado: azul profundo →
+ * terracota → branco → azul diluido → branco → azul profundo → branco →
+ * azul diluido → azul → rodape azul profundo.
  */
 export default async function HomePage() {
   const [settings, services, team, testimonials] = await Promise.all([
@@ -45,19 +48,27 @@ export default async function HomePage() {
         professional={professional ? { name: professional.name, role: professional.role } : null}
       />
 
-      <TrustStrip insurance={settings.insurance} serviceCount={services.length} />
+      <TrustStrip
+        insurance={settings.insurance}
+        serviceCount={services.length}
+        openingHours={settings.opening_hours}
+      />
 
-      <FeaturedServices services={services} />
+      <FeaturedServices services={services} whatsapp={settings.whatsapp} />
 
       {professional && (
-        <DoctorIntro professional={professional} clinicTagline={settings.clinic_tagline} />
+        <DoctorIntro
+          professional={professional}
+          clinicTagline={settings.clinic_tagline}
+          whatsapp={settings.whatsapp}
+        />
       )}
 
       <Steps whatsapp={settings.whatsapp} />
 
       {testimonials.length > 0 && (
         <Section
-          tone="tint"
+          tone="deep"
           title="Quem já passou por aqui"
           description="Depoimentos publicados só com consentimento por escrito do paciente."
         >
