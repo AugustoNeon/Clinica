@@ -2,24 +2,24 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
-import { Button } from "@/components/ui/Button";
+import { Notice } from "@/components/admin/Notice";
+import { Field, FormActions, FormSection, describedBy, inputClasses } from "@/components/admin/form";
+import { HOURLY_SLOTS } from "@/lib/scheduling";
 import {
-  appointmentStatusValues,
   appointmentStatusLabels,
+  appointmentStatusValues,
   initialAdminAppointmentState,
   type AdminAppointmentState,
 } from "@/lib/validation/adminAppointment";
-import { HOURLY_SLOTS } from "@/lib/scheduling";
 import type { Appointment, Patient, Service } from "@/types";
-
-const inputClasses =
-  "w-full rounded-lg border border-black/15 bg-transparent px-3 py-2 text-sm outline-none focus:border-black/40 dark:border-white/20 dark:focus:border-white/50";
 
 interface AppointmentFormProps {
   appointment?: Appointment;
   patients: Patient[];
   services: Service[];
   defaultDate?: string;
+  /** Pre-seleciona o paciente (link "Marcar consulta" na lista de pacientes). */
+  defaultPatientId?: string;
   /** So `true` na tela de edicao — toda consulta nasce "confirmada" (decisao do /grill), status nao aparece na criacao. */
   showStatus?: boolean;
   action: (state: AdminAppointmentState, formData: FormData) => Promise<AdminAppointmentState>;
@@ -31,141 +31,135 @@ export function AppointmentForm({
   patients,
   services,
   defaultDate,
+  defaultPatientId,
   showStatus = false,
   action,
   submitLabel,
 }: AppointmentFormProps) {
   const [state, formAction, isPending] = useActionState(action, initialAdminAppointmentState);
+  const errors = state.errors;
 
   return (
-    <form action={formAction} noValidate className="grid gap-5">
-      {state.status === "error" && state.message && (
-        <p role="alert" className="rounded-lg border border-red-500/50 bg-red-500/10 p-3 text-sm">
-          {state.message}
-        </p>
-      )}
+    <form action={formAction} noValidate className="grid gap-6">
+      {state.status === "error" && state.message && <Notice tone="error">{state.message}</Notice>}
 
-      <Field label="Paciente" error={state.errors.patient_id}>
-        {patients.length === 0 ? (
-          <p className="text-sm opacity-70">
-            Nenhum paciente cadastrado ainda —{" "}
-            <Link href="/admin/pacientes/novo" className="underline underline-offset-2">
-              cadastre um primeiro
-            </Link>
-            .
-          </p>
-        ) : (
-          <select
-            name="patient_id"
-            defaultValue={appointment?.patient_id ?? ""}
-            className={inputClasses}
-            aria-invalid={Boolean(state.errors.patient_id)}
-          >
-            <option value="" disabled>
-              Selecione...
-            </option>
-            {patients.map((patient) => (
-              <option key={patient.id} value={patient.id}>
-                {patient.name}
+      <FormSection title="Consulta">
+        <Field id="patient_id" label="Paciente" error={errors.patient_id}>
+          {patients.length === 0 ? (
+            <Notice tone="info">
+              Nenhum paciente cadastrado ainda.{" "}
+              <Link href="/admin/pacientes/novo" className="font-medium text-blue-dark underline underline-offset-4">
+                Cadastre o primeiro
+              </Link>{" "}
+              e volte aqui.
+            </Notice>
+          ) : (
+            <select
+              id="patient_id"
+              name="patient_id"
+              defaultValue={appointment?.patient_id ?? defaultPatientId ?? ""}
+              className={inputClasses}
+              aria-invalid={Boolean(errors.patient_id)}
+            >
+              <option value="" disabled>
+                Selecione…
               </option>
-            ))}
-          </select>
-        )}
-      </Field>
+              {patients.map((patient) => (
+                <option key={patient.id} value={patient.id}>
+                  {patient.name}
+                </option>
+              ))}
+            </select>
+          )}
+        </Field>
 
-      <Field label="Servico (opcional)" error={state.errors.service_id}>
-        <select
-          name="service_id"
-          defaultValue={appointment?.service_id ?? ""}
-          className={inputClasses}
-          aria-invalid={Boolean(state.errors.service_id)}
-        >
-          <option value="">Nenhum</option>
-          {services.map((service) => (
-            <option key={service.id} value={service.id}>
-              {service.title}
-            </option>
-          ))}
-        </select>
-      </Field>
-
-      <Field label="Data" error={state.errors.date}>
-        <input
-          name="date"
-          type="date"
-          defaultValue={appointment?.date ?? defaultDate ?? ""}
-          className={inputClasses}
-          aria-invalid={Boolean(state.errors.date)}
-        />
-      </Field>
-
-      <Field label="Horario" error={state.errors.time}>
-        <select
-          name="time"
-          defaultValue={appointment?.time ?? ""}
-          className={inputClasses}
-          aria-invalid={Boolean(state.errors.time)}
-        >
-          <option value="" disabled>
-            Selecione...
-          </option>
-          {HOURLY_SLOTS.map((slot) => (
-            <option key={slot} value={slot}>
-              {slot}
-            </option>
-          ))}
-        </select>
-      </Field>
-
-      {showStatus && (
-        <Field label="Status">
+        <Field id="service_id" label="Serviço" optional hint="Ajuda a lembrar do motivo; não aparece no site." error={errors.service_id}>
           <select
-            name="status"
-            defaultValue={appointment?.status ?? "confirmada"}
+            id="service_id"
+            name="service_id"
+            defaultValue={appointment?.service_id ?? ""}
             className={inputClasses}
+            aria-invalid={Boolean(errors.service_id)}
+            aria-describedby={describedBy("service_id", Boolean(errors.service_id), true)}
           >
-            {appointmentStatusValues.map((value) => (
-              <option key={value} value={value}>
-                {appointmentStatusLabels[value]}
+            <option value="">Nenhum</option>
+            {services.map((service) => (
+              <option key={service.id} value={service.id}>
+                {service.title}
               </option>
             ))}
           </select>
         </Field>
-      )}
 
-      <Field label="Observacoes (opcional)" error={state.errors.notes}>
-        <textarea
-          name="notes"
-          rows={4}
-          defaultValue={appointment?.notes ?? ""}
-          className={inputClasses}
-          aria-invalid={Boolean(state.errors.notes)}
-        />
-      </Field>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <Field id="date" label="Data" error={errors.date}>
+            <input
+              id="date"
+              name="date"
+              type="date"
+              defaultValue={appointment?.date ?? defaultDate ?? ""}
+              className={inputClasses}
+              aria-invalid={Boolean(errors.date)}
+            />
+          </Field>
+          <Field id="time" label="Horário" hint="Consultas de 1 hora, em hora cheia." error={errors.time}>
+            <select
+              id="time"
+              name="time"
+              defaultValue={appointment?.time ?? ""}
+              className={inputClasses}
+              aria-invalid={Boolean(errors.time)}
+              aria-describedby={describedBy("time", Boolean(errors.time), true)}
+            >
+              <option value="" disabled>
+                Selecione…
+              </option>
+              {HOURLY_SLOTS.map((slot) => (
+                <option key={slot} value={slot}>
+                  {slot}
+                </option>
+              ))}
+            </select>
+          </Field>
+        </div>
 
-      <div>
-        <Button type="submit" disabled={isPending || patients.length === 0}>
-          {isPending ? "Salvando..." : submitLabel}
-        </Button>
-      </div>
+        {showStatus && (
+          <Field id="status" label="Status">
+            <select
+              id="status"
+              name="status"
+              defaultValue={appointment?.status ?? "confirmada"}
+              className={inputClasses}
+            >
+              {appointmentStatusValues.map((value) => (
+                <option key={value} value={value}>
+                  {appointmentStatusLabels[value]}
+                </option>
+              ))}
+            </select>
+          </Field>
+        )}
+      </FormSection>
+
+      <FormSection title="Observações" description="Só para você. Nada daqui vai para o site.">
+        <Field id="notes" label="Anotações" optional error={errors.notes}>
+          <textarea
+            id="notes"
+            name="notes"
+            rows={4}
+            defaultValue={appointment?.notes ?? ""}
+            className={inputClasses}
+            aria-invalid={Boolean(errors.notes)}
+          />
+        </Field>
+      </FormSection>
+
+      <FormActions
+        submitLabel={submitLabel}
+        pending={isPending}
+        disabled={patients.length === 0}
+        cancelHref="/admin/agenda"
+      />
     </form>
-  );
-}
-
-function Field({
-  label,
-  error,
-  children,
-}: {
-  label: string;
-  error?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div>
-      <label className="mb-1.5 block text-sm font-medium">{label}</label>
-      {children}
-      {error && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</p>}
-    </div>
   );
 }

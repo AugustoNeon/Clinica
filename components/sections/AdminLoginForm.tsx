@@ -2,44 +2,32 @@
 
 import { useActionState } from "react";
 import { loginAction } from "@/app/admin/login/actions";
+import { Notice } from "@/components/admin/Notice";
+import { Field, describedBy, inputClasses } from "@/components/admin/form";
 import { Button } from "@/components/ui/Button";
 import { initialAdminLoginState } from "@/lib/validation/adminLogin";
-
-const inputClasses =
-  "w-full rounded-lg border border-black/15 bg-transparent px-3 py-2 text-sm outline-none focus:border-black/40 dark:border-white/20 dark:focus:border-white/50";
 
 export function AdminLoginForm() {
   const [state, formAction, isPending] = useActionState(loginAction, initialAdminLoginState);
 
   return (
     <form action={formAction} noValidate className="grid gap-5">
-      {state.status === "error" && state.message && (
-        <p role="alert" className="rounded-lg border border-red-500/50 bg-red-500/10 p-3 text-sm">
-          {state.message}
-        </p>
-      )}
+      {state.status === "error" && state.message && <Notice tone="error">{state.message}</Notice>}
 
-      <div>
-        <label htmlFor="email" className="mb-1.5 block text-sm font-medium">
-          E-mail
-        </label>
+      <Field id="email" label="E-mail" error={state.errors.email}>
         <input
           id="email"
           name="email"
           type="email"
           autoComplete="email"
+          inputMode="email"
           className={inputClasses}
           aria-invalid={Boolean(state.errors.email)}
+          aria-describedby={describedBy("email", Boolean(state.errors.email), false)}
         />
-        {state.errors.email && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">{state.errors.email}</p>
-        )}
-      </div>
+      </Field>
 
-      <div>
-        <label htmlFor="password" className="mb-1.5 block text-sm font-medium">
-          Senha
-        </label>
+      <Field id="password" label="Senha" error={state.errors.password}>
         <input
           id="password"
           name="password"
@@ -47,17 +35,13 @@ export function AdminLoginForm() {
           autoComplete="current-password"
           className={inputClasses}
           aria-invalid={Boolean(state.errors.password)}
+          aria-describedby={describedBy("password", Boolean(state.errors.password), false)}
         />
-        {state.errors.password && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">{state.errors.password}</p>
-        )}
-      </div>
+      </Field>
 
-      <div>
-        <Button type="submit" disabled={isPending}>
-          {isPending ? "Entrando..." : "Entrar"}
-        </Button>
-      </div>
+      <Button type="submit" size="lg" disabled={isPending} className="w-full">
+        {isPending ? "Entrando…" : "Entrar"}
+      </Button>
     </form>
   );
 }

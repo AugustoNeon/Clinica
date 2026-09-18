@@ -2,11 +2,10 @@
 
 import { useActionState } from "react";
 import { confirmTotpEnrollmentAction } from "@/app/admin/(protected)/seguranca/actions";
+import { Notice } from "@/components/admin/Notice";
+import { Field, codeInputClasses, describedBy } from "@/components/admin/form";
 import { Button } from "@/components/ui/Button";
 import { initialAdminTotpCodeState } from "@/lib/validation/adminTotp";
-
-const inputClasses =
-  "w-full rounded-lg border border-black/15 bg-transparent px-3 py-2 text-center text-lg tracking-[0.3em] outline-none focus:border-black/40 dark:border-white/20 dark:focus:border-white/50";
 
 export function TotpEnrollForm({ secret, email }: { secret: string; email: string }) {
   const [state, formAction, isPending] = useActionState(
@@ -16,39 +15,29 @@ export function TotpEnrollForm({ secret, email }: { secret: string; email: strin
 
   return (
     <form action={formAction} noValidate className="grid gap-4">
-      {state.status === "error" && state.message && (
-        <p role="alert" className="rounded-lg border border-red-500/50 bg-red-500/10 p-3 text-sm">
-          {state.message}
-        </p>
-      )}
+      {state.status === "error" && state.message && <Notice tone="error">{state.message}</Notice>}
 
       <input type="hidden" name="secret" value={secret} />
       <input type="hidden" name="email" value={email} />
 
-      <div>
-        <label htmlFor="code" className="mb-1.5 block text-sm font-medium">
-          Código de confirmação
-        </label>
+      <Field id="code" label="Código que o aplicativo mostra agora" error={state.errors.code}>
         <input
           id="code"
           name="code"
           type="text"
           inputMode="numeric"
+          pattern="[0-9]*"
           autoComplete="one-time-code"
           maxLength={6}
-          className={inputClasses}
+          className={codeInputClasses}
           aria-invalid={Boolean(state.errors.code)}
+          aria-describedby={describedBy("code", Boolean(state.errors.code), false)}
         />
-        {state.errors.code && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">{state.errors.code}</p>
-        )}
-      </div>
+      </Field>
 
-      <div>
-        <Button type="submit" disabled={isPending}>
-          {isPending ? "Confirmando..." : "Ativar verificação em duas etapas"}
-        </Button>
-      </div>
+      <Button type="submit" size="lg" disabled={isPending}>
+        {isPending ? "Confirmando…" : "Ativar verificação em duas etapas"}
+      </Button>
     </form>
   );
 }

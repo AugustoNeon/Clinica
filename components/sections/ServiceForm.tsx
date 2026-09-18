@@ -1,12 +1,18 @@
 "use client";
 
-import { useActionState } from "react";
-import { Button } from "@/components/ui/Button";
+import { useActionState, useState } from "react";
+import { Notice } from "@/components/admin/Notice";
+import {
+  CheckboxField,
+  Field,
+  FormActions,
+  FormSection,
+  describedBy,
+  inputClasses,
+} from "@/components/admin/form";
+import { slugify } from "@/lib/utils/slug";
 import { initialAdminServiceState, type AdminServiceState } from "@/lib/validation/adminService";
 import type { Service } from "@/types";
-
-const inputClasses =
-  "w-full rounded-lg border border-black/15 bg-transparent px-3 py-2 text-sm outline-none focus:border-black/40 dark:border-white/20 dark:focus:border-white/50";
 
 interface ServiceFormProps {
   service?: Service;
@@ -16,115 +22,142 @@ interface ServiceFormProps {
 
 export function ServiceForm({ service, action, submitLabel }: ServiceFormProps) {
   const [state, formAction, isPending] = useActionState(action, initialAdminServiceState);
+  // Slug controlado so para sugerir a partir do titulo enquanto estiver vazio (criacao).
+  const [slug, setSlug] = useState(service?.slug ?? "");
+  const [slugTouched, setSlugTouched] = useState(Boolean(service));
+  const errors = state.errors;
 
   return (
-    <form action={formAction} noValidate className="grid gap-5">
-      {state.status === "error" && state.message && (
-        <p role="alert" className="rounded-lg border border-red-500/50 bg-red-500/10 p-3 text-sm">
-          {state.message}
-        </p>
-      )}
+    <form action={formAction} noValidate className="grid gap-6">
+      {state.status === "error" && state.message && <Notice tone="error">{state.message}</Notice>}
 
-      <Field label="Titulo" error={state.errors.title}>
-        <input
-          name="title"
-          type="text"
-          defaultValue={service?.title}
-          className={inputClasses}
-          aria-invalid={Boolean(state.errors.title)}
+      <FormSection title="Identificação" description="Como o serviço aparece nas listas e no endereço da página.">
+        <Field id="title" label="Título" error={errors.title}>
+          <input
+            id="title"
+            name="title"
+            type="text"
+            defaultValue={service?.title}
+            maxLength={120}
+            className={inputClasses}
+            aria-invalid={Boolean(errors.title)}
+            aria-describedby={describedBy("title", Boolean(errors.title), false)}
+            onBlur={(event) => {
+              if (!slugTouched && slug === "") setSlug(slugify(event.target.value));
+            }}
+          />
+        </Field>
+
+        <Field
+          id="slug"
+          label="Endereço (slug)"
+          hint={`A página fica em /servicos/${slug || "…"}. Só letras minúsculas, números e hífen.`}
+          error={errors.slug}
+        >
+          <input
+            id="slug"
+            name="slug"
+            type="text"
+            value={slug}
+            onChange={(event) => {
+              setSlugTouched(true);
+              setSlug(event.target.value);
+            }}
+            placeholder="ex.: clinico-geral"
+            maxLength={120}
+            className={`${inputClasses} font-mono text-sm`}
+            aria-invalid={Boolean(errors.slug)}
+            aria-describedby={describedBy("slug", Boolean(errors.slug), true)}
+          />
+        </Field>
+
+        <Field id="category" label="Categoria" optional error={errors.category}>
+          <input
+            id="category"
+            name="category"
+            type="text"
+            defaultValue={service?.category ?? ""}
+            maxLength={120}
+            className={inputClasses}
+            aria-invalid={Boolean(errors.category)}
+          />
+        </Field>
+      </FormSection>
+
+      <FormSection title="Textos" description="A descrição curta vai nas listas; a longa, na página do serviço.">
+        <Field
+          id="description"
+          label="Descrição curta"
+          hint="Uma ou duas frases, até 300 caracteres."
+          error={errors.description}
+        >
+          <textarea
+            id="description"
+            name="description"
+            rows={2}
+            maxLength={300}
+            defaultValue={service?.description}
+            className={inputClasses}
+            aria-invalid={Boolean(errors.description)}
+            aria-describedby={describedBy("description", Boolean(errors.description), true)}
+          />
+        </Field>
+
+        <Field
+          id="long_description"
+          label="Descrição longa"
+          optional
+          hint="O que é, para que serve, que tipo de procedimento envolve. Sem preço, prazo ou promessa de resultado."
+          error={errors.long_description}
+        >
+          <textarea
+            id="long_description"
+            name="long_description"
+            rows={8}
+            maxLength={4000}
+            defaultValue={service?.long_description ?? ""}
+            className={inputClasses}
+            aria-invalid={Boolean(errors.long_description)}
+            aria-describedby={describedBy("long_description", Boolean(errors.long_description), true)}
+          />
+        </Field>
+      </FormSection>
+
+      <FormSection title="Exibição">
+        <div className="grid gap-5 sm:grid-cols-2">
+          <Field id="order" label="Ordem de exibição" hint="Menor aparece primeiro." error={errors.order}>
+            <input
+              id="order"
+              name="order"
+              type="number"
+              min={0}
+              defaultValue={service?.order ?? 0}
+              className={inputClasses}
+              aria-invalid={Boolean(errors.order)}
+              aria-describedby={describedBy("order", Boolean(errors.order), true)}
+            />
+          </Field>
+          <Field id="image_url" label="URL da imagem" optional error={errors.image_url}>
+            <input
+              id="image_url"
+              name="image_url"
+              type="url"
+              defaultValue={service?.image_url ?? ""}
+              className={inputClasses}
+              aria-invalid={Boolean(errors.image_url)}
+            />
+          </Field>
+        </div>
+        <CheckboxField
+          id="published"
+          name="published"
+          label="Publicado"
+          hint="Visível no site. Desmarque para esconder sem apagar."
+          defaultChecked={service?.published ?? false}
         />
-      </Field>
+      </FormSection>
 
-      <Field label="Slug" error={state.errors.slug}>
-        <input
-          name="slug"
-          type="text"
-          defaultValue={service?.slug}
-          placeholder="ex.: clinico-geral"
-          className={inputClasses}
-          aria-invalid={Boolean(state.errors.slug)}
-        />
-      </Field>
-
-      <Field label="Descricao curta" error={state.errors.description}>
-        <textarea
-          name="description"
-          rows={2}
-          defaultValue={service?.description}
-          className={inputClasses}
-          aria-invalid={Boolean(state.errors.description)}
-        />
-      </Field>
-
-      <Field label="Descricao longa (pagina do servico)" error={state.errors.long_description}>
-        <textarea
-          name="long_description"
-          rows={6}
-          defaultValue={service?.long_description ?? ""}
-          className={inputClasses}
-          aria-invalid={Boolean(state.errors.long_description)}
-        />
-      </Field>
-
-      <Field label="Categoria (opcional)" error={state.errors.category}>
-        <input
-          name="category"
-          type="text"
-          defaultValue={service?.category ?? ""}
-          className={inputClasses}
-          aria-invalid={Boolean(state.errors.category)}
-        />
-      </Field>
-
-      <Field label="URL da imagem (opcional)" error={state.errors.image_url}>
-        <input
-          name="image_url"
-          type="text"
-          defaultValue={service?.image_url ?? ""}
-          className={inputClasses}
-          aria-invalid={Boolean(state.errors.image_url)}
-        />
-      </Field>
-
-      <Field label="Ordem de exibicao" error={state.errors.order}>
-        <input
-          name="order"
-          type="number"
-          min={0}
-          defaultValue={service?.order ?? 0}
-          className={inputClasses}
-          aria-invalid={Boolean(state.errors.order)}
-        />
-      </Field>
-
-      <label className="flex items-center gap-2 text-sm">
-        <input type="checkbox" name="published" defaultChecked={service?.published ?? false} />
-        Publicado (visivel no site)
-      </label>
-
-      <div>
-        <Button type="submit" disabled={isPending}>
-          {isPending ? "Salvando..." : submitLabel}
-        </Button>
-      </div>
+      <FormActions submitLabel={submitLabel} pending={isPending} cancelHref="/admin/servicos" />
     </form>
-  );
-}
-
-function Field({
-  label,
-  error,
-  children,
-}: {
-  label: string;
-  error?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div>
-      <label className="mb-1.5 block text-sm font-medium">{label}</label>
-      {children}
-      {error && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</p>}
-    </div>
   );
 }

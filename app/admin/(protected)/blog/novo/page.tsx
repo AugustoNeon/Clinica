@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { EditorLayout, Tips } from "@/components/admin/EditorLayout";
 import { BlogPostForm } from "@/components/sections/BlogPostForm";
 import { createBlogPostAction } from "./actions";
 
@@ -9,9 +10,21 @@ export const metadata: Metadata = {
 
 export default function NewBlogPostPage() {
   return (
-    <div>
-      <h1 className="mb-6 text-2xl font-semibold">Novo post</h1>
+    <EditorLayout
+      title="Novo post"
+      description="Escreva como explica no consultório: uma dúvida real, uma resposta direta."
+      back={{ href: "/admin/blog", label: "Blog" }}
+      aside={
+        <Tips
+          items={[
+            "Comece em rascunho; publique quando reler no dia seguinte.",
+            "Parágrafos curtos, separados por uma linha em branco.",
+            "Evite prometer resultado ou citar preço — o post é orientação, não anúncio.",
+          ]}
+        />
+      }
+    >
       <BlogPostForm action={createBlogPostAction} submitLabel="Criar post" />
-    </div>
+    </EditorLayout>
   );
 }
