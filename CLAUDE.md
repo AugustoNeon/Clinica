@@ -47,6 +47,14 @@ agendamento em andamento desde 2026-08-10** (fatiado em Fase 0–D, issues
 `schedule_exceptions`) concluídas (PRs #38/#39/#42); Fase C (#36, Google
 Calendar OAuth) é a próxima, ainda não iniciada; Fase D (#37, formulário
 de agendamento no site) depende da C.
+**Redesign visual + pré-lançamento (issue #65) entregues em 2026-09-18
+(PR #66, branch `design/redesign-visual`):** todas as páginas públicas
+redesenhadas (header fixo com menu mobile, Home nova, `PageHero` nas
+internas, `/blog/[slug]` novo, rodapé completo), mais 404/erro com a
+marca, sitemap, robots, manifest, OG image, JSON-LD e o workflow
+`supabase-keepalive`. Lista do que ainda falta antes de divulgar em
+`docs/checklist-pre-lancamento.md` (CRO, bio, depoimentos e post
+placeholder, MFA desligado, domínio).
 
 ## Stack
 
@@ -104,7 +112,8 @@ do projeto (Vitest), cobrindo a regra de conflito de horário de
 mockado de propósito, não existe banco de teste separado do de produção.
 Chaves ausentes (`regressao`, `coverage-target`, `suite-dir`,
 `sentinelas`, `isolamento`, `conta-testes`, `conta-executados`) seguem
-SKIP explícito: a suíte existe mas ainda é de 1 arquivo, sem meta de
+SKIP explícito: a suíte tem 3 arquivos (conflito de horário, agrupamento
+de serviços, utilitários de texto — 19 testes em 2026-09-18), sem meta de
 cobertura nem convenção de regressão formal — cresce conforme mais
 lógica de negócio real aparecer. `schema-fingerprint` deixou de ser SKIP
 em 2026-08-05 (Fase 5 PR1, issue #16): o schema agora existe como
@@ -161,12 +170,14 @@ app/                    # rotas — só casca de página, conteúdo placeholder 
 └── contato/actions.ts  # PATH CRÍTICO — Server Action do formulário (entrada pública)
 components/ui/          # primitivos (Button, Card, Container, Section)
 components/sections/    # blocos de página (Hero, ServiceList, TeamGrid, ContactForm)
-components/layout/      # SiteHeader, SiteFooter
+components/layout/      # SiteHeader (sticky + MobileNav), SiteFooter
+components/seo/         # JSON-LD schema.org (Dentist) montado de site_settings
 lib/data/               # PATH CRÍTICO — 1 arquivo por entidade; consulta Supabase real (Fase 5 PR1)
 lib/validation/         # PATH CRÍTICO — schemas Zod, compartilhados cliente+servidor
 lib/supabase/           # PATH CRÍTICO — clientes centralizados (ainda não ligados)
 lib/adminAuth/          # PATH CRÍTICO — TOTP + timeout de sessão do /admin (issue #47)
-lib/config/             # features.ts (escopo em aberto) + navigation.ts
+lib/config/             # features.ts, navigation.ts, site.ts (URL/nome), services.ts (grupos)
+lib/content/            # conteúdo GENÉRICO da área (FAQ) — nunca dado de clínica
 types/                  # interfaces espelhando o schema de PLANEJAMENTO.md §5
 ```
 
@@ -410,6 +421,22 @@ jamais a prosa:
 
 ## Lições aprendidas
 
+- 2026-09-18: O plano gratuito do Supabase **pausa o projeto após 7 dias
+  sem atividade** — e o site inteiro caiu junto: todas as páginas públicas
+  em 500 com a tela crua do Next, o DNS do projeto nem resolvia (NXDOMAIN
+  também em resolvedores públicos). Ninguém percebeu por mais de um mês
+  (último acesso 2026-08-12, descoberto 2026-09-18 ao iniciar a issue
+  #65). Restaurar pelo Dashboard resolveu sem redeploy. Fix: workflow
+  `supabase-keepalive` (query a cada 3 dias) + header/footer/error
+  boundary tolerantes a banco fora. Fix definitivo (Pro ou cache R2 no
+  OpenNext) fica na #54. Lição maior: site sem monitor de uptime não
+  avisa que caiu — entra no checklist de pré-lançamento.
+- 2026-09-18: No Tailwind v4, `hidden` combinado com um `inline-flex` vindo
+  de uma string de classes compartilhada (`buttonClasses`) NÃO esconde o
+  elemento: as duas utilities têm a mesma camada e `inline-flex` vence
+  por ordem no CSS. Usar a variante `max-sm:hidden`/`max-lg:hidden` (media
+  query, vem depois) — foi assim que o botão de desktop vazou no header
+  mobile.
 <!-- APPEND-ONLY DATA DESC: nova linha NO TOPO. Reduz merge conflict. -->
 
 - 2026-08-12: `npm ci` no CI (Linux) falhava com `EUSAGE` mesmo depois de
@@ -473,6 +500,21 @@ jamais a prosa:
 
 ## Decisões fechadas
 
+- 2026-09-18: Redesign visual (issue #65) entregue num PR só (#66), muito
+  acima do limite de 300 linhas do contrato — pedido explícito do usuário
+  ("faça tudo que estiver ao seu alcance", "site odontológico completo,
+  adaptamos depois"); os 6 commits são fatias revisáveis. Escolhas de
+  design registradas em `DESIGN.md` → "Padrões do redesign": arco do
+  sorriso como único motivo gráfico, composição "esquerda fixa / lista à
+  direita" no lugar de grade de cards iguais, WhatsApp sempre em
+  `--blue-dark` (sem verde do WhatsApp na paleta), motion em CSS puro
+  (scroll-driven + `TiltFrame` só com mouse). Conteúdo genérico da área
+  (FAQ, passos, valores) entra pela exceção de 2026-08-05; fotos de banco
+  de imagem NÃO entraram mesmo com autorização do usuário — espaço físico
+  segue como espaço reservado rotulado (#10), porque foto de outra clínica
+  fingindo ser esta é o oposto do princípio "mostrar, não prometer". Custo
+  aceito: revisão de PR grande; depoimentos/post placeholder continuam no
+  banco até a doutora despublicar.
 <!-- APPEND-ONLY DATA DESC: nova linha NO TOPO. -->
 
 - 2026-08-12: MFA (TOTP) e timeout de sessão do painel admin (issue #47)

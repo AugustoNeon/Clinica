@@ -124,3 +124,71 @@ Rascunho visual aprovado nesta demanda (recorte de home com header,
 hero, especialidades, faixa full-bleed e rodapé) — não é código, é só
 a referência visual que validou esta paleta/tipografia antes de
 escrever este documento.
+
+## Padrões do redesign (issue #65, 2026-09-18)
+
+Aplicação completa dos tokens acima em todas as páginas públicas (PR #66).
+Nenhum token de cor/tipo novo — só padrões de composição e movimento.
+
+### Motivo gráfico: o arco do sorriso
+
+Único ornamento do site, derivado da curva do logo. Aparece em três
+lugares, de propósito, e em nenhum outro:
+
+- **Moldura de foto em arco** — `rounded-[999px_999px_1.75rem_1.75rem]`
+  (arco em cima: hero, `/equipe`, `/sobre`) ou invertida
+  (`rounded-[1.75rem_1.75rem_999px_999px]`, bloco da doutora na Home).
+- **Arco desenhado sob o h1 do hero** — SVG com `pathLength=1`, traço
+  `--terracotta`, anima uma vez no carregamento (`.smile-arc`).
+- **Marca-d'água na faixa final** — `icon-smile.png` invertido para
+  branco, opacidade 10%, sobre `--blue-dark` (`CtaBand`).
+
+Não usar o arco em cards, botões ou ícones: vira decoração aleatória.
+
+### Estrutura de página
+
+- **Home:** hero (tint) → faixa de fatos → serviços (branco, duas
+  colunas, esquerda fixa no scroll) → doutora (tint) → passos (branco) →
+  depoimentos (tint) → FAQ (tint) → ficha prática + mapa (branco) → faixa
+  final (`--blue-dark`). Fundos alternam para dar ritmo; nunca dois tints
+  seguidos sem uma quebra branca, exceto depoimentos → FAQ (aceito).
+- **Internas:** `PageHero` (tint, h1 grande, lead de 1–2 linhas, link de
+  volta opcional) → conteúdo → `CtaBand`. Sem hero de foto fora da Home.
+- **Composição "esquerda fixa / direita lista"** (`lg:sticky lg:top-28`)
+  para serviços, FAQ e grupos de `/servicos`: intro curta à esquerda,
+  itens à direita. É a alternativa deliberada à grade de cards iguais.
+- **Cards** só em `/servicos` (grupos) e depoimentos — onde o item é
+  clicável ou é uma citação fechada. Listas de linhas com hairline
+  (`divide-y divide-ink/10`) em todo o resto.
+
+### Componentes
+
+- `Button`: `primary` (azul escuro), `secondary` (borda), `inverse`
+  (branco sobre azul escuro), `ghost`; tamanhos `md`/`lg`. WhatsApp é
+  sempre `primary` + `IconWhatsApp` — sem verde do WhatsApp na paleta.
+- `Section` com `tone` (`default` | `tint` | `dark`).
+- Ícones inline em `components/ui/icons.tsx` (traço 1.75, `aria-hidden`).
+- `z-index` semântico em `globals.css`: `--z-header` (40) < `--z-overlay`
+  (50, menu mobile). Nenhum número solto.
+
+### Motion (complementa a seção "Motion" acima)
+
+- **Entrada:** só no hero (`.rise-in`, escalonado 80 ms por bloco) e no
+  arco. Nada mais anima ao carregar.
+- **Scroll:** `.reveal` — scroll-driven animation em CSS puro
+  (`animation-timeline: view()`, intervalo `entry 0px → 260px`),
+  progressive enhancement: navegador sem suporte mostra tudo parado.
+- **Ponteiro:** `TiltFrame` (inclinação ≤6° + brilho) só na foto do hero e
+  só com mouse; toque não faz nada.
+- **Hover:** linhas de serviço ganham fundo tint e a seta preenche; cards
+  sobem 2 px com sombra `blue-dark/10`.
+- `prefers-reduced-motion`: tudo acima vira instantâneo ou desligado
+  (regra global em `globals.css`).
+
+### Conteúdo genérico permitido
+
+FAQ (`lib/content/faq.ts`), passos da primeira consulta (`Steps`) e
+valores (`/sobre`) são conhecimento padrão da área, dentro da exceção de
+2026-08-05 do `AGENTS.md`: sem preço, prazo, estatística ou promessa, e
+toda resposta remete à avaliação individual. Tudo o que é fato da
+clínica continua vindo de `site_settings`/banco.
