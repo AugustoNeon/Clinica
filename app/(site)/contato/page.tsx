@@ -29,7 +29,7 @@ export default async function ContatoPage() {
           href={whatsappHref}
           target="_blank"
           rel="noopener noreferrer"
-          className={buttonClasses("primary", "", "lg")}
+          className={buttonClasses("inverse", "", "lg")}
         >
           <IconWhatsApp width={20} height={20} />
           Chamar no WhatsApp
@@ -37,7 +37,7 @@ export default async function ContatoPage() {
         {settings.phone && (
           <a
             href={`tel:${settings.phone.replace(/\D/g, "")}`}
-            className={buttonClasses("secondary", "", "lg")}
+            className={buttonClasses("outline-inverse", "", "lg")}
           >
             <IconPhone width={20} height={20} />
             {settings.phone}
