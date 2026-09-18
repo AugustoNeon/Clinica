@@ -51,6 +51,11 @@ function isActive(pathname: string, href: string): boolean {
  * celular (botao no topo). Componente de cliente por causa do estado da
  * gaveta e do `usePathname` — o conteudo (grupos/links) e estatico, de
  * `lib/config/adminNav.ts`.
+ *
+ * Links com `prefetch={false}` (issue #69): os 11 prefetches automaticos
+ * passavam pelo middleware de sessao ao mesmo tempo e disputavam a
+ * renovacao do token do Supabase — a sessao caia no meio do uso. Painel
+ * de 1 pessoa nao precisa de prefetch.
  */
 export function AdminSidebar({ email, badges = {} }: AdminSidebarProps) {
   const pathname = usePathname();
@@ -77,6 +82,7 @@ export function AdminSidebar({ email, badges = {} }: AdminSidebarProps) {
     <nav aria-label="Navegação do painel" className="flex-1 overflow-y-auto px-3 py-4">
       <Link
         href="/admin"
+        prefetch={false}
         aria-current={isActive(pathname, "/admin") ? "page" : undefined}
         onClick={() => setOpenedAt(null)}
         className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ease-out ${
@@ -101,6 +107,7 @@ export function AdminSidebar({ email, badges = {} }: AdminSidebarProps) {
                 <li key={item.href}>
                   <Link
                     href={item.href}
+                    prefetch={false}
                     aria-current={active ? "page" : undefined}
                     onClick={() => setOpenedAt(null)}
                     className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark ${
