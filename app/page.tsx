@@ -1,16 +1,25 @@
-import Link from "next/link";
+import { CtaBand } from "@/components/sections/CtaBand";
+import { DoctorIntro } from "@/components/sections/DoctorIntro";
+import { Faq } from "@/components/sections/Faq";
+import { FeaturedServices } from "@/components/sections/FeaturedServices";
 import { Hero } from "@/components/sections/Hero";
-import { LocationMap } from "@/components/sections/LocationMap";
-import { ServiceList } from "@/components/sections/ServiceList";
-import { TeamGrid } from "@/components/sections/TeamGrid";
+import { PracticalInfo } from "@/components/sections/PracticalInfo";
+import { Steps } from "@/components/sections/Steps";
 import { TestimonialList } from "@/components/sections/TestimonialList";
-import { buttonClasses } from "@/components/ui/Button";
+import { TrustStrip } from "@/components/sections/TrustStrip";
+import { LocalBusinessJsonLd } from "@/components/seo/LocalBusinessJsonLd";
+import { PlaceholderNotice } from "@/components/ui/PlaceholderNotice";
 import { Section } from "@/components/ui/Section";
 import { getServices } from "@/lib/data/services";
 import { getSiteSettingsMap } from "@/lib/data/siteSettings";
 import { getTeamMembers } from "@/lib/data/team";
 import { getTestimonials } from "@/lib/data/testimonials";
 
+/**
+ * Home (issue #65). Ordem das secoes segue o funil de quem procura dentista
+ * pelo celular (PRODUCT.md): quem e / o que faz / como e / prova social /
+ * onde fica / chamada final. Cada bloco le do banco via `lib/data/*`.
+ */
 export default async function HomePage() {
   const [settings, services, team, testimonials] = await Promise.all([
     getSiteSettingsMap(),
@@ -18,66 +27,57 @@ export default async function HomePage() {
     getTeamMembers(),
     getTestimonials(),
   ]);
+  const professional = team[0] ?? null;
+  const hasPlaceholderTestimonial = testimonials.some((testimonial) =>
+    /placeholder/i.test(testimonial.patient_name),
+  );
 
   return (
     <>
+      <LocalBusinessJsonLd settings={settings} services={services} />
+
       <Hero
-        title={settings.clinic_name}
-        subtitle={settings.clinic_tagline}
+        tagline={settings.clinic_tagline}
         whatsapp={settings.whatsapp}
+        address={settings.address}
+        openingHours={settings.opening_hours}
+        insurance={settings.insurance}
+        professional={professional ? { name: professional.name, role: professional.role } : null}
       />
 
-      <Section
-        title="Servicos"
-        description="Conheça as especialidades atendidas pela clínica."
-      >
-        <ServiceList services={services} />
-      </Section>
+      <TrustStrip insurance={settings.insurance} serviceCount={services.length} />
 
-      <Section
-        title="Equipe"
-        description="A Dra. Ariane Vaz Storrer é a única profissional da clínica."
-      >
-        <TeamGrid members={team} />
-      </Section>
+      <FeaturedServices services={services} />
 
-      <Section
-        title="Depoimentos"
-        description="Depoimentos de placeholder. Publicar depoimento real exige consentimento por escrito do paciente."
-      >
-        <TestimonialList testimonials={testimonials} />
-      </Section>
+      {professional && (
+        <DoctorIntro professional={professional} clinicTagline={settings.clinic_tagline} />
+      )}
 
-      <Section
-        title="Convênios e formas de pagamento"
-        description="Informações confirmadas pela clínica em 2026-08-05."
-      >
-        <dl className="grid gap-6 sm:grid-cols-2 sm:max-w-3xl">
-          <div>
-            <dt className="text-sm font-medium">Convênio atendido</dt>
-            <dd className="mt-1 text-sm text-ink-muted">{settings.insurance}</dd>
-          </div>
-          <div>
-            <dt className="text-sm font-medium">Formas de pagamento</dt>
-            <dd className="mt-1 text-sm text-ink-muted">{settings.payment_methods}</dd>
-          </div>
-        </dl>
-      </Section>
+      <Steps whatsapp={settings.whatsapp} />
 
-      <Section title="Onde fica a clínica" description={settings.address}>
-        <LocationMap embedUrl={settings.maps_embed_url} />
-      </Section>
+      {testimonials.length > 0 && (
+        <Section
+          tone="tint"
+          title="Quem já passou por aqui"
+          description="Depoimentos publicados só com consentimento por escrito do paciente."
+        >
+          {hasPlaceholderTestimonial && (
+            <div className="mb-8">
+              <PlaceholderNotice>
+                Os depoimentos abaixo são exemplos. Entram os reais assim que a
+                clínica tiver o consentimento por escrito de cada paciente.
+              </PlaceholderNotice>
+            </div>
+          )}
+          <TestimonialList testimonials={testimonials} />
+        </Section>
+      )}
 
-      {/* Fechamento da home: ultimo CTA antes do rodape. */}
-      <Section
-        className="bg-surface-tint"
-        title="Agende sua avaliação"
-        description="Conte o que você está sentindo ou o que quer mudar no seu sorriso — a avaliação define o próximo passo."
-      >
-        <Link href="/contato" className={buttonClasses("primary")}>
-          Falar com a clínica
-        </Link>
-      </Section>
+      <Faq />
+
+      <PracticalInfo settings={settings} />
+
+      <CtaBand whatsapp={settings.whatsapp} phone={settings.phone} />
     </>
   );
 }
