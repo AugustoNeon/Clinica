@@ -153,7 +153,7 @@ comando antes de confiar no fato.
 |---|---|---|
 | Stack e versões | 2026-08-03 | `node --version && npm ls next react typescript --depth=0` |
 | Comandos (build/lint) | 2026-08-03 | `npm run verify` |
-| Paths críticos | 2026-08-03 | `ls lib/supabase lib/validation app/contato/actions.ts next.config.ts` |
+| Paths críticos | 2026-08-03 | `ls lib/supabase lib/validation app/(site)/contato/actions.ts next.config.ts` |
 | Vars obrigatórias | 2026-08-05 | `npm run build` sem `.env.local` (deve falhar pedindo as 3 vars Supabase) |
 | Deploy (Cloudflare, não Vercel) | 2026-08-10 | `grep -c '"deploy"' package.json && test -f wrangler.jsonc && test ! -f vercel.json && echo ok` |
 
@@ -165,13 +165,16 @@ sustenta tudo: **página e componente nunca falam com o banco**; só chamam
 
 ```
 app/                    # rotas — só casca de página, conteúdo placeholder marcado
-├── page.tsx            #   Home
-├── sobre|servicos|equipe|blog|contato|privacidade/
-└── contato/actions.ts  # PATH CRÍTICO — Server Action do formulário (entrada pública)
+├── (site)/             # site público: layout com header/rodapé/skip link + páginas
+│   ├── page.tsx        #   Home
+│   ├── sobre|servicos|equipe|blog|contato|privacidade/
+│   └── contato/actions.ts  # PATH CRÍTICO — Server Action do formulário (entrada pública)
+└── admin/              # painel: layout próprio (barra lateral), não herda o chrome público
 components/ui/          # primitivos (Button, Card, Container, Section)
 components/sections/    # blocos de página (Hero, ServiceList, TeamGrid, ContactForm)
 components/layout/      # SiteHeader (sticky + MobileNav), SiteFooter
 components/seo/         # JSON-LD schema.org (Dentist) montado de site_settings
+components/admin/       # primitivos do painel: shell, listas, formulários, confirmação de exclusão
 lib/data/               # PATH CRÍTICO — 1 arquivo por entidade; consulta Supabase real (Fase 5 PR1)
 lib/validation/         # PATH CRÍTICO — schemas Zod, compartilhados cliente+servidor
 lib/supabase/           # PATH CRÍTICO — clientes centralizados (ainda não ligados)
@@ -184,7 +187,7 @@ types/                  # interfaces espelhando o schema de PLANEJAMENTO.md §5
 **Paths críticos:** `lib/supabase/` (segredos e RLS), `lib/validation/`
 (barreira de entrada), `lib/data/` (acesso a dado pessoal),
 `lib/adminAuth/` (TOTP + assinatura de cookie de sessão do admin),
-`app/contato/actions.ts` (endpoint público) e `next.config.ts` (cabeçalhos de
+`app/(site)/contato/actions.ts` (endpoint público) e `next.config.ts` (cabeçalhos de
 segurança). Nunca tocar sem revisão dedicada. O check
 `agent/checks/protect-paths.sh` reforça isso em pré-edição.
 

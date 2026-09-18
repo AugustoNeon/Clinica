@@ -40,6 +40,10 @@
 - ✅ `/blog/[slug]` (antes nenhum post abria).
 - ✅ Aviso stale em `/contato` removido (e-mail e Turnstile já existem).
 - ✅ `npm run verify` verde; 19 testes (3 arquivos).
+- ✅ Painel admin redesenhado (PR #68, issue #67): shell próprio, início com
+  pendências calculadas do banco, exclusão com confirmação em dois passos,
+  formulários com dicas e labels ligados. As pendências da seção 3 aparecem
+  para a doutora na tela inicial do painel.
 
 ## 3. Antes de divulgar — conteúdo (doutora / usuário)
 

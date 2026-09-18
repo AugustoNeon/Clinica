@@ -27,6 +27,8 @@
   --terracotta: #e2805e;
   --terracotta-text: #b8492e;
   --terracotta-tint: #ffeae3;
+  /* Fundo "rebaixado" do painel admin: os paineis brancos flutuam sobre ele. */
+  --surface-sunken: #f3f7fa;
 
   /*
    * Escala semantica de z-index (issue #65). Nunca usar numero solto:
@@ -47,6 +49,7 @@
   --color-terracotta: var(--terracotta);
   --color-terracotta-text: var(--terracotta-text);
   --color-terracotta-tint: var(--terracotta-tint);
+  --color-surface-sunken: var(--surface-sunken);
 
   /* As duas variaveis vem do next/font/local em app/layout.tsx. */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;

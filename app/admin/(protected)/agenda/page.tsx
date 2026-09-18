@@ -1,12 +1,22 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getScheduleExceptionsForMonth, isDefaultWorkday } from "@/lib/data/scheduleExceptions";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { AdminPanel } from "@/components/admin/AdminPanel";
+import { ConfirmAction } from "@/components/admin/ConfirmAction";
+import { Notice } from "@/components/admin/Notice";
+import { StatusBadge, type BadgeTone } from "@/components/admin/StatusBadge";
+import { inputClasses } from "@/components/admin/form";
+import { buttonClasses } from "@/components/ui/Button";
+import { IconArrowLeft, IconArrowRight, IconPlus } from "@/components/ui/icons";
 import { getAppointmentsForMonth } from "@/lib/data/appointments";
-import { getAllPatients } from "@/lib/data/patients";
-import { getAllServices } from "@/lib/data/services";
-import { appointmentStatusLabels } from "@/lib/validation/adminAppointment";
 import { getConnectionStatus, getFreeSlotsForDate } from "@/lib/data/googleCalendar";
-import { toggleScheduleExceptionAction, cancelAppointmentAction } from "./actions";
+import { getAllPatients } from "@/lib/data/patients";
+import { getScheduleExceptionsForMonth, isDefaultWorkday } from "@/lib/data/scheduleExceptions";
+import { getAllServices } from "@/lib/data/services";
+import { formatShortDate, todayInClinicTimeZone } from "@/lib/utils/dates";
+import { appointmentStatusLabels } from "@/lib/validation/adminAppointment";
+import type { AppointmentStatus } from "@/types";
+import { cancelAppointmentAction, toggleScheduleExceptionAction } from "./actions";
 
 export const metadata: Metadata = {
   title: "Agenda",
@@ -18,14 +28,18 @@ interface AgendaPageProps {
 }
 
 const DATE_PARAM_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
-
 const WEEKDAY_LABELS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+const STATUS_TONE: Record<AppointmentStatus, BadgeTone> = {
+  confirmada: "success",
+  cancelada: "neutral",
+  concluida: "info",
+};
 
 function pad2(value: number): string {
   return String(value).padStart(2, "0");
 }
 
-/** Ano/mes vindos de `?mes=AAAA-MM`; cai pro mes corrente (UTC) se ausente/invalido. */
+/** Ano/mes vindos de `?mes=AAAA-MM`; cai pro mes corrente se ausente/invalido. */
 function resolveYearMonth(mes: string | undefined): { year: number; month: number } {
   const match = mes?.match(/^(\d{4})-(\d{2})$/);
   if (match) {
@@ -33,8 +47,8 @@ function resolveYearMonth(mes: string | undefined): { year: number; month: numbe
     const month = Number(match[2]);
     if (month >= 1 && month <= 12) return { year, month };
   }
-  const now = new Date();
-  return { year: now.getUTCFullYear(), month: now.getUTCMonth() + 1 };
+  const [year, month] = todayInClinicTimeZone().split("-").map(Number);
+  return { year, month };
 }
 
 function adjacentMonth(year: number, month: number, delta: number): { year: number; month: number } {
@@ -62,9 +76,15 @@ function buildCalendarWeeks(year: number, month: number): (string | null)[][] {
   return weeks;
 }
 
+/**
+ * Agenda (Fase B #35, Fase C #36, issue #37; visual da #67). Calendario do
+ * mes com dias de trabalho/folga (padrao segunda a sexta + excecoes),
+ * consultas do mes, horarios livres cruzados com o Google Calendar.
+ */
 export default async function AdminAgendaPage({ searchParams }: AgendaPageProps) {
   const { mes, google, data: selectedDate } = await searchParams;
   const { year, month } = resolveYearMonth(mes);
+  const today = todayInClinicTimeZone();
 
   const connected = await getConnectionStatus();
 
@@ -97,212 +117,298 @@ export default async function AdminAgendaPage({ searchParams }: AgendaPageProps)
     list.push(appointment);
     appointmentsByDate.set(appointment.date, list);
   }
+  const sortedAppointments = [...appointments].sort((a, b) =>
+    `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`),
+  );
 
   const weeks = buildCalendarWeeks(year, month);
   const prev = adjacentMonth(year, month, -1);
   const next = adjacentMonth(year, month, 1);
-  const monthLabel = new Date(Date.UTC(year, month - 1, 1)).toLocaleDateString("pt-BR", {
+  const rawMonthLabel = new Date(Date.UTC(year, month - 1, 1)).toLocaleDateString("pt-BR", {
     month: "long",
     year: "numeric",
     timeZone: "UTC",
   });
+  // "setembro de 2026" → "Setembro de 2026" (so a primeira letra; `capitalize` do CSS pegava o "De").
+  const monthLabel = rawMonthLabel.charAt(0).toUpperCase() + rawMonthLabel.slice(1);
+  const monthParam = `${year}-${pad2(month)}`;
+  const activeCount = appointments.filter((appointment) => appointment.status !== "cancelada").length;
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Agenda</h1>
-        <Link href="/admin/agenda/consultas/nova" className="text-sm underline underline-offset-2">
-          + Nova consulta
-        </Link>
-      </div>
-      <p className="mt-2 text-sm opacity-80">
-        Padrão: trabalha de segunda a sexta. Clique num dia pra marcar uma exceção (folga num dia
-        útil, ou disponibilidade extra num fim de semana); clique de novo pra desfazer. Clique no
-        número do dia pra marcar uma consulta naquela data.
-      </p>
-
-      <section className="mt-6 rounded-md border border-black/10 p-4 dark:border-white/15">
-        <h2 className="font-medium">Google Calendar</h2>
-        {google === "conectado" && (
-          <p className="mt-2 text-sm text-green-700 dark:text-green-400">Conectado com sucesso.</p>
-        )}
-        {google === "erro" && (
-          <p className="mt-2 text-sm text-red-700 dark:text-red-400">
-            Não foi possível conectar. Tente de novo.
-          </p>
-        )}
-        <p className="mt-2 text-sm opacity-80">
-          {connected
-            ? "Conectado — os horários livres abaixo já cruzam com a agenda pessoal dela."
-            : "Não conectado. Sem isso, a lista de horários livres não funciona."}
-        </p>
-        {!connected && (
-          <Link
-            href="/admin/agenda/google/conectar"
-            prefetch={false}
-            className="mt-2 inline-block text-sm underline underline-offset-2"
-          >
-            Conectar Google Calendar
+      <AdminPageHeader
+        title="Agenda"
+        description="Padrão: atende de segunda a sexta. Marque folga num dia útil ou disponibilidade extra num fim de semana clicando no dia; o número do dia abre uma consulta nova naquela data."
+        actions={
+          <Link href="/admin/agenda/consultas/nova" className={buttonClasses("primary")}>
+            <IconPlus width={18} height={18} />
+            Nova consulta
           </Link>
-        )}
-      </section>
+        }
+      />
 
-      <section className="mt-6 rounded-md border border-black/10 p-4 dark:border-white/15">
-        <h2 className="font-medium">Horários livres</h2>
-        <form method="get" className="mt-2 flex flex-wrap items-end gap-2">
-          <input type="hidden" name="mes" value={`${year}-${pad2(month)}`} />
-          <label className="text-sm">
-            <span className="block opacity-80">Data</span>
-            <input
-              type="date"
-              name="data"
-              defaultValue={validSelectedDate ?? undefined}
-              className="mt-1 rounded-md border border-black/20 px-2 py-1 dark:border-white/25 dark:bg-transparent"
-            />
-          </label>
-          <button type="submit" className="text-sm underline underline-offset-2">
-            Ver horários
-          </button>
-        </form>
-        {validSelectedDate && !connected && (
-          <p className="mt-2 text-sm opacity-80">Conecte o Google Calendar acima primeiro.</p>
-        )}
-        {validSelectedDate && connected && freeSlotsError && (
-          <p className="mt-2 text-sm text-red-700 dark:text-red-400">
-            Falha ao consultar o Google Calendar. Tente de novo.
-          </p>
-        )}
-        {validSelectedDate && connected && !freeSlotsError && freeSlots && freeSlots.length === 0 && (
-          <p className="mt-2 text-sm opacity-80">Nenhum horário livre nesse dia.</p>
-        )}
-        {validSelectedDate && connected && !freeSlotsError && freeSlots && freeSlots.length > 0 && (
-          <ul className="mt-2 flex flex-wrap gap-2 text-sm">
-            {freeSlots.map((slot) => (
-              <li key={slot} className="rounded-md border border-black/10 px-2 py-1 dark:border-white/15">
-                {slot}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <div className="mt-6 flex items-center justify-between">
-        <Link
-          href={`/admin/agenda?mes=${prev.year}-${pad2(prev.month)}`}
-          className="text-sm underline underline-offset-2"
-        >
-          ← Mês anterior
-        </Link>
-        <p className="font-medium capitalize">{monthLabel}</p>
-        <Link
-          href={`/admin/agenda?mes=${next.year}-${pad2(next.month)}`}
-          className="text-sm underline underline-offset-2"
-        >
-          Próximo mês →
-        </Link>
-      </div>
-
-      <div className="mt-4 grid grid-cols-7 gap-2 text-center text-xs opacity-70">
-        {WEEKDAY_LABELS.map((label) => (
-          <div key={label}>{label}</div>
-        ))}
-      </div>
-
-      <div className="mt-2 grid grid-cols-7 gap-2">
-        {weeks.flatMap((week, weekIndex) =>
-          week.map((dateStr, dayIndex) => {
-            if (!dateStr) {
-              return <div key={`${weekIndex}-${dayIndex}`} />;
-            }
-
-            const exception = exceptionByDate.get(dateStr);
-            const defaultAvailable = isDefaultWorkday(dateStr);
-            const effectiveAvailable = exception ? exception.is_available : defaultAvailable;
-            const dayNumber = Number(dateStr.slice(-2));
-            const toggleForDate = toggleScheduleExceptionAction.bind(null, dateStr);
-            const dayAppointments = appointmentsByDate.get(dateStr) ?? [];
-            const activeCount = dayAppointments.filter((a) => a.status !== "cancelada").length;
-
-            return (
-              <div
-                key={dateStr}
-                className={`flex flex-col items-center gap-1 rounded-md border p-2 text-xs ${
-                  effectiveAvailable
-                    ? "border-black/10 dark:border-white/15"
-                    : "border-black/10 bg-black/5 dark:border-white/15 dark:bg-white/5"
-                }`}
-              >
-                <div className="flex w-full items-center justify-between">
-                  <Link
-                    href={`/admin/agenda/consultas/nova?data=${dateStr}`}
-                    className="font-medium underline underline-offset-2"
-                  >
-                    {dayNumber}
-                  </Link>
-                  {activeCount > 0 && (
-                    <span className="rounded-full bg-blue/10 px-1.5 text-[10px] text-blue dark:bg-blue/20">
-                      {activeCount}
-                    </span>
-                  )}
-                </div>
-                <span className="opacity-80">{effectiveAvailable ? "Trabalha" : "Não trabalha"}</span>
-                {exception && <span className="opacity-60">(exceção)</span>}
-                <form action={toggleForDate}>
-                  <button type="submit" className="mt-1 underline underline-offset-2">
-                    {exception
-                      ? "Desfazer"
-                      : defaultAvailable
-                        ? "Marcar folga"
-                        : "Marcar disponível"}
-                  </button>
-                </form>
-              </div>
-            );
-          }),
-        )}
-      </div>
-
-      <h2 className="mt-8 font-medium">Consultas de {monthLabel}</h2>
-      {appointments.length === 0 ? (
-        <p className="mt-2 text-sm opacity-70">Nenhuma consulta marcada neste mês.</p>
-      ) : (
-        <ul className="mt-2 divide-y divide-black/10 dark:divide-white/15">
-          {appointments.map((appointment) => {
-            const patient = patientById.get(appointment.patient_id);
-            const service = appointment.service_id ? serviceById.get(appointment.service_id) : null;
-            const cancelThis = cancelAppointmentAction.bind(null, appointment.id);
-
-            return (
-              <li key={appointment.id} className="flex items-center justify-between py-3 text-sm">
-                <div>
-                  <p className="font-medium">
-                    {appointment.date} às {appointment.time} — {patient?.name ?? "Paciente removido"}
-                  </p>
-                  <p className="opacity-70">
-                    {service ? `${service.title} — ` : ""}
-                    {appointmentStatusLabels[appointment.status]}
-                  </p>
-                </div>
-                <div className="flex items-center gap-3">
-                  {appointment.status === "confirmada" && (
-                    <form action={cancelThis}>
-                      <button type="submit" className="underline underline-offset-2">
-                        Cancelar
-                      </button>
-                    </form>
-                  )}
-                  <Link
-                    href={`/admin/agenda/consultas/${appointment.id}/editar`}
-                    className="underline underline-offset-2"
-                  >
-                    Editar
-                  </Link>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+      {google === "conectado" && (
+        <Notice tone="success" className="mb-6">
+          Google Calendar conectado. Os horários livres já cruzam com a sua agenda pessoal.
+        </Notice>
       )}
+      {google === "erro" && (
+        <Notice tone="error" className="mb-6">
+          Não foi possível conectar ao Google Calendar. Tente de novo.
+        </Notice>
+      )}
+
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(0,1.2fr)]">
+        <AdminPanel flush>
+          <div className="flex items-center justify-between gap-3 border-b border-ink/10 px-4 py-3 sm:px-5">
+            <Link
+              href={`/admin/agenda?mes=${prev.year}-${pad2(prev.month)}`}
+              aria-label="Mês anterior"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl text-ink-muted transition-colors ease-out hover:bg-surface-sunken hover:text-ink"
+            >
+              <IconArrowLeft />
+            </Link>
+            <h2 className="font-display text-xl font-medium">{monthLabel}</h2>
+            <Link
+              href={`/admin/agenda?mes=${next.year}-${pad2(next.month)}`}
+              aria-label="Próximo mês"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl text-ink-muted transition-colors ease-out hover:bg-surface-sunken hover:text-ink"
+            >
+              <IconArrowRight />
+            </Link>
+          </div>
+
+          <div className="p-3 sm:p-4">
+            <div className="grid grid-cols-7 gap-1.5 text-center text-xs font-medium text-ink-muted sm:gap-2">
+              {WEEKDAY_LABELS.map((label) => (
+                <div key={label} className="py-1">
+                  {label}
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-1.5 grid grid-cols-7 gap-1.5 sm:gap-2">
+              {weeks.flatMap((week, weekIndex) =>
+                week.map((dateStr, dayIndex) => {
+                  if (!dateStr) {
+                    return <div key={`${weekIndex}-${dayIndex}`} />;
+                  }
+
+                  const exception = exceptionByDate.get(dateStr);
+                  const defaultAvailable = isDefaultWorkday(dateStr);
+                  const effectiveAvailable = exception ? exception.is_available : defaultAvailable;
+                  const dayNumber = Number(dateStr.slice(-2));
+                  const toggleForDate = toggleScheduleExceptionAction.bind(null, dateStr);
+                  const dayAppointments = appointmentsByDate.get(dateStr) ?? [];
+                  const active = dayAppointments.filter((a) => a.status !== "cancelada").length;
+                  const isToday = dateStr === today;
+                  const isPast = dateStr < today;
+
+                  return (
+                    <div
+                      key={dateStr}
+                      className={`flex min-h-24 flex-col rounded-xl border p-1.5 text-xs sm:min-h-28 sm:p-2 ${
+                        effectiveAvailable
+                          ? "border-ink/10 bg-surface"
+                          : "border-ink/5 bg-surface-sunken text-ink-muted"
+                      } ${isToday ? "ring-2 ring-blue" : ""} ${isPast ? "opacity-70" : ""}`}
+                    >
+                      <div className="flex items-start justify-between gap-1">
+                        <Link
+                          href={`/admin/agenda/consultas/nova?data=${dateStr}`}
+                          title="Marcar consulta neste dia"
+                          className={`inline-flex h-7 w-7 items-center justify-center rounded-full font-display text-sm font-medium transition-colors ease-out hover:bg-blue-dark hover:text-white ${
+                            isToday ? "bg-blue-dark text-white" : ""
+                          }`}
+                        >
+                          {dayNumber}
+                        </Link>
+                        {active > 0 && (
+                          <span
+                            className="inline-flex min-w-5 items-center justify-center rounded-full bg-terracotta px-1.5 text-[11px] font-semibold text-ink"
+                            title={`${active} ${active === 1 ? "consulta" : "consultas"}`}
+                          >
+                            {active}
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="mt-1 hidden leading-tight sm:block">
+                        {effectiveAvailable ? "Atende" : "Folga"}
+                        {exception && <span className="text-ink-muted"> · exceção</span>}
+                      </p>
+
+                      <form action={toggleForDate} className="mt-auto">
+                        <button
+                          type="submit"
+                          title={
+                            exception
+                              ? "Desfazer a exceção deste dia"
+                              : defaultAvailable
+                                ? "Marcar folga neste dia"
+                                : "Abrir este dia para atendimento"
+                          }
+                          aria-label={
+                            exception
+                              ? "Desfazer a exceção deste dia"
+                              : defaultAvailable
+                                ? "Marcar folga neste dia"
+                                : "Abrir este dia para atendimento"
+                          }
+                          className="w-full rounded-lg py-1 text-center text-[11px] font-medium text-blue-dark transition-colors ease-out hover:bg-surface-tint focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-dark sm:px-1 sm:text-left"
+                        >
+                          {/* Celula de ~35px no celular: simbolo em vez de texto (o nome completo esta no aria-label). */}
+                          <span className="text-base leading-none sm:hidden" aria-hidden>
+                            {exception ? "↺" : defaultAvailable ? "−" : "+"}
+                          </span>
+                          <span className="hidden sm:inline">
+                            {exception ? "Desfazer" : defaultAvailable ? "Marcar folga" : "Abrir dia"}
+                          </span>
+                        </button>
+                      </form>
+                    </div>
+                  );
+                }),
+              )}
+            </div>
+          </div>
+        </AdminPanel>
+
+        <div className="grid content-start gap-6">
+          <AdminPanel
+            title="Google Calendar"
+            action={
+              <StatusBadge tone={connected ? "success" : "neutral"}>
+                {connected ? "Conectado" : "Não conectado"}
+              </StatusBadge>
+            }
+          >
+            <p className="text-sm leading-relaxed text-ink-muted">
+              {connected
+                ? "Os horários livres abaixo descontam os compromissos da sua agenda pessoal."
+                : "Conecte a sua conta Google para a lista de horários livres considerar a sua agenda pessoal."}
+            </p>
+            {!connected && (
+              <Link
+                href="/admin/agenda/google/conectar"
+                prefetch={false}
+                className={buttonClasses("secondary", "mt-4")}
+              >
+                Conectar Google Calendar
+              </Link>
+            )}
+          </AdminPanel>
+
+          <AdminPanel title="Horários livres" description="Escolha um dia para ver as horas cheias sem compromisso.">
+            <form method="get" className="flex flex-wrap items-end gap-2">
+              <input type="hidden" name="mes" value={monthParam} />
+              <div className="flex-1">
+                <label htmlFor="data" className="mb-1.5 block text-sm font-medium">
+                  Data
+                </label>
+                <input
+                  id="data"
+                  type="date"
+                  name="data"
+                  defaultValue={validSelectedDate ?? undefined}
+                  className={inputClasses}
+                />
+              </div>
+              <button type="submit" className={buttonClasses("secondary")}>
+                Ver horários
+              </button>
+            </form>
+
+            {validSelectedDate && !connected && (
+              <p className="mt-3 text-sm text-ink-muted">Conecte o Google Calendar acima primeiro.</p>
+            )}
+            {validSelectedDate && connected && freeSlotsError && (
+              <Notice tone="error" className="mt-3">
+                Falha ao consultar o Google Calendar. Tente de novo.
+              </Notice>
+            )}
+            {validSelectedDate && connected && !freeSlotsError && freeSlots && freeSlots.length === 0 && (
+              <p className="mt-3 text-sm text-ink-muted">
+                Nenhum horário livre em {formatShortDate(validSelectedDate)}.
+              </p>
+            )}
+            {validSelectedDate && connected && !freeSlotsError && freeSlots && freeSlots.length > 0 && (
+              <div className="mt-4">
+                <p className="text-sm font-medium">{formatShortDate(validSelectedDate)}</p>
+                <ul className="mt-2 flex flex-wrap gap-2">
+                  {freeSlots.map((slot) => (
+                    <li key={slot}>
+                      <Link
+                        href={`/admin/agenda/consultas/nova?data=${validSelectedDate}`}
+                        className="inline-flex rounded-full border border-blue/40 bg-surface-tint px-3 py-1 text-sm font-medium text-blue-dark transition-colors ease-out hover:bg-blue-dark hover:text-white"
+                      >
+                        {slot}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </AdminPanel>
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <AdminPanel
+          title={`Consultas de ${monthLabel}`}
+          description={`${activeCount} ${activeCount === 1 ? "ativa" : "ativas"} (canceladas continuam listadas).`}
+          flush
+        >
+          {sortedAppointments.length === 0 ? (
+            <p className="px-5 py-8 text-sm text-ink-muted">Nenhuma consulta marcada neste mês.</p>
+          ) : (
+            <ul className="divide-y divide-ink/10">
+              {sortedAppointments.map((appointment) => {
+                const patient = patientById.get(appointment.patient_id);
+                const service = appointment.service_id ? serviceById.get(appointment.service_id) : null;
+                const cancelThis = cancelAppointmentAction.bind(null, appointment.id);
+
+                return (
+                  <li
+                    key={appointment.id}
+                    className="flex flex-wrap items-center gap-x-4 gap-y-2 px-5 py-3.5 sm:flex-nowrap"
+                  >
+                    <div className="w-28 shrink-0">
+                      <p className="text-sm font-medium">
+                        {appointment.date === today ? "Hoje" : formatShortDate(appointment.date)}
+                      </p>
+                      <p className="text-xs text-ink-muted">{appointment.time}</p>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <Link
+                        href={`/admin/agenda/consultas/${appointment.id}/editar`}
+                        className="font-medium underline-offset-4 hover:text-blue-dark hover:underline"
+                      >
+                        {patient?.name ?? "Paciente removido"}
+                      </Link>
+                      <p className="truncate text-sm text-ink-muted">
+                        {service?.title ?? "Sem serviço definido"}
+                      </p>
+                    </div>
+                    <StatusBadge tone={STATUS_TONE[appointment.status]}>
+                      {appointmentStatusLabels[appointment.status]}
+                    </StatusBadge>
+                    {appointment.status === "confirmada" && (
+                      <ConfirmAction
+                        action={cancelThis}
+                        label="Cancelar"
+                        question={`Cancelar a consulta de ${patient?.name ?? "paciente"} às ${appointment.time}?`}
+                        confirmLabel="Sim, cancelar"
+                        tone="neutral"
+                      />
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </AdminPanel>
+      </div>
     </div>
   );
 }

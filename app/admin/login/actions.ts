@@ -13,7 +13,7 @@ import {
 /**
  * Server Action de login do painel admin (Fase 5 PR2, issue #18).
  *
- * Mesmo padrao de `app/contato/actions.ts`: valida com o schema
+ * Mesmo padrao de `app/(site)/contato/actions.ts`: valida com o schema
  * compartilhado, e erro nunca vaza detalhe interno (aqui, alem disso,
  * nunca revela se o problema foi o e-mail ou a senha — mensagem generica
  * evita enumeracao de conta).

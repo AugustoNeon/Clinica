@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { ConfirmAction } from "@/components/admin/ConfirmAction";
+import { DangerZone, EditorLayout, Tips } from "@/components/admin/EditorLayout";
 import { TestimonialForm } from "@/components/sections/TestimonialForm";
 import { getTestimonialByIdAdmin } from "@/lib/data/testimonials";
 import { deleteTestimonialAction, updateTestimonialAction } from "./actions";
@@ -25,25 +27,27 @@ export default async function EditTestimonialPage({
   const deleteWithId = deleteTestimonialAction.bind(null, id);
 
   return (
-    <div>
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Editar depoimento</h1>
-        <form action={deleteWithId}>
-          <button
-            type="submit"
-            className="text-sm text-red-600 underline underline-offset-2 dark:text-red-400"
-          >
-            Excluir
-          </button>
-        </form>
-      </div>
-      <div className="mt-6">
-        <TestimonialForm
-          testimonial={testimonial}
-          action={updateWithId}
-          submitLabel="Salvar alteracoes"
-        />
-      </div>
-    </div>
+    <EditorLayout
+      title={`Depoimento de ${testimonial.patient_name}`}
+      back={{ href: "/admin/depoimentos", label: "Depoimentos" }}
+      aside={
+        <>
+          <Tips
+            items={[
+              "Se o paciente pedir para retirar o depoimento, desmarque “Publicado” ou exclua — é direito dele (LGPD).",
+            ]}
+          />
+          <DangerZone>
+            <ConfirmAction
+              action={deleteWithId}
+              label="Excluir depoimento"
+              question={`Excluir o depoimento de “${testimonial.patient_name}”?`}
+            />
+          </DangerZone>
+        </>
+      }
+    >
+      <TestimonialForm testimonial={testimonial} action={updateWithId} submitLabel="Salvar alterações" />
+    </EditorLayout>
   );
 }
