@@ -1,0 +1,37 @@
+# Mantém o projeto Supabase (plano gratuito) ativo.
+#
+# O Supabase pausa projetos free sem atividade por 7 dias — e o site inteiro
+# cai junto: todas as páginas leem o banco, então viram 500 (aconteceu em
+# 2026-09-18, mais de um mês depois do último acesso; ver
+# docs/checklist-pre-lancamento.md). Uma query mínima a cada 3 dias conta
+# como atividade e evita a pausa.
+#
+# Limite conhecido: o GitHub desativa workflows agendados depois de 60 dias
+# sem commit no repositório — se o projeto ficar parado por muito tempo,
+# reativar em Actions > supabase-keepalive > Enable workflow.
+name: supabase-keepalive
+
+on:
+  schedule:
+    - cron: "17 6 */3 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    name: query minima no banco
+    runs-on: ubuntu-latest
+    steps:
+      - name: Consulta 1 linha de site_settings
+        env:
+          SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+        run: |
+          code=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            "$SUPABASE_URL/rest/v1/site_settings?select=key&limit=1")
+          echo "HTTP $code"
+          test "$code" = "200"
