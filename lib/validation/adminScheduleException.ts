@@ -9,5 +9,5 @@ import { z } from "zod";
 
 export const adminScheduleExceptionDateSchema = z
   .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, "Data invalida.")
-  .refine((value) => !Number.isNaN(new Date(`${value}T00:00:00Z`).getTime()), "Data invalida.");
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "Data inválida.")
+  .refine((value) => !Number.isNaN(new Date(`${value}T00:00:00Z`).getTime()), "Data inválida.");

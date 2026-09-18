@@ -27,7 +27,7 @@ export async function confirmTotpEnrollmentAction(
   const input = adminTotpCodeInputFromFormData(formData);
   const result = validateAdminTotpCode(input);
   if (!result.success) {
-    return { status: "error", message: "Codigo invalido.", errors: result.errors };
+    return { status: "error", message: "Código inválido.", errors: result.errors };
   }
 
   const secretBase32 = String(formData.get("secret") ?? "");
@@ -43,7 +43,7 @@ export async function confirmTotpEnrollmentAction(
   if (!verifyTotpCode(secretBase32, result.data.code, email)) {
     return {
       status: "error",
-      message: "Codigo incorreto. Confira o app autenticador e tente de novo.",
+      message: "Código incorreto. Confira o app autenticador e tente de novo.",
       errors: {},
     };
   }
@@ -60,7 +60,7 @@ export async function disableTotpAction(
   const input = adminTotpCodeInputFromFormData(formData);
   const result = validateAdminTotpCode(input);
   if (!result.success) {
-    return { status: "error", message: "Codigo invalido.", errors: result.errors };
+    return { status: "error", message: "Código inválido.", errors: result.errors };
   }
 
   const totp = await getTotpStatus();
@@ -70,7 +70,7 @@ export async function disableTotpAction(
   if (!stored || !verifyTotpCode(stored.secret, result.data.code, stored.email)) {
     return {
       status: "error",
-      message: "Codigo incorreto. Digite o codigo atual do aplicativo pra desativar.",
+      message: "Código incorreto. Digite o código atual do aplicativo para desativar.",
       errors: {},
     };
   }

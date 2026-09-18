@@ -5,7 +5,7 @@ export const adminTotpCodeSchema = z.object({
   code: z
     .string()
     .trim()
-    .regex(/^\d{6}$/, "Digite os 6 numeros do aplicativo autenticador."),
+    .regex(/^\d{6}$/, "Digite os 6 números do aplicativo autenticador."),
 });
 
 export type AdminTotpCodeInput = { code: string };

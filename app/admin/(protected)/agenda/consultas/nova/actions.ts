@@ -30,13 +30,13 @@ export async function createAppointmentAction(
     // Mensagem de conflito de horario e pensada pro usuario ver
     // (validacao de negocio, nao erro de sistema) — outros erros inesperados
     // ficam so no log do servidor, sem detalhe tecnico exposto na tela.
-    if (error instanceof Error && error.message.startsWith("Ja existe uma consulta")) {
+    if (error instanceof Error && error.message.startsWith("Já existe uma consulta")) {
       return { status: "error", message: error.message, errors: {} };
     }
     console.error("Falha ao criar consulta:", error);
     return {
       status: "error",
-      message: "Nao foi possivel salvar a consulta agora. Tente novamente.",
+      message: "Não foi possível salvar a consulta agora. Tente novamente.",
       errors: {},
     };
   }

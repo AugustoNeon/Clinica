@@ -70,7 +70,7 @@ export async function submitContactForm(
 ): Promise<ContactFormState> {
   const genericError: ContactFormState = {
     status: "error",
-    message: "Nao foi possivel enviar sua mensagem agora. Tente novamente em instantes.",
+    message: "Não foi possível enviar sua mensagem agora. Tente novamente em instantes.",
     errors: {},
   };
 
@@ -126,7 +126,7 @@ export async function submitContactForm(
 
     return {
       status: "success",
-      message: "Mensagem recebida. A clinica entrara em contato pelos dados informados.",
+      message: "Mensagem recebida. A clínica entrará em contato pelos dados informados.",
       errors: {},
     };
   } catch {

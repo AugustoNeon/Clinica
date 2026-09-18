@@ -20,10 +20,10 @@ export const adminTeamMemberSchema = z.object({
     .max(500, "URL muito longa.")
     .refine(
       (value) => value === "" || value.startsWith("/") || z.url().safeParse(value).success,
-      "URL invalida.",
+      "URL inválida.",
     )
     .transform((value) => (value === "" ? null : value)),
-  order: z.coerce.number().int("Ordem precisa ser um numero inteiro.").min(0, "Ordem nao pode ser negativa."),
+  order: z.coerce.number().int("Ordem precisa ser um número inteiro.").min(0, "Ordem não pode ser negativa."),
   published: z.boolean(),
 });
 

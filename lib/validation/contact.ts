@@ -21,8 +21,8 @@ export const contactFormSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(3, "Informe seu nome completo (minimo 3 caracteres).")
-    .max(120, "Nome muito longo (maximo 120 caracteres)."),
+    .min(3, "Informe seu nome completo (mínimo 3 caracteres).")
+    .max(120, "Nome muito longo (máximo 120 caracteres)."),
 
   phone: z
     .string()
@@ -32,27 +32,27 @@ export const contactFormSchema = z.object({
     .refine((value) => {
       const digits = phoneDigits(value).length;
       return digits >= 10 && digits <= 13;
-    }, "Telefone invalido. Use DDD + numero, por exemplo (11) 91234-5678."),
+    }, "Telefone inválido. Use DDD + número, por exemplo (41) 91234-5678."),
 
   /** Opcional: nem todo paciente quer deixar e-mail. */
   email: z
     .string()
     .trim()
     .max(180, "E-mail muito longo.")
-    .refine((value) => value === "" || z.email().safeParse(value).success, "E-mail invalido.")
+    .refine((value) => value === "" || z.email().safeParse(value).success, "E-mail inválido.")
     .transform((value) => (value === "" ? null : value)),
 
   message: z
     .string()
     .trim()
     .min(10, "Escreva uma mensagem com pelo menos 10 caracteres.")
-    .max(2000, "Mensagem muito longa (maximo 2000 caracteres)."),
+    .max(2000, "Mensagem muito longa (máximo 2000 caracteres)."),
 
   /** Slug do servico de interesse. Opcional — o paciente pode nao saber. */
   preferred_service: z
     .string()
     .trim()
-    .max(120, "Servico invalido.")
+    .max(120, "Serviço inválido.")
     .transform((value) => (value === "" ? null : value)),
 
   /**
@@ -62,7 +62,7 @@ export const contactFormSchema = z.object({
    */
   lgpd_consent: z
     .boolean()
-    .refine((value) => value, "E preciso aceitar a politica de privacidade para enviar."),
+    .refine((value) => value, "É preciso aceitar a Política de Privacidade para enviar."),
 });
 
 export type ContactFormValues = z.infer<typeof contactFormSchema>;
@@ -82,7 +82,7 @@ export type ContactFieldErrors = Partial<Record<keyof ContactFormInput, string>>
 
 /**
  * Estado devolvido pela Server Action do formulario (`useActionState`).
- * Vive aqui, e nao no arquivo "use server", porque um modulo de Server
+ * Vive aqui, e não no arquivo "use server", porque um modulo de Server
  * Action so pode exportar funcoes assincronas.
  */
 export interface ContactFormState {

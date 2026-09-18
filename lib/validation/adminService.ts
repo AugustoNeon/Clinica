@@ -13,17 +13,17 @@ export const adminServiceSchema = z.object({
     .trim()
     .min(1, "Informe o slug.")
     .max(120, "Slug muito longo.")
-    .regex(slugPattern, "Use apenas letras minusculas, numeros e hifen (ex.: clinico-geral)."),
-  title: z.string().trim().min(1, "Informe o titulo.").max(120, "Titulo muito longo."),
+    .regex(slugPattern, "Use apenas letras minúsculas, números e hífen (ex.: clinico-geral)."),
+  title: z.string().trim().min(1, "Informe o título.").max(120, "Título muito longo."),
   description: z
     .string()
     .trim()
-    .min(1, "Informe a descricao curta.")
-    .max(300, "Descricao curta muito longa (maximo 300 caracteres)."),
+    .min(1, "Informe a descrição curta.")
+    .max(300, "Descrição curta muito longa (máximo 300 caracteres)."),
   long_description: z
     .string()
     .trim()
-    .max(4000, "Descricao longa muito extensa.")
+    .max(4000, "Descrição longa muito extensa.")
     .transform((value) => (value === "" ? null : value)),
   category: z
     .string()
@@ -34,9 +34,9 @@ export const adminServiceSchema = z.object({
     .string()
     .trim()
     .max(500, "URL muito longa.")
-    .refine((value) => value === "" || z.url().safeParse(value).success, "URL invalida.")
+    .refine((value) => value === "" || z.url().safeParse(value).success, "URL inválida.")
     .transform((value) => (value === "" ? null : value)),
-  order: z.coerce.number().int("Ordem precisa ser um numero inteiro.").min(0, "Ordem nao pode ser negativa."),
+  order: z.coerce.number().int("Ordem precisa ser um número inteiro.").min(0, "Ordem não pode ser negativa."),
   published: z.boolean(),
 });
 

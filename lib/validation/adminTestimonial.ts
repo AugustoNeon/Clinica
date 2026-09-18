@@ -21,14 +21,14 @@ export const adminTestimonialSchema = z.object({
   content: z.string().trim().min(1, "Informe o depoimento.").max(2000, "Depoimento muito longo."),
   rating: z.coerce
     .number()
-    .int("Avaliacao precisa ser um numero inteiro.")
-    .min(1, "Avaliacao minima e 1.")
-    .max(5, "Avaliacao maxima e 5."),
+    .int("Avaliação precisa ser um número inteiro.")
+    .min(1, "Avaliação mínima é 1.")
+    .max(5, "Avaliação máxima é 5."),
   photo_url: z
     .string()
     .trim()
     .max(500, "URL muito longa.")
-    .refine((value) => value === "" || z.url().safeParse(value).success, "URL invalida.")
+    .refine((value) => value === "" || z.url().safeParse(value).success, "URL inválida.")
     .transform((value) => (value === "" ? null : value)),
   consent_confirmed: z.boolean(),
   published: z.boolean(),

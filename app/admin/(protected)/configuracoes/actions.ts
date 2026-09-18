@@ -30,7 +30,7 @@ export async function updateSiteSettingsAction(
   } catch {
     return {
       status: "error",
-      message: "Nao foi possivel salvar as configuracoes agora. Tente novamente.",
+      message: "Não foi possível salvar as configurações agora. Tente novamente.",
       errors: {},
     };
   }
@@ -40,5 +40,5 @@ export async function updateSiteSettingsAction(
   revalidatePath("/sobre");
   revalidatePath("/contato");
 
-  return { status: "success", message: "Configuracoes salvas.", errors: {} };
+  return { status: "success", message: "Configurações salvas.", errors: {} };
 }

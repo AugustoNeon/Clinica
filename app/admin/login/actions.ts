@@ -42,7 +42,7 @@ export async function loginAction(
   if (error) {
     return {
       status: "error",
-      message: "E-mail ou senha invalidos.",
+      message: "E-mail ou senha inválidos.",
       errors: {},
     };
   }
