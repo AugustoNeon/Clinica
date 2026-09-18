@@ -6,6 +6,12 @@
  * Nao inventar combinacao nova: `--blue` nao serve para texto pequeno sobre
  * branco (3.3:1) — para isso existe `--blue-dark`; mesma logica entre
  * `--terracotta` (preenchimento) e `--terracotta-text` (texto/icone).
+ *
+ * Camada rica (issue #71): `--blue-deep` e o fundo "drenched" do hero, dos
+ * blocos de destaque e do rodape (branco por cima da 11:1); `--blue-glow` e
+ * `--terracotta-soft` sao as versoes claras do azul e do terracota para texto
+ * pequeno e icones SOBRE o azul profundo (6.9:1 e 5.6:1). Nenhum deles vai
+ * sobre fundo claro.
  */
 
 /*
@@ -24,9 +30,12 @@
   --ink-muted: #696160;
   --blue: #4590bf;
   --blue-dark: #1d6a96;
+  --blue-deep: #123f5c;
+  --blue-glow: #9ad3f2;
   --terracotta: #e2805e;
   --terracotta-text: #b8492e;
   --terracotta-tint: #ffeae3;
+  --terracotta-soft: #f3a583;
   /* Fundo "rebaixado" do painel admin: os paineis brancos flutuam sobre ele. */
   --surface-sunken: #f3f7fa;
 
@@ -46,9 +55,12 @@
   --color-ink-muted: var(--ink-muted);
   --color-blue: var(--blue);
   --color-blue-dark: var(--blue-dark);
+  --color-blue-deep: var(--blue-deep);
+  --color-blue-glow: var(--blue-glow);
   --color-terracotta: var(--terracotta);
   --color-terracotta-text: var(--terracotta-text);
   --color-terracotta-tint: var(--terracotta-tint);
+  --color-terracotta-soft: var(--terracotta-soft);
   --color-surface-sunken: var(--surface-sunken);
 
   /* As duas variaveis vem do next/font/local em app/layout.tsx. */
@@ -115,10 +127,36 @@ p {
 }
 
 /*
- * Entrada suave do hero (unica animacao de entrada do site — DESIGN.md pede
- * microinteracao, nao coreografia). O conteudo ja esta visivel no primeiro
- * frame: a animacao so parte de uma leve translacao/opacidade e nunca
- * "esconde" nada se o JS ou a animacao falhar.
+ * Textura da marca (issue #71): fileiras de arcos do sorriso, em tijolo,
+ * desenhadas em SVG inline. E o mesmo traco do logo repetido — nao e um
+ * padrao generico de pontos. Cor branca para fundos azuis (`.pattern-arcs`)
+ * e azul para fundos claros (`.pattern-arcs-blue`); a opacidade fica baixa
+ * de proposito, e textura, nao ilustracao.
+ */
+.pattern-arcs,
+.pattern-arcs-blue {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='32' viewBox='0 0 64 32'%3E%3Cpath d='M4 8c16 22 40 22 56 0' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='32' viewBox='0 0 64 32'%3E%3Cpath d='M4 8c16 22 40 22 56 0' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-size: 64px 32px;
+  background-position:
+    0 0,
+    32px 16px;
+  opacity: 0.1;
+}
+
+.pattern-arcs-blue {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='32' viewBox='0 0 64 32'%3E%3Cpath d='M4 8c16 22 40 22 56 0' fill='none' stroke='%234590bf' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='32' viewBox='0 0 64 32'%3E%3Cpath d='M4 8c16 22 40 22 56 0' fill='none' stroke='%234590bf' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  opacity: 0.16;
+}
+
+/*
+ * Entrada suave do hero (coreografia unica do site — DESIGN.md pede
+ * microinteracao, nao coreografia em toda secao). O conteudo ja esta visivel
+ * no primeiro frame: a animacao so parte de uma leve translacao/opacidade e
+ * nunca "esconde" nada se o JS ou a animacao falhar.
  */
 @keyframes rise-in {
   from {
@@ -134,6 +172,52 @@ p {
 .rise-in {
   animation: rise-in 700ms var(--ease-out-expo) both;
   animation-delay: var(--rise-delay, 0ms);
+}
+
+/*
+ * Flutuacao lenta dos "chips" sobre a foto do hero e das formas decorativas
+ * (issue #71). Amplitude pequena e periodo longo: profundidade, nao
+ * brinquedo. `--float-delay` desencontra os chips entre si.
+ */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.float {
+  animation: float 6s ease-in-out infinite;
+  animation-delay: var(--float-delay, 0ms);
+}
+
+/*
+ * Faixa de fatos em movimento continuo (issue #71). O conteudo e duplicado
+ * no markup (segunda copia `aria-hidden`) e a trilha anda -50%: o loop fecha
+ * sem salto. Pausa com o mouse em cima para dar tempo de ler.
+ */
+@keyframes ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.ticker {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ticker 48s linear infinite;
+}
+
+.ticker:hover .ticker-track {
+  animation-play-state: paused;
 }
 
 /*
@@ -159,12 +243,48 @@ p {
     animation-timeline: view();
     animation-range: entry 0px entry 260px;
   }
+
+  /*
+   * Parallax leve das formas decorativas (issue #71): enquanto a secao
+   * atravessa a viewport, a forma desloca de `--drift-from` ate
+   * `--drift-to`. So em elementos `aria-hidden`; texto nunca deriva.
+   */
+  @keyframes drift {
+    from {
+      transform: translateY(var(--drift-from, 40px));
+    }
+    to {
+      transform: translateY(var(--drift-to, -40px));
+    }
+  }
+
+  .drift {
+    animation: drift linear both;
+    animation-timeline: view();
+    animation-range: entry 0% exit 100%;
+  }
+
+  /* Arco que liga os tres passos: desenha-se conforme a secao entra. */
+  @keyframes draw-on-scroll {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .draw-on-scroll {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: draw-on-scroll linear both;
+    animation-timeline: view();
+    animation-range: entry 10% entry 90%;
+  }
 }
 
 /*
  * Moldura 3D do hero (components/ui/TiltFrame.tsx). As variaveis sao
  * escritas pelo componente a cada movimento do mouse; sem JS ficam no
- * padrao e a moldura e uma div comum.
+ * padrao e a moldura e uma div comum. Os filhos com `.tilt-layer` ganham
+ * profundidade propria (`--depth`, em px) e acompanham a inclinacao.
  */
 .tilt {
   transform: perspective(1100px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
@@ -173,7 +293,11 @@ p {
   will-change: transform;
 }
 
-.tilt::after {
+.tilt-layer {
+  transform: translateZ(var(--depth, 0px));
+}
+
+.tilt-glare::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -200,6 +324,33 @@ p {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
   animation: draw-arc 1100ms var(--ease-out-expo) 500ms forwards;
+}
+
+/*
+ * Icone de servico que se redesenha ao passar o mouse no cartao (issue #71).
+ * Os paths tem `pathLength=1`; no hover o traco parte do zero e completa em
+ * 900 ms. Fora do hover o icone esta sempre inteiro — nada depende disso.
+ */
+@keyframes draw-icon {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.draw-icon path,
+.draw-icon circle,
+.draw-icon rect {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+.group:hover .draw-icon path,
+.group:hover .draw-icon circle,
+.group:hover .draw-icon rect {
+  animation: draw-icon 900ms var(--ease-out-expo) both;
 }
 
 /* Marcador nativo do <details> escondido: o chevron e desenhado pelo FAQ. */
@@ -230,13 +381,39 @@ details.faq[open] > summary .faq-chevron {
     scroll-behavior: auto !important;
   }
 
-  /* Sem revelacao por scroll nem arco desenhando: conteudo parado e visivel. */
+  /* Sem revelacao por scroll, sem flutuacao, sem parallax: tudo parado e visivel. */
   .reveal,
-  .smile-arc {
+  .smile-arc,
+  .float,
+  .drift,
+  .draw-on-scroll,
+  .draw-icon path,
+  .draw-icon circle,
+  .draw-icon rect {
     animation: none !important;
   }
 
-  .smile-arc {
+  .smile-arc,
+  .draw-on-scroll {
     stroke-dashoffset: 0;
+  }
+
+  /* A faixa de fatos para de andar e mostra os itens em linhas; a copia some. */
+  .ticker {
+    mask-image: none;
+  }
+
+  .ticker-track {
+    animation: none !important;
+    width: auto;
+    flex-wrap: wrap;
+  }
+
+  .ticker-copy {
+    display: none;
+  }
+
+  .tilt {
+    transform: none !important;
   }
 }

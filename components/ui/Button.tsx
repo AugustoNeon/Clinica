@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes } from "react";
 
-export type ButtonVariant = "primary" | "secondary" | "inverse" | "ghost";
+export type ButtonVariant = "primary" | "secondary" | "inverse" | "ghost" | "accent" | "outline-inverse";
 export type ButtonSize = "md" | "lg";
 
 const BASE =
@@ -21,15 +21,23 @@ const SIZES: Record<ButtonSize, string> = {
  * nao existe `--blue-darker` e clarear reabriria o problema de contraste. O
  * `transition-*` respeita `prefers-reduced-motion` pela regra global de globals.css.
  *
- * `inverse` e o par invertido para fundo `--blue-dark` (faixa de CTA, rodape):
+ * `inverse` e o par invertido para fundo azul (faixa de CTA, hero, rodape):
  * botao branco com texto `--blue-dark` (5.9:1, mesmo par ao contrario).
+ * `outline-inverse` e o secundario sobre azul: borda e texto brancos.
+ * `accent` e o terracota preenchido com tinta por cima (5.8:1) — a acao
+ * secundaria "quente", nunca o WhatsApp (que e sempre azul, DESIGN.md).
  * `ghost` e o link-botao sem borda, para acao terciaria ao lado de um primario.
  */
 const VARIANTS: Record<ButtonVariant, string> = {
   primary:
     "bg-blue-dark text-white shadow-sm shadow-blue-dark/20 hover:brightness-90 hover:shadow-md hover:shadow-blue-dark/25 active:brightness-90",
   secondary: "border border-ink/20 bg-surface text-ink hover:border-blue hover:bg-surface-tint",
-  inverse: "bg-surface text-blue-dark shadow-sm hover:bg-surface-tint",
+  inverse:
+    "bg-surface text-blue-dark shadow-md shadow-blue-deep/30 hover:bg-surface-tint hover:shadow-lg focus-visible:outline-white",
+  "outline-inverse":
+    "border border-white/40 text-white hover:border-white hover:bg-white/10 focus-visible:outline-white",
+  accent:
+    "bg-terracotta text-ink shadow-sm shadow-terracotta/30 hover:brightness-95 hover:shadow-md hover:shadow-terracotta/40 active:brightness-95",
   ghost: "text-blue-dark hover:bg-surface-tint",
 };
 
