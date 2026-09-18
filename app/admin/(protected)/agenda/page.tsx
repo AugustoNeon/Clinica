@@ -241,9 +241,29 @@ export default async function AdminAgendaPage({ searchParams }: AgendaPageProps)
                       <form action={toggleForDate} className="mt-auto">
                         <button
                           type="submit"
-                          className="w-full rounded-lg px-1 py-1 text-left text-[11px] font-medium text-blue-dark transition-colors ease-out hover:bg-surface-tint focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-dark"
+                          title={
+                            exception
+                              ? "Desfazer a exceção deste dia"
+                              : defaultAvailable
+                                ? "Marcar folga neste dia"
+                                : "Abrir este dia para atendimento"
+                          }
+                          aria-label={
+                            exception
+                              ? "Desfazer a exceção deste dia"
+                              : defaultAvailable
+                                ? "Marcar folga neste dia"
+                                : "Abrir este dia para atendimento"
+                          }
+                          className="w-full rounded-lg py-1 text-center text-[11px] font-medium text-blue-dark transition-colors ease-out hover:bg-surface-tint focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-dark sm:px-1 sm:text-left"
                         >
-                          {exception ? "Desfazer" : defaultAvailable ? "Marcar folga" : "Abrir dia"}
+                          {/* Celula de ~35px no celular: simbolo em vez de texto (o nome completo esta no aria-label). */}
+                          <span className="text-base leading-none sm:hidden" aria-hidden>
+                            {exception ? "↺" : defaultAvailable ? "−" : "+"}
+                          </span>
+                          <span className="hidden sm:inline">
+                            {exception ? "Desfazer" : defaultAvailable ? "Marcar folga" : "Abrir dia"}
+                          </span>
                         </button>
                       </form>
                     </div>
