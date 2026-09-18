@@ -22,7 +22,7 @@ export function DoctorIntro({ professional, clinicTagline }: DoctorIntroProps) {
   return (
     <section className="bg-surface-tint py-14 sm:py-20 lg:py-24">
       <Container className="grid items-center gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-20">
-        <div className="relative mx-auto w-full max-w-sm lg:max-w-none">
+        <div className="reveal relative mx-auto w-full max-w-sm lg:max-w-none">
           {/* Arco invertido em relacao ao hero: mesma familia de forma, outra postura. */}
           <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem_1.75rem_999px_999px] bg-blue/20">
             <Image
@@ -39,7 +39,7 @@ export function DoctorIntro({ professional, clinicTagline }: DoctorIntroProps) {
           />
         </div>
 
-        <div>
+        <div className="reveal">
           <p className="font-display text-2xl font-medium text-blue-dark sm:text-3xl">
             “{clinicTagline}”
           </p>

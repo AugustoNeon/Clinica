@@ -41,7 +41,7 @@ export function FeaturedServices({ services }: FeaturedServicesProps) {
           </Link>
         </div>
 
-        <div>
+        <div className="reveal">
           <ul className="divide-y divide-ink/10 border-y border-ink/10">
             {featured.map((service) => (
               <li key={service.id}>

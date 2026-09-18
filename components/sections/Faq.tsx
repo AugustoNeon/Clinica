@@ -26,7 +26,7 @@ export function Faq({
           <p className="mt-4 text-lg leading-relaxed text-ink-muted">{description}</p>
         </div>
 
-        <div className="divide-y divide-ink/10 border-y border-ink/10">
+        <div className="reveal divide-y divide-ink/10 border-y border-ink/10">
           {items.map((item) => (
             <details key={item.question} className="faq group">
               <summary className="flex items-center justify-between gap-6 py-5 text-left font-display text-xl font-medium transition-colors ease-out hover:text-blue-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark">

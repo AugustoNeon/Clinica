@@ -39,7 +39,7 @@ export function CtaBand({
         className="pointer-events-none absolute -bottom-16 -right-10 h-72 w-72 opacity-10 brightness-0 invert sm:h-96 sm:w-96 lg:-right-4 lg:h-[30rem] lg:w-[30rem]"
       />
       <Container className="relative py-16 sm:py-20 lg:py-24">
-        <div className="max-w-2xl">
+        <div className="reveal max-w-2xl">
           <h2 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-5xl">
             {title}
           </h2>

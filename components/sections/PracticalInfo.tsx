@@ -25,7 +25,7 @@ export function PracticalInfo({ settings, title = "Onde e quando", compact = fal
       <Container className="grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-16">
         <div>
           <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h2>
-          <dl className="mt-8 space-y-7">
+          <dl className="reveal mt-8 space-y-7">
             {settings.address && (
               <div className="flex gap-4">
                 <IconMapPin className="mt-1 shrink-0 text-terracotta-text" width={22} height={22} />
@@ -119,7 +119,7 @@ export function PracticalInfo({ settings, title = "Onde e quando", compact = fal
           </dl>
         </div>
 
-        <div className="overflow-hidden rounded-3xl border border-ink/10 bg-surface-tint">
+        <div className="reveal overflow-hidden rounded-3xl border border-ink/10 bg-surface-tint">
           <LocationMap embedUrl={settings.maps_embed_url} />
         </div>
       </Container>

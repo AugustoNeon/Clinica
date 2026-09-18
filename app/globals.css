@@ -133,6 +133,72 @@ p {
   animation-delay: var(--rise-delay, 0ms);
 }
 
+/*
+ * Revelacao ao rolar, em CSS puro (scroll-driven animations). Progressive
+ * enhancement: navegador sem `animation-timeline` mostra tudo parado, como
+ * sempre foi. O intervalo e em pixels de entrada (nao em % do elemento)
+ * para uma secao alta e um item pequeno terem a mesma sensacao.
+ */
+@supports (animation-timeline: view()) {
+  @keyframes reveal-in {
+    from {
+      opacity: 0;
+      transform: translateY(28px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .reveal {
+    animation: reveal-in linear both;
+    animation-timeline: view();
+    animation-range: entry 0px entry 260px;
+  }
+}
+
+/*
+ * Moldura 3D do hero (components/ui/TiltFrame.tsx). As variaveis sao
+ * escritas pelo componente a cada movimento do mouse; sem JS ficam no
+ * padrao e a moldura e uma div comum.
+ */
+.tilt {
+  transform: perspective(1100px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 500ms var(--ease-out-expo);
+  will-change: transform;
+}
+
+.tilt::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgba(255, 255, 255, 0.28),
+    transparent 60%
+  );
+  opacity: var(--glare-opacity, 0);
+  transition: opacity 400ms var(--ease-out-expo);
+  pointer-events: none;
+}
+
+/* Arco do sorriso sob o titulo do hero: desenha-se uma vez, no carregamento. */
+@keyframes draw-arc {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.smile-arc {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw-arc 1100ms var(--ease-out-expo) 500ms forwards;
+}
+
 /* Marcador nativo do <details> escondido: o chevron e desenhado pelo FAQ. */
 details.faq > summary {
   list-style: none;
@@ -159,5 +225,15 @@ details.faq[open] > summary .faq-chevron {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  /* Sem revelacao por scroll nem arco desenhando: conteudo parado e visivel. */
+  .reveal,
+  .smile-arc {
+    animation: none !important;
+  }
+
+  .smile-arc {
+    stroke-dashoffset: 0;
   }
 }

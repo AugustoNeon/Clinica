@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/config/site";
+import { getBlogPosts } from "@/lib/data/blogPosts";
 import { getServices } from "@/lib/data/services";
 
 /**
@@ -8,7 +9,7 @@ import { getServices } from "@/lib/data/services";
  * serviço novo no admin entra aqui sozinho).
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const services = await getServices();
+  const [services, posts] = await Promise.all([getServices(), getBlogPosts()]);
 
   const fixed: MetadataRoute.Sitemap = [
     { url: `${SITE_URL}/`, changeFrequency: "monthly", priority: 1 },
@@ -26,5 +27,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...fixed, ...serviceEntries];
+  const postEntries: MetadataRoute.Sitemap = posts.map((post) => ({
+    url: `${SITE_URL}/blog/${post.slug}`,
+    lastModified: post.published_at ?? undefined,
+    changeFrequency: "monthly",
+    priority: 0.5,
+  }));
+
+  return [...fixed, ...serviceEntries, ...postEntries];
 }

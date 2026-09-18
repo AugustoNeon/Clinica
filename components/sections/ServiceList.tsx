@@ -42,7 +42,7 @@ export function ServiceList({ services }: ServiceListProps) {
               <p className="mt-3 text-base leading-relaxed text-ink-muted">{group.description}</p>
             </div>
 
-            <ul className="grid gap-4 sm:grid-cols-2">
+            <ul className="reveal grid gap-4 sm:grid-cols-2">
               {group.services.map((service) => (
                 <li key={service.id}>
                   <Link

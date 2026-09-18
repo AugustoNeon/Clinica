@@ -58,7 +58,7 @@ export async function SiteHeader() {
               href={whatsappHref}
               target="_blank"
               rel="noopener noreferrer"
-              className={buttonClasses("primary", "hidden sm:inline-flex")}
+              className={buttonClasses("primary", "max-sm:hidden")}
             >
               <IconWhatsApp width={18} height={18} />
               <span>Agendar pelo WhatsApp</span>
@@ -75,7 +75,13 @@ export async function SiteHeader() {
               <IconWhatsApp width={22} height={22} />
             </a>
           )}
-          <Link href="/contato" className={buttonClasses("secondary", "hidden lg:inline-flex")}>
+          {/*
+           * `max-sm:hidden`/`max-lg:hidden` (variantes) e nao `hidden sm:inline-flex`:
+           * `buttonClasses` ja traz `inline-flex`, e no CSS do Tailwind
+           * `inline-flex` vence `hidden` (mesma camada, ordem alfabetica) —
+           * o botao aparecia no celular por cima do menu.
+           */}
+          <Link href="/contato" className={buttonClasses("secondary", "max-lg:hidden")}>
             Enviar mensagem
           </Link>
           <MobileNav items={mainNav} whatsappHref={whatsappHref} />

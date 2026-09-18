@@ -33,7 +33,7 @@ export function TrustStrip({ insurance, serviceCount }: TrustStripProps) {
   return (
     <div className="border-b border-ink/10 bg-surface">
       <Container>
-        <ul className="grid gap-x-8 gap-y-6 py-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-10">
+        <ul className="reveal grid gap-x-8 gap-y-6 py-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-10">
           {items.map((item) => (
             <li key={item.title} className="flex gap-3">
               <span aria-hidden className="mt-2 h-2 w-2 shrink-0 rounded-full bg-terracotta" />

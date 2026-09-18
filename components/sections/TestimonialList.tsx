@@ -32,7 +32,7 @@ export function TestimonialList({ testimonials }: TestimonialListProps) {
   }
 
   return (
-    <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <ul className="reveal grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {testimonials.map((testimonial) => (
         <li key={testimonial.id}>
           <figure className="flex h-full flex-col rounded-3xl border border-ink/10 bg-surface p-7">

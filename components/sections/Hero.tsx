@@ -3,6 +3,7 @@ import Link from "next/link";
 import { buttonClasses } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { IconClock, IconMapPin, IconShield, IconWhatsApp } from "@/components/ui/icons";
+import { TiltFrame } from "@/components/ui/TiltFrame";
 import { buildWhatsAppUrl } from "@/lib/utils/whatsapp";
 
 interface HeroProps {
@@ -51,6 +52,22 @@ export function Hero({ tagline, whatsapp, address, openingHours, insurance, prof
           >
             {tagline}
           </h1>
+          {/* O sorriso do logo, desenhado sob o titulo: assinatura da marca, nao enfeite. */}
+          <svg
+            aria-hidden
+            viewBox="0 0 240 40"
+            className="mt-3 h-6 w-44 text-terracotta sm:w-56"
+            fill="none"
+          >
+            <path
+              className="smile-arc"
+              d="M8 8c40 34 184 34 224 0"
+              stroke="currentColor"
+              strokeWidth="6"
+              strokeLinecap="round"
+              pathLength={1}
+            />
+          </svg>
           <p
             className="rise-in mt-6 max-w-xl text-lg leading-relaxed text-ink-muted"
             style={{ "--rise-delay": "160ms" } as React.CSSProperties}
@@ -102,8 +119,11 @@ export function Hero({ tagline, whatsapp, address, openingHours, insurance, prof
           </ul>
         </div>
 
-        <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-          <div className="relative aspect-[4/5] overflow-hidden rounded-[999px_999px_1.75rem_1.75rem] bg-blue/20 shadow-xl shadow-blue-dark/10">
+        <div
+          className="rise-in relative mx-auto w-full max-w-md lg:max-w-none"
+          style={{ "--rise-delay": "120ms" } as React.CSSProperties}
+        >
+          <TiltFrame className="relative aspect-[4/5] overflow-hidden rounded-[999px_999px_1.75rem_1.75rem] bg-blue/20 shadow-xl shadow-blue-dark/10">
             <Image
               src="/images/team/ariane-02-sentada.jpg"
               alt="Dra. Ariane Vaz Storrer sorrindo, sentada, em foto de estúdio"
@@ -112,7 +132,7 @@ export function Hero({ tagline, whatsapp, address, openingHours, insurance, prof
               sizes="(min-width: 1024px) 40vw, (min-width: 640px) 28rem, 100vw"
               className="object-cover object-top"
             />
-          </div>
+          </TiltFrame>
 
           {professional && (
             <div className="absolute -bottom-5 left-4 flex items-center gap-3 rounded-2xl border border-ink/10 bg-surface px-4 py-3 shadow-lg shadow-blue-dark/10 sm:left-8">

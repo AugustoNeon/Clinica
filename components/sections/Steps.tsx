@@ -44,7 +44,7 @@ export function Steps({ whatsapp }: StepsProps) {
           </p>
         </div>
 
-        <ol className="mt-12 grid gap-10 md:grid-cols-3 md:gap-8">
+        <ol className="reveal mt-12 grid gap-10 md:grid-cols-3 md:gap-8">
           {STEPS.map((step, index) => (
             <li key={step.title} className="relative border-t-2 border-blue/30 pt-6">
               <span className="font-display text-5xl font-semibold leading-none text-blue" aria-hidden>
