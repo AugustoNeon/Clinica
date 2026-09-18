@@ -22,8 +22,9 @@ export function LocationMap({ embedUrl }: LocationMapProps) {
       title="Localização da clínica no Google Maps"
       loading="lazy"
       referrerPolicy="strict-origin-when-cross-origin"
+      allowFullScreen
       style={{ border: 0 }}
-      className="h-[320px] w-full rounded-2xl sm:h-[380px]"
+      className="block h-[340px] w-full sm:h-[420px] lg:h-full lg:min-h-[460px]"
     />
   );
 }

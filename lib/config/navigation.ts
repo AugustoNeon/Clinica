@@ -9,13 +9,13 @@ export interface NavItem {
  * nao ha mais flag controlando a presenca dele.
  */
 export const mainNav: NavItem[] = [
-  { href: "/", label: "Inicio" },
+  { href: "/", label: "Início" },
   { href: "/sobre", label: "Sobre" },
-  { href: "/servicos", label: "Servicos" },
+  { href: "/servicos", label: "Serviços" },
   { href: "/equipe", label: "Equipe" },
   { href: "/blog", label: "Blog" },
   { href: "/contato", label: "Contato" },
 ];
 
 /** Itens do rodape: institucional obrigatorio (LGPD) fora do menu principal. */
-export const footerNav: NavItem[] = [{ href: "/privacidade", label: "Politica de Privacidade" }];
+export const footerNav: NavItem[] = [{ href: "/privacidade", label: "Política de Privacidade" }];

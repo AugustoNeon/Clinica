@@ -1,9 +1,15 @@
 import type { ButtonHTMLAttributes } from "react";
 
-export type ButtonVariant = "primary" | "secondary";
+export type ButtonVariant = "primary" | "secondary" | "inverse" | "ghost";
+export type ButtonSize = "md" | "lg";
 
 const BASE =
-  "inline-flex items-center justify-center rounded-xl px-5 py-2.5 text-sm font-medium transition ease-out disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark";
+  "inline-flex items-center justify-center gap-2 rounded-xl font-medium transition duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark";
+
+const SIZES: Record<ButtonSize, string> = {
+  md: "px-5 py-2.5 text-sm",
+  lg: "px-6 py-3.5 text-base",
+};
 
 /*
  * Cores da tabela do DESIGN.md. O primario e branco sobre `--blue-dark`, nao
@@ -14,21 +20,33 @@ const BASE =
  * do rodape. O hover/active escurece por `brightness` em vez de trocar de token:
  * nao existe `--blue-darker` e clarear reabriria o problema de contraste. O
  * `transition-*` respeita `prefers-reduced-motion` pela regra global de globals.css.
+ *
+ * `inverse` e o par invertido para fundo `--blue-dark` (faixa de CTA, rodape):
+ * botao branco com texto `--blue-dark` (5.9:1, mesmo par ao contrario).
+ * `ghost` e o link-botao sem borda, para acao terciaria ao lado de um primario.
  */
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary: "bg-blue-dark text-white hover:brightness-90 active:brightness-90",
-  secondary: "border border-ink/20 text-ink hover:bg-surface-tint hover:border-blue",
+  primary:
+    "bg-blue-dark text-white shadow-sm shadow-blue-dark/20 hover:brightness-90 hover:shadow-md hover:shadow-blue-dark/25 active:brightness-90",
+  secondary: "border border-ink/20 bg-surface text-ink hover:border-blue hover:bg-surface-tint",
+  inverse: "bg-surface text-blue-dark shadow-sm hover:bg-surface-tint",
+  ghost: "text-blue-dark hover:bg-surface-tint",
 };
 
-/** Classes do botao, para reaproveitar em `<Link>` sem duplicar estilo. */
-export function buttonClasses(variant: ButtonVariant = "primary", className = ""): string {
-  return `${BASE} ${VARIANTS[variant]} ${className}`.trim();
+/** Classes do botao, para reaproveitar em `<Link>`/`<a>` sem duplicar estilo. */
+export function buttonClasses(
+  variant: ButtonVariant = "primary",
+  className = "",
+  size: ButtonSize = "md",
+): string {
+  return `${BASE} ${SIZES[size]} ${VARIANTS[variant]} ${className}`.trim();
 }
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
+  size?: ButtonSize;
 }
 
-export function Button({ variant = "primary", className = "", ...props }: ButtonProps) {
-  return <button className={buttonClasses(variant, className)} {...props} />;
+export function Button({ variant = "primary", size = "md", className = "", ...props }: ButtonProps) {
+  return <button className={buttonClasses(variant, className, size)} {...props} />;
 }

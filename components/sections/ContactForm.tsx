@@ -5,6 +5,7 @@ import Script from "next/script";
 import { useActionState, useState, type FormEvent } from "react";
 import { submitContactForm } from "@/app/contato/actions";
 import { Button } from "@/components/ui/Button";
+import { IconCheck } from "@/components/ui/icons";
 import {
   initialContactFormState,
   validateContactForm,
@@ -27,8 +28,14 @@ const EMPTY_VALUES: ContactFormInput = {
   lgpd_consent: false,
 };
 
+/*
+ * Campos: borda `ink/20` (nao cinza claro generico), foco em `blue-dark` com
+ * anel suave, e `aria-invalid` pinta a borda de vermelho — o erro e visivel
+ * antes mesmo de ler a mensagem. Fundo branco sempre (o formulario pode
+ * ficar sobre `surface-tint`).
+ */
 const inputClasses =
-  "w-full rounded-lg border border-black/15 bg-transparent px-3 py-2 text-sm outline-none focus:border-black/40 dark:border-white/20 dark:focus:border-white/50";
+  "w-full rounded-xl border border-ink/20 bg-surface px-4 py-3 text-base text-ink outline-none transition duration-200 ease-out placeholder:text-ink-muted/70 hover:border-ink/40 focus:border-blue-dark focus:ring-4 focus:ring-blue/20 aria-invalid:border-red-600 aria-invalid:focus:ring-red-600/15";
 
 export function ContactForm({ services }: ContactFormProps) {
   const [state, formAction, isPending] = useActionState(
@@ -59,12 +66,12 @@ export function ContactForm({ services }: ContactFormProps) {
 
   if (state.status === "success") {
     return (
-      <div
-        role="status"
-        className="rounded-xl border border-black/10 p-6 text-sm dark:border-white/15"
-      >
-        <p className="font-medium">Mensagem enviada</p>
-        <p className="mt-2 opacity-80">{state.message}</p>
+      <div role="status" className="rounded-3xl border border-blue/30 bg-surface-tint p-8">
+        <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-dark text-white">
+          <IconCheck width={24} height={24} />
+        </span>
+        <p className="mt-4 font-display text-2xl font-medium">Mensagem enviada</p>
+        <p className="mt-2 text-base leading-relaxed text-ink-muted">{state.message}</p>
       </div>
     );
   }
@@ -72,70 +79,81 @@ export function ContactForm({ services }: ContactFormProps) {
   return (
     <form action={formAction} onSubmit={handleSubmit} noValidate className="grid gap-5">
       {state.status === "error" && state.message && (
-        <p role="alert" className="rounded-lg border border-red-500/50 bg-red-500/10 p-3 text-sm">
+        <p role="alert" className="rounded-xl border border-red-600/40 bg-red-50 p-4 text-sm text-red-800">
           {state.message}
         </p>
       )}
 
-      <Field id="name" label="Nome completo" error={errors.name}>
-        <input
-          id="name"
-          name="name"
-          type="text"
-          autoComplete="name"
-          maxLength={120}
-          className={inputClasses}
-          value={values.name}
-          onChange={(event) => update("name", event.target.value)}
-          aria-invalid={Boolean(errors.name)}
-        />
-      </Field>
+      <div className="grid gap-5 sm:grid-cols-2">
+        <Field id="name" label="Nome completo" error={errors.name}>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            autoComplete="name"
+            maxLength={120}
+            className={inputClasses}
+            value={values.name}
+            onChange={(event) => update("name", event.target.value)}
+            aria-invalid={Boolean(errors.name)}
+          />
+        </Field>
 
-      <Field id="phone" label="Telefone / WhatsApp" error={errors.phone}>
-        <input
-          id="phone"
-          name="phone"
-          type="tel"
-          autoComplete="tel"
-          maxLength={30}
-          placeholder="(00) 00000-0000"
-          className={inputClasses}
-          value={values.phone}
-          onChange={(event) => update("phone", event.target.value)}
-          aria-invalid={Boolean(errors.phone)}
-        />
-      </Field>
+        <Field id="phone" label="Telefone / WhatsApp" error={errors.phone}>
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            maxLength={30}
+            placeholder="(41) 99999-9999"
+            className={inputClasses}
+            value={values.phone}
+            onChange={(event) => update("phone", event.target.value)}
+            aria-invalid={Boolean(errors.phone)}
+          />
+        </Field>
+      </div>
 
-      <Field id="email" label="E-mail (opcional)" error={errors.email}>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="email"
-          maxLength={180}
-          className={inputClasses}
-          value={values.email}
-          onChange={(event) => update("email", event.target.value)}
-          aria-invalid={Boolean(errors.email)}
-        />
-      </Field>
+      <div className="grid gap-5 sm:grid-cols-2">
+        <Field id="email" label="E-mail" hint="opcional" error={errors.email}>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            maxLength={180}
+            className={inputClasses}
+            value={values.email}
+            onChange={(event) => update("email", event.target.value)}
+            aria-invalid={Boolean(errors.email)}
+          />
+        </Field>
 
-      <Field id="preferred_service" label="Servico de interesse (opcional)" error={errors.preferred_service}>
-        <select
+        <Field
           id="preferred_service"
-          name="preferred_service"
-          className={inputClasses}
-          value={values.preferred_service}
-          onChange={(event) => update("preferred_service", event.target.value)}
+          label="Serviço de interesse"
+          hint="opcional"
+          error={errors.preferred_service}
         >
-          <option value="">Nao sei / outro</option>
-          {services.map((service) => (
-            <option key={service.id} value={service.slug}>
-              {service.title}
-            </option>
-          ))}
-        </select>
-      </Field>
+          <select
+            id="preferred_service"
+            name="preferred_service"
+            className={inputClasses}
+            value={values.preferred_service}
+            onChange={(event) => update("preferred_service", event.target.value)}
+          >
+            <option value="">Não sei / outro</option>
+            {services.map((service) => (
+              <option key={service.id} value={service.slug}>
+                {service.title}
+              </option>
+            ))}
+          </select>
+        </Field>
+      </div>
 
       <Field id="message" label="Mensagem" error={errors.message}>
         <textarea
@@ -143,6 +161,7 @@ export function ContactForm({ services }: ContactFormProps) {
           name="message"
           rows={5}
           maxLength={2000}
+          placeholder="Ex.: sinto sensibilidade no lado esquerdo há duas semanas…"
           className={inputClasses}
           value={values.message}
           onChange={(event) => update("message", event.target.value)}
@@ -151,12 +170,12 @@ export function ContactForm({ services }: ContactFormProps) {
       </Field>
 
       <div>
-        <label htmlFor="lgpd_consent" className="flex items-start gap-3 text-sm">
+        <label htmlFor="lgpd_consent" className="flex items-start gap-3 text-sm leading-relaxed">
           <input
             id="lgpd_consent"
             name="lgpd_consent"
             type="checkbox"
-            className="mt-1"
+            className="mt-1 h-4 w-4 shrink-0 accent-blue-dark"
             checked={values.lgpd_consent}
             onChange={(event) => update("lgpd_consent", event.target.checked)}
             aria-invalid={Boolean(errors.lgpd_consent)}
@@ -164,14 +183,14 @@ export function ContactForm({ services }: ContactFormProps) {
           {/* LGPD: consentimento explicito, nunca marcado por default. */}
           <span>
             Li e concordo com a{" "}
-            <Link href="/privacidade" className="underline">
-              Politica de Privacidade
+            <Link href="/privacidade" className="font-medium text-blue-dark underline underline-offset-4">
+              Política de Privacidade
             </Link>{" "}
             e autorizo o contato pelos dados informados.
           </span>
         </label>
         {errors.lgpd_consent && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.lgpd_consent}</p>
+          <p className="mt-1.5 text-sm text-red-700">{errors.lgpd_consent}</p>
         )}
       </div>
 
@@ -193,10 +212,11 @@ export function ContactForm({ services }: ContactFormProps) {
         </>
       )}
 
-      <div>
-        <Button type="submit" disabled={isPending}>
-          {isPending ? "Enviando..." : "Enviar mensagem"}
+      <div className="flex flex-wrap items-center gap-4">
+        <Button type="submit" size="lg" disabled={isPending}>
+          {isPending ? "Enviando…" : "Enviar mensagem"}
         </Button>
+        <p className="text-sm text-ink-muted">Resposta no horário de atendimento.</p>
       </div>
     </form>
   );
@@ -205,18 +225,24 @@ export function ContactForm({ services }: ContactFormProps) {
 interface FieldProps {
   id: string;
   label: string;
+  hint?: string;
   error?: string;
   children: React.ReactNode;
 }
 
-function Field({ id, label, error, children }: FieldProps) {
+function Field({ id, label, hint, error, children }: FieldProps) {
   return (
     <div>
       <label htmlFor={id} className="mb-1.5 block text-sm font-medium">
         {label}
+        {hint && <span className="ml-1.5 font-normal text-ink-muted">({hint})</span>}
       </label>
       {children}
-      {error && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</p>}
+      {error && (
+        <p id={`${id}-erro`} className="mt-1.5 text-sm text-red-700">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
