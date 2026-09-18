@@ -1,12 +1,18 @@
 import type { Metadata } from "next";
-import { Card, CardBody, CardTitle } from "@/components/ui/Card";
+import Link from "next/link";
+import { CtaBand } from "@/components/sections/CtaBand";
 import { Container } from "@/components/ui/Container";
+import { IconArrowRight } from "@/components/ui/icons";
+import { PageHero } from "@/components/ui/PageHero";
 import { PlaceholderNotice } from "@/components/ui/PlaceholderNotice";
-import { Section } from "@/components/ui/Section";
 import { getBlogPosts } from "@/lib/data/blogPosts";
+import { getSiteSettingsMap } from "@/lib/data/siteSettings";
+import { excerpt, formatDate } from "@/lib/utils/text";
 
 export const metadata: Metadata = {
   title: "Blog",
+  description:
+    "Orientações sobre saúde bucal, prevenção e tratamentos, escritas pela Dra. Ariane Vaz Storrer.",
 };
 
 /**
@@ -16,42 +22,71 @@ export const metadata: Metadata = {
  * Falta o conteudo: nenhum post real foi escrito ainda.
  */
 export default async function BlogPage() {
-  const posts = await getBlogPosts();
+  const [posts, settings] = await Promise.all([getBlogPosts(), getSiteSettingsMap()]);
+  const hasPlaceholder = posts.some((post) => /placeholder/i.test(post.title));
 
   return (
     <>
-      <Container className="pt-8">
-        <PlaceholderNotice>
-          O blog é confirmado (a Dra. Ariane pretende publicar 1x por semana),
-          mas nenhum post real foi escrito ainda — a listagem abaixo é só um
-          exemplo.
-        </PlaceholderNotice>
-      </Container>
-
-      <Section
+      <PageHero
         title="Blog"
-        description="Listagem de placeholder, servida por lib/data/blogPosts.ts (dados em memoria)."
-      >
-        {posts.length === 0 ? (
-          <p className="opacity-80">Nenhum post publicado ainda.</p>
-        ) : (
-          <ul className="grid gap-4 sm:grid-cols-2">
-            {posts.map((post) => (
-              <li key={post.id}>
-                <Card className="h-full">
-                  {post.published_at && (
-                    <p className="text-xs uppercase tracking-wide opacity-60">
-                      {post.published_at.slice(0, 10)}
+        lead="Orientações práticas sobre saúde bucal, prevenção e o que esperar de cada tratamento — no mesmo tom da consulta."
+      />
+
+      <section className="py-14 sm:py-20 lg:py-24">
+        <Container>
+          {hasPlaceholder && (
+            <div className="mb-10 max-w-3xl">
+              <PlaceholderNotice>
+                O blog é confirmado (a Dra. Ariane pretende publicar 1x por
+                semana), mas nenhum post real foi escrito ainda — a listagem
+                abaixo é só um exemplo.
+              </PlaceholderNotice>
+            </div>
+          )}
+
+          {posts.length === 0 ? (
+            <div className="max-w-xl">
+              <p className="font-display text-2xl font-medium">Ainda não há posts publicados.</p>
+              <p className="mt-3 text-base leading-relaxed text-ink-muted">
+                Os primeiros textos estão a caminho. Enquanto isso, as dúvidas
+                mais comuns já estão respondidas na página inicial.
+              </p>
+            </div>
+          ) : (
+            <ul className="divide-y divide-ink/10 border-y border-ink/10">
+              {posts.map((post) => (
+                <li key={post.id}>
+                  <Link
+                    href={`/blog/${post.slug}`}
+                    className="group grid gap-3 py-8 sm:grid-cols-[8rem_minmax(0,1fr)_auto] sm:items-baseline sm:gap-8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark"
+                  >
+                    <p className="text-sm text-ink-muted">
+                      {post.published_at ? (
+                        <time dateTime={post.published_at}>{formatDate(post.published_at)}</time>
+                      ) : (
+                        "Rascunho"
+                      )}
                     </p>
-                  )}
-                  <CardTitle>{post.title}</CardTitle>
-                  <CardBody>{post.content}</CardBody>
-                </Card>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Section>
+                    <div>
+                      <h2 className="text-2xl font-medium transition-colors ease-out group-hover:text-blue-dark">
+                        {post.title}
+                      </h2>
+                      <p className="mt-2 max-w-prose text-base leading-relaxed text-ink-muted">
+                        {excerpt(post.content, 180)}
+                      </p>
+                    </div>
+                    <IconArrowRight
+                      className="hidden text-ink-muted transition-transform duration-200 ease-out group-hover:translate-x-1 group-hover:text-blue-dark sm:block"
+                    />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Container>
+      </section>
+
+      <CtaBand whatsapp={settings.whatsapp} phone={settings.phone} />
     </>
   );
 }
