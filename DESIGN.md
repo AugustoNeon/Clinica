@@ -192,3 +192,34 @@ valores (`/sobre`) são conhecimento padrão da área, dentro da exceção de
 2026-08-05 do `AGENTS.md`: sem preço, prazo, estatística ou promessa, e
 toda resposta remete à avaliação individual. Tudo o que é fato da
 clínica continua vindo de `site_settings`/banco.
+
+## Painel admin (issue #67, 2026-09-18)
+
+Registro `product` (design serve a tarefa), não `brand`: sem hero, sem
+motion de entrada, densidade maior. Mesmos tokens do site; um token a
+mais, `--surface-sunken` (`#F3F7FA`), fundo rebaixado sobre o qual os
+painéis brancos flutuam.
+
+- **Shell:** barra lateral fixa de 16rem a partir de `lg` (grupos
+  Atendimento / Conteúdo do site / Conta, item ativo em `--surface-tint`
+  + `--blue-dark`, badge terracota com contagem); no celular, barra no
+  topo + gaveta. Fonte única da navegação: `lib/config/adminNav.ts`.
+- **Página:** `AdminPageHeader` (título, contexto, ações à direita, link
+  de volta) → `AdminPanel` (superfície branca, `rounded-2xl`, sombra
+  sutil) ou `EditorLayout` (formulário 2/3 + coluna lateral com `Tips` e
+  `DangerZone`).
+- **Estados semânticos** (`StatusBadge`, `Notice`): verde/âmbar/vermelho
+  entram SÓ aqui, em texto pequeno sobre fundo tintado (≥4.5:1). No site
+  público a paleta continua azul + terracota.
+- **Formulários:** `components/admin/form.tsx` — `Field` (label
+  `htmlFor`, dica, erro via `aria-describedby`), `FormSection` (fieldset
+  em painel), `FormActions` (salvar + cancelar). Campos com o mesmo foco
+  do formulário público de contato.
+- **Destrutivo:** `ConfirmAction` em dois passos, foco no "Cancelar";
+  nunca `window.confirm`, nunca clique único. Excluir paciente tem tela
+  própria (mostra as consultas que vão junto).
+- **Listas:** `ListRow` (título clicável, meta, badges, ações) dentro de
+  `AdminPanel flush`; `EmptyState` sempre com o próximo passo.
+- **Início:** números reais (sem decoração), pendências calculadas do
+  banco, próximas consultas e mensagens recentes — a "cara" do dia da
+  doutora, não um índice de links.
