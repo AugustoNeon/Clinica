@@ -15,7 +15,7 @@ export const adminPatientSchema = z.object({
     .string()
     .trim()
     .max(190, "E-mail muito longo.")
-    .refine((value) => value === "" || z.email().safeParse(value).success, "E-mail invalido.")
+    .refine((value) => value === "" || z.email().safeParse(value).success, "E-mail inválido.")
     .transform((value) => (value === "" ? null : value)),
   notes: z
     .string()

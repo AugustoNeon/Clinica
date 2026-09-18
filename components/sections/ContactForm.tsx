@@ -19,6 +19,16 @@ interface ContactFormProps {
   services: Service[];
 }
 
+/** Ordem visual dos campos, para focar o primeiro com erro. */
+const FIELD_ORDER: (keyof ContactFormInput)[] = [
+  "name",
+  "phone",
+  "email",
+  "preferred_service",
+  "message",
+  "lgpd_consent",
+];
+
 const EMPTY_VALUES: ContactFormInput = {
   name: "",
   phone: "",
@@ -61,6 +71,12 @@ export function ContactForm({ services }: ContactFormProps) {
     if (!result.success) {
       event.preventDefault();
       setClientErrors(result.errors);
+      // Leva o foco (e o scroll) ao primeiro campo com erro, na ordem do
+      // formulario — no celular o erro pode estar fora da tela.
+      const firstInvalid = FIELD_ORDER.find((field) => result.errors[field]);
+      if (firstInvalid) {
+        event.currentTarget.querySelector<HTMLElement>(`#${firstInvalid}`)?.focus();
+      }
     }
   }
 

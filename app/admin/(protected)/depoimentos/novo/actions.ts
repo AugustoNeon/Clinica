@@ -29,7 +29,7 @@ export async function createTestimonialAction(
   } catch {
     return {
       status: "error",
-      message: "Nao foi possivel salvar o depoimento agora. Tente novamente.",
+      message: "Não foi possível salvar o depoimento agora. Tente novamente.",
       errors: {},
     };
   }

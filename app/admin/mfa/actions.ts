@@ -29,7 +29,7 @@ export async function verifyMfaAction(
   const input = adminTotpCodeInputFromFormData(formData);
   const result = validateAdminTotpCode(input);
   if (!result.success) {
-    return { status: "error", message: "Codigo invalido.", errors: result.errors };
+    return { status: "error", message: "Código inválido.", errors: result.errors };
   }
 
   const totp = await getTotpSecretForCurrentUser();
@@ -41,7 +41,7 @@ export async function verifyMfaAction(
   if (!verifyTotpCode(totp.secret, result.data.code, totp.email)) {
     return {
       status: "error",
-      message: "Codigo incorreto ou expirado. Tente o codigo atual do aplicativo.",
+      message: "Código incorreto ou expirado. Tente o código atual do aplicativo.",
       errors: {},
     };
   }

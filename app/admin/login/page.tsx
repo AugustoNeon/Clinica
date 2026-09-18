@@ -9,6 +9,11 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+/**
+ * Tela de login. Quem ja esta autenticado nao chega aqui: o middleware
+ * (`lib/supabase/middleware.ts`) redireciona `/admin/login` para `/admin`
+ * quando ha sessao valida.
+ */
 export default function AdminLoginPage() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-4 py-12">

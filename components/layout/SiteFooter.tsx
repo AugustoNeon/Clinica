@@ -62,7 +62,7 @@ export async function SiteFooter() {
               href={settings.instagram_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-5 inline-flex items-center gap-2 rounded-lg text-white/90 transition-colors ease-out hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+              className="mt-4 inline-flex items-center gap-2 rounded-lg py-1.5 text-white/90 transition-colors ease-out hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             >
               <IconInstagram />
               <span>Instagram</span>
@@ -77,7 +77,7 @@ export async function SiteFooter() {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="text-white/90 transition-colors ease-out hover:text-white"
+                  className="inline-block py-1 text-white/90 transition-colors ease-out hover:text-white"
                 >
                   {item.label}
                 </Link>
@@ -94,7 +94,7 @@ export async function SiteFooter() {
                 <li key={service.id}>
                   <Link
                     href={`/servicos/${service.slug}`}
-                    className="text-white/90 transition-colors ease-out hover:text-white"
+                    className="inline-block py-1 text-white/90 transition-colors ease-out hover:text-white"
                   >
                     {service.title}
                   </Link>
@@ -104,7 +104,7 @@ export async function SiteFooter() {
                 <li>
                   <Link
                     href="/servicos"
-                    className="font-medium text-white underline-offset-4 hover:underline"
+                    className="inline-block py-1 font-medium text-white underline-offset-4 hover:underline"
                   >
                     Ver todos os serviços
                   </Link>
@@ -130,7 +130,7 @@ export async function SiteFooter() {
                           href={settings.maps_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="font-medium text-white underline-offset-4 hover:underline"
+                          className="inline-block py-1 font-medium text-white underline-offset-4 hover:underline"
                         >
                           Como chegar
                         </a>
@@ -144,7 +144,7 @@ export async function SiteFooter() {
                   <IconPhone className="mt-0.5 shrink-0" />
                   <a
                     href={`tel:${settings.phone.replace(/\D/g, "")}`}
-                    className="transition-colors ease-out hover:text-white"
+                    className="inline-block py-1 transition-colors ease-out hover:text-white"
                   >
                     {settings.phone}
                   </a>
@@ -157,7 +157,7 @@ export async function SiteFooter() {
                     href={buildWhatsAppUrl(settings.whatsapp, "Olá! Gostaria de agendar uma avaliação.")}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="transition-colors ease-out hover:text-white"
+                    className="inline-block py-1 transition-colors ease-out hover:text-white"
                   >
                     {settings.whatsapp}
                   </a>
@@ -168,7 +168,7 @@ export async function SiteFooter() {
                   <IconMail className="mt-0.5 shrink-0" />
                   <a
                     href={`mailto:${settings.email}`}
-                    className="break-all transition-colors ease-out hover:text-white"
+                    className="inline-block break-all py-1 transition-colors ease-out hover:text-white"
                   >
                     {settings.email}
                   </a>
@@ -203,7 +203,7 @@ export async function SiteFooter() {
                 {/* LGPD: a politica de privacidade tem que estar linkada no rodape (PLANEJAMENTO.md secao 7). */}
                 <Link
                   href={item.href}
-                  className="transition-colors ease-out hover:text-white"
+                  className="inline-block py-1 transition-colors ease-out hover:text-white"
                 >
                   {item.label}
                 </Link>

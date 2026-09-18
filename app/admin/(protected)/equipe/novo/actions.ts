@@ -29,7 +29,7 @@ export async function createTeamMemberAction(
   } catch {
     return {
       status: "error",
-      message: "Nao foi possivel salvar o membro agora. Tente novamente.",
+      message: "Não foi possível salvar o membro agora. Tente novamente.",
       errors: {},
     };
   }

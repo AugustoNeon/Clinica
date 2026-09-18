@@ -18,7 +18,7 @@ export const appointmentStatusValues = [
 export const appointmentStatusLabels: Record<AppointmentStatus, string> = {
   confirmada: "Confirmada",
   cancelada: "Cancelada",
-  concluida: "Concluida",
+  concluida: "Concluída",
 };
 
 export const adminAppointmentStatusSchema = z.enum(appointmentStatusValues);
@@ -32,8 +32,8 @@ export const adminAppointmentSchema = z.object({
     .string()
     .trim()
     .transform((value) => (value === "" ? null : value)),
-  date: z.string().trim().regex(datePattern, "Data invalida."),
-  time: z.string().trim().regex(timePattern, "Horario invalido."),
+  date: z.string().trim().regex(datePattern, "Data inválida."),
+  time: z.string().trim().regex(timePattern, "Horário inválido."),
   notes: z
     .string()
     .trim()

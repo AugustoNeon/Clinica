@@ -70,7 +70,7 @@ export function CtaBand({
               Ou ligue:{" "}
               <a
                 href={`tel:${phone.replace(/\D/g, "")}`}
-                className="font-medium text-white underline-offset-4 hover:underline"
+                className="inline-block py-1 font-medium text-white underline-offset-4 hover:underline"
               >
                 {phone}
               </a>

@@ -30,7 +30,7 @@ export async function updatePatientAction(
   } catch {
     return {
       status: "error",
-      message: "Nao foi possivel salvar o paciente agora. Tente novamente.",
+      message: "Não foi possível salvar o paciente agora. Tente novamente.",
       errors: {},
     };
   }

@@ -38,7 +38,7 @@ export function PracticalInfo({ settings, title = "Onde e quando", compact = fal
                         href={settings.maps_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm font-medium text-blue-dark underline-offset-4 hover:underline"
+                        className="inline-block py-1 text-sm font-medium text-blue-dark underline-offset-4 hover:underline"
                       >
                         Abrir rota no Google Maps
                       </a>
@@ -87,7 +87,7 @@ export function PracticalInfo({ settings, title = "Onde e quando", compact = fal
                     {settings.phone && (
                       <a
                         href={`tel:${settings.phone.replace(/\D/g, "")}`}
-                        className="underline-offset-4 hover:underline"
+                        className="inline-block py-1 underline-offset-4 hover:underline"
                       >
                         {settings.phone}
                       </a>
@@ -97,7 +97,7 @@ export function PracticalInfo({ settings, title = "Onde e quando", compact = fal
                         href={whatsappHref}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 underline-offset-4 hover:underline"
+                        className="inline-flex items-center gap-2 py-1 underline-offset-4 hover:underline"
                       >
                         <IconWhatsApp width={18} height={18} className="text-blue-dark" />
                         {settings.whatsapp}
@@ -106,7 +106,7 @@ export function PracticalInfo({ settings, title = "Onde e quando", compact = fal
                     {settings.email && (
                       <a
                         href={`mailto:${settings.email}`}
-                        className="inline-flex items-center gap-2 break-all text-base underline-offset-4 hover:underline"
+                        className="inline-flex items-center gap-2 break-all py-1 text-base underline-offset-4 hover:underline"
                       >
                         <IconMail width={18} height={18} className="text-blue-dark" />
                         {settings.email}

@@ -18,7 +18,7 @@ export const contactLeadStatusValues = [
 export const contactLeadStatusLabels: Record<ContactLeadStatus, string> = {
   novo: "Novo",
   em_atendimento: "Em atendimento",
-  concluido: "Concluido",
+  concluido: "Concluído",
   descartado: "Descartado",
 };
 

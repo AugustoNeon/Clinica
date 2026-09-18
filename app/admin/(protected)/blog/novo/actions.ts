@@ -29,7 +29,7 @@ export async function createBlogPostAction(
   } catch {
     return {
       status: "error",
-      message: "Nao foi possivel salvar o post agora. Tente novamente.",
+      message: "Não foi possível salvar o post agora. Tente novamente.",
       errors: {},
     };
   }

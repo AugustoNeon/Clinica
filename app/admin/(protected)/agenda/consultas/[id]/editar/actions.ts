@@ -30,13 +30,13 @@ export async function updateAppointmentAction(
   try {
     await updateAppointment(id, result.data, statusResult.data);
   } catch (error) {
-    if (error instanceof Error && error.message.startsWith("Ja existe uma consulta")) {
+    if (error instanceof Error && error.message.startsWith("Já existe uma consulta")) {
       return { status: "error", message: error.message, errors: {} };
     }
     console.error("Falha ao atualizar consulta:", error);
     return {
       status: "error",
-      message: "Nao foi possivel salvar a consulta agora. Tente novamente.",
+      message: "Não foi possível salvar a consulta agora. Tente novamente.",
       errors: {},
     };
   }

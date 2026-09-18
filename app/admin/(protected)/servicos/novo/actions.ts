@@ -29,7 +29,7 @@ export async function createServiceAction(
   } catch {
     return {
       status: "error",
-      message: "Nao foi possivel salvar o servico agora. Tente novamente.",
+      message: "Não foi possível salvar o serviço agora. Tente novamente.",
       errors: {},
     };
   }

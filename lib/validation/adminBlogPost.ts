@@ -19,16 +19,16 @@ export const adminBlogPostSchema = z.object({
     .trim()
     .min(1, "Informe o slug.")
     .max(120, "Slug muito longo.")
-    .regex(slugPattern, "Use apenas letras minusculas, numeros e hifen (ex.: dica-de-higiene)."),
-  title: z.string().trim().min(1, "Informe o titulo.").max(190, "Titulo muito longo."),
+    .regex(slugPattern, "Use apenas letras minúsculas, números e hífen (ex.: dica-de-higiene)."),
+  title: z.string().trim().min(1, "Informe o título.").max(190, "Título muito longo."),
   content: z.string().trim().min(1, "Informe o conteudo.").max(20000, "Conteudo muito extenso."),
   cover_image_url: z
     .string()
     .trim()
     .max(500, "URL muito longa.")
-    .refine((value) => value === "" || z.url().safeParse(value).success, "URL invalida.")
+    .refine((value) => value === "" || z.url().safeParse(value).success, "URL inválida.")
     .transform((value) => (value === "" ? null : value)),
-  status: z.enum(blogPostStatusValues, "Status invalido."),
+  status: z.enum(blogPostStatusValues, "Status inválido."),
 });
 
 export type AdminBlogPostValues = z.infer<typeof adminBlogPostSchema>;
