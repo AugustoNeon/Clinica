@@ -62,7 +62,7 @@ export async function SiteFooter() {
               href={settings.instagram_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-5 inline-flex items-center gap-2 rounded-lg text-white/90 transition-colors ease-out hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+              className="mt-4 inline-flex items-center gap-2 rounded-lg py-1.5 text-white/90 transition-colors ease-out hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             >
               <IconInstagram />
               <span>Instagram</span>
