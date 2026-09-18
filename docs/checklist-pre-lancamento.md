@@ -45,6 +45,38 @@
   formulários com dicas e labels ligados. As pendências da seção 3 aparecem
   para a doutora na tela inicial do painel.
 
+## 2b. QA completo (issue #69, 2026-09-18)
+
+Rodado no servidor local com o banco de produção, registros de teste
+criados e removidos ao final.
+
+- ✅ **Links:** rastreador percorreu 25 páginas internas (todas 200) e
+  38 links externos (WhatsApp com mensagem, `tel:`, `mailto:`, mapa,
+  Instagram) — zero quebrados, formatos válidos.
+- ✅ **Responsividade:** nenhuma página pública ou do painel com overflow
+  horizontal a 375px; tablet (768px) e desktop (1360px) conferidos.
+- ✅ **Site:** menu mobile, FAQ, link "pular para o conteúdo", validação do
+  formulário de contato (4 erros, foco no primeiro campo) e envio real
+  (lead de teste marcado como descartado depois).
+- ✅ **Painel:** troca de status de mensagem; criar/editar/excluir serviço;
+  criar/excluir post e depoimento; salvar configurações; criar paciente →
+  marcar consulta (paciente pré-selecionado) → cancelar → excluir consulta
+  → excluir paciente (tela de confirmação); marcar/desfazer folga na
+  agenda. Confirmação em dois passos em todas as exclusões.
+- ✅ **Correções feitas:** acentuação em todas as mensagens de validação e
+  de ação; alvos de toque ≥24px em rodapé, ficha prática, contato e faixa
+  final; 404 próprio do painel; foco no primeiro erro do contato;
+  `prefetch={false}` na barra do painel.
+- ⏳ **Sessão do painel caiu 2 vezes em ~1h de uso contínuo.** Hipótese:
+  o JWT do Supabase expira em 1 h e os 11 prefetches da barra lateral
+  disputavam a renovação no middleware (corrigido com `prefetch={false}`).
+  Se voltar a acontecer: Supabase Dashboard → Authentication → Sessions →
+  aumentar o "JWT expiry" (ex.: 8 h). O timeout próprio de 30 min de
+  inatividade continua valendo.
+- ❌ Não testado por depender de dispositivo/conta: ativar MFA (precisa do
+  celular), conectar Google Calendar (já conectado), envio de e-mail de
+  lead (Resend só em produção), Turnstile (só em produção).
+
 ## 3. Antes de divulgar — conteúdo (doutora / usuário)
 
 - ❌ **CRO** da Dra. Ariane no admin (`/admin/equipe`) — obrigatório na
