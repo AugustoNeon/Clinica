@@ -1,7 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import { SiteFooter } from "@/components/layout/SiteFooter";
-import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_SHORT_NAME, SITE_URL } from "@/lib/config/site";
 import "./globals.css";
 
@@ -67,6 +65,11 @@ export const viewport: Viewport = {
   themeColor: "#1d6a96",
 };
 
+/**
+ * Layout raiz: so `<html>`/`<body>`, fontes, metadata e CSS global. O
+ * chrome do site publico esta em `app/(site)/layout.tsx`; o shell do
+ * painel, em `app/admin/(protected)/layout.tsx` (issue #67).
+ */
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -74,16 +77,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${inter.variable} ${fraunces.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col">
-        <a href="#conteudo" className="skip-link">
-          Pular para o conteúdo
-        </a>
-        <SiteHeader />
-        <main id="conteudo" className="flex-1">
-          {children}
-        </main>
-        <SiteFooter />
-      </body>
+      <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );
 }

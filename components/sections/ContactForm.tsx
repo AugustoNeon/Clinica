@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Script from "next/script";
 import { useActionState, useState, type FormEvent } from "react";
-import { submitContactForm } from "@/app/contato/actions";
+import { submitContactForm } from "@/app/(site)/contato/actions";
 import { Button } from "@/components/ui/Button";
 import { IconCheck } from "@/components/ui/icons";
 import {
@@ -200,7 +200,7 @@ export function ContactForm({ services }: ContactFormProps) {
         publica por natureza: e so o identificador do widget, nao um
         segredo). Sem a key, nada e renderizado e o formulario segue
         funcionando normal — a verificacao no servidor
-        (app/contato/actions.ts) tambem e pulada nesse caso.
+        (app/(site)/contato/actions.ts) tambem e pulada nesse caso.
       */}
       {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
         <>
