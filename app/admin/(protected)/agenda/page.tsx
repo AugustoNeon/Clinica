@@ -124,11 +124,13 @@ export default async function AdminAgendaPage({ searchParams }: AgendaPageProps)
   const weeks = buildCalendarWeeks(year, month);
   const prev = adjacentMonth(year, month, -1);
   const next = adjacentMonth(year, month, 1);
-  const monthLabel = new Date(Date.UTC(year, month - 1, 1)).toLocaleDateString("pt-BR", {
+  const rawMonthLabel = new Date(Date.UTC(year, month - 1, 1)).toLocaleDateString("pt-BR", {
     month: "long",
     year: "numeric",
     timeZone: "UTC",
   });
+  // "setembro de 2026" → "Setembro de 2026" (so a primeira letra; `capitalize` do CSS pegava o "De").
+  const monthLabel = rawMonthLabel.charAt(0).toUpperCase() + rawMonthLabel.slice(1);
   const monthParam = `${year}-${pad2(month)}`;
   const activeCount = appointments.filter((appointment) => appointment.status !== "cancelada").length;
 
@@ -166,7 +168,7 @@ export default async function AdminAgendaPage({ searchParams }: AgendaPageProps)
             >
               <IconArrowLeft />
             </Link>
-            <h2 className="font-display text-xl font-medium capitalize">{monthLabel}</h2>
+            <h2 className="font-display text-xl font-medium">{monthLabel}</h2>
             <Link
               href={`/admin/agenda?mes=${next.year}-${pad2(next.month)}`}
               aria-label="Próximo mês"
