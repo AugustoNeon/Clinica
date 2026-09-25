@@ -100,8 +100,9 @@ export function Hero({ tagline, whatsapp, address, openingHours, insurance, prof
             </Link>
           </div>
 
+          {/* So no celular: no desktop a barra de topo ja mostra endereco e horario. */}
           <ul
-            className="rise-in mt-11 flex flex-wrap gap-x-8 gap-y-3 text-sm text-white/85"
+            className="rise-in mt-11 flex flex-wrap gap-x-8 gap-y-3 text-sm text-white/85 lg:hidden"
             style={{ "--rise-delay": "320ms" } as Vars}
           >
             <li className="flex items-center gap-2">
@@ -152,9 +153,13 @@ export function Hero({ tagline, whatsapp, address, openingHours, insurance, prof
               />
             </div>
 
-            {/* Chips de fato na frente da foto: profundidade positiva + flutuacao. */}
-            <div
-              className="tilt-layer float absolute left-0 top-[14%] flex items-center gap-2.5 rounded-2xl bg-surface px-3.5 py-2.5 text-ink shadow-xl shadow-blue-deep/50 sm:-left-8"
+            {/* Selos na frente da foto: profundidade positiva + flutuacao. O de
+                urgencia parece botao, entao E um link para o WhatsApp. */}
+            <a
+              href={whatsappHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="tilt-layer float absolute left-0 top-[14%] flex items-center gap-2.5 rounded-2xl bg-surface px-3.5 py-2.5 text-ink shadow-xl shadow-blue-deep/50 transition-colors ease-out hover:bg-surface-tint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:-left-8"
               style={{ "--depth": "55px", "--float-delay": "0ms" } as Vars}
             >
               <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-dark text-white">
@@ -165,7 +170,7 @@ export function Hero({ tagline, whatsapp, address, openingHours, insurance, prof
                 <br />
                 <span className="font-normal text-ink-muted">Direto pelo WhatsApp</span>
               </span>
-            </div>
+            </a>
 
             {insurance && (
               <div

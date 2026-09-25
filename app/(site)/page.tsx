@@ -80,7 +80,7 @@ export default async function HomePage() {
               </PlaceholderNotice>
             </div>
           )}
-          <TestimonialList testimonials={testimonials} />
+          <TestimonialList testimonials={testimonials} featureFirst={!hasPlaceholderTestimonial} />
         </Section>
       )}
 

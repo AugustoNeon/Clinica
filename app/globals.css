@@ -73,6 +73,10 @@
 
 html {
   scroll-behavior: smooth;
+  /* Header fixo (+ barra de topo no desktop) nao cobre ancora nem foco de teclado. */
+  scroll-padding-top: 6.5rem;
+  /* Sem atraso de toque duplo no celular. */
+  touch-action: manipulation;
 }
 
 body {
@@ -129,12 +133,11 @@ p {
 /*
  * Textura da marca (issue #71): fileiras de arcos do sorriso, em tijolo,
  * desenhadas em SVG inline. E o mesmo traco do logo repetido — nao e um
- * padrao generico de pontos. Cor branca para fundos azuis (`.pattern-arcs`)
- * e azul para fundos claros (`.pattern-arcs-blue`); a opacidade fica baixa
- * de proposito, e textura, nao ilustracao.
+ * padrao generico de pontos. So sobre azul (hero, aberturas, depoimentos,
+ * faixa final, rodape, barra do painel): nos fundos claros ela virava papel
+ * de parede (critique de 2026-09-25). Opacidade baixa de proposito.
  */
-.pattern-arcs,
-.pattern-arcs-blue {
+.pattern-arcs {
   background-image:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='32' viewBox='0 0 64 32'%3E%3Cpath d='M4 8c16 22 40 22 56 0' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"),
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='32' viewBox='0 0 64 32'%3E%3Cpath d='M4 8c16 22 40 22 56 0' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
@@ -143,13 +146,6 @@ p {
     0 0,
     32px 16px;
   opacity: 0.07;
-}
-
-.pattern-arcs-blue {
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='32' viewBox='0 0 64 32'%3E%3Cpath d='M4 8c16 22 40 22 56 0' fill='none' stroke='%234590bf' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='32' viewBox='0 0 64 32'%3E%3Cpath d='M4 8c16 22 40 22 56 0' fill='none' stroke='%234590bf' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
-  opacity: 0.1;
 }
 
 /*
@@ -175,11 +171,12 @@ p {
 }
 
 /*
- * Flutuacao lenta dos "chips" sobre a foto do hero e das formas decorativas
- * (issue #71). Amplitude pequena e periodo longo: profundidade, nao
- * brinquedo. `--float-delay` desencontra os chips entre si. Usa a
- * propriedade `translate` (nao `transform`) para somar com a profundidade
- * `translateZ` das camadas do TiltFrame em vez de substitui-la.
+ * Flutuacao dos selos do hero e dos emblemas das internas (issue #71): um
+ * unico movimento lento depois do carregamento, que assenta e para. Fica
+ * abaixo de 5 s de proposito — movimento automatico mais longo que isso,
+ * ao lado de conteudo, exige controle de pausa (WCAG 2.2.2). `--float-delay`
+ * desencontra os selos. Usa a propriedade `translate` (nao `transform`)
+ * para somar com o `translateZ` das camadas do TiltFrame.
  */
 @keyframes float {
   0%,
@@ -192,14 +189,16 @@ p {
 }
 
 .float {
-  animation: float 6s ease-in-out infinite;
-  animation-delay: var(--float-delay, 0ms);
+  animation: float 3.6s ease-in-out 1 both;
+  animation-delay: calc(700ms + var(--float-delay, 0ms));
 }
 
 /*
  * Faixa de fatos em movimento continuo (issue #71). O conteudo e duplicado
  * no markup (segunda copia `aria-hidden`) e a trilha anda -50%: o loop fecha
- * sem salto. Pausa com o mouse em cima para dar tempo de ler.
+ * sem salto. Pausa pelo botao (`data-paused`, WCAG 2.2.2), com o mouse em
+ * cima e com foco dentro. No celular fica parada e quebra em linhas: texto
+ * andando e dificil de ler rolando com o polegar.
  */
 @keyframes ticker {
   to {
@@ -218,8 +217,26 @@ p {
   animation: ticker 48s linear infinite;
 }
 
-.ticker:hover .ticker-track {
+.ticker:hover .ticker-track,
+.ticker:focus-within .ticker-track,
+.ticker[data-paused] .ticker-track {
   animation-play-state: paused;
+}
+
+@media (max-width: 639px) {
+  .ticker {
+    mask-image: none;
+  }
+
+  .ticker-track {
+    animation: none;
+    width: auto;
+    flex-wrap: wrap;
+  }
+
+  .ticker-copy {
+    display: none;
+  }
 }
 
 /*
@@ -400,8 +417,9 @@ details.faq[open] > summary .faq-chevron {
     flex-wrap: wrap;
   }
 
-  .ticker-copy {
-    display: none;
+  .ticker-copy,
+  .ticker-toggle {
+    display: none !important;
   }
 
   .tilt {
