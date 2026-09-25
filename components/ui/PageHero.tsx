@@ -16,6 +16,8 @@ interface PageHeroProps {
   children?: ReactNode;
   /** Elemento visual a direita do texto (icone grande, foto...), opcional. */
   visual?: ReactNode;
+  /** Mostra o `visual` tambem no celular, abaixo do texto (padrao: so a partir de `lg`). */
+  visualOnMobile?: boolean;
 }
 
 type Vars = React.CSSProperties;
@@ -26,7 +28,7 @@ type Vars = React.CSSProperties;
  * Da identidade a cada pagina sem repetir o hero da Home — e sorri para a
  * secao seguinte pelo divisor curvo.
  */
-export function PageHero({ title, lead, back, kicker, children, visual }: PageHeroProps) {
+export function PageHero({ title, lead, back, kicker, children, visual, visualOnMobile = false }: PageHeroProps) {
   return (
     <div className="relative overflow-hidden bg-blue-dark text-white">
       <div aria-hidden className="pattern-arcs pointer-events-none absolute inset-0" />
@@ -76,7 +78,14 @@ export function PageHero({ title, lead, back, kicker, children, visual }: PageHe
             </div>
           )}
         </div>
-        {visual && <div className="rise-in relative hidden lg:block" style={{ "--rise-delay": "120ms" } as Vars}>{visual}</div>}
+        {visual && (
+          <div
+            className={`rise-in relative ${visualOnMobile ? "" : "hidden lg:block"}`}
+            style={{ "--rise-delay": "120ms" } as Vars}
+          >
+            {visual}
+          </div>
+        )}
       </Container>
       <SmileDivider className="relative text-surface" />
     </div>
