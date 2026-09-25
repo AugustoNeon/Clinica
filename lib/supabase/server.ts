@@ -8,20 +8,21 @@ import { cookies } from "next/headers";
  * Clientes Supabase para o SERVIDOR (Server Components, Server Actions,
  * Route Handlers).
  *
- * ESTADO: NAO ESTA LIGADO A NADA AINDA. Nao existe projeto Supabase
- * criado; `lib/data/*` roda com dados mock. Ver o cabecalho de
- * `lib/supabase/client.ts` para o contrato de substituicao.
- *
  * `import "server-only"` e a barreira: se algum dia este modulo for
  * importado por engano de um componente de cliente, o build QUEBRA em
  * vez de vazar a chave de servico para o bundle do browser.
  *
  * Segredos: nenhum valor literal aqui. Criacao preguicosa — o build nao
  * pode depender de env var estar setada.
+ *
+ * NENHUM cliente fica guardado em variavel de modulo (issue #75): no
+ * Cloudflare Workers o isolate atende muitas requests, e objeto guardado
+ * no escopo global atravessa requests. Em 2026-09-25 o Worker de
+ * producao travou (toda pagina pendurada ate o cancelamento, depois de
+ * um erro 1102 de limite de CPU) e esses singletons eram o unico estado
+ * global de servidor da app. Criar o cliente e sincrono e nao faz rede,
+ * entao criar um por chamada custa pouco.
  */
-
-let serverClient: SupabaseClient | null = null;
-let adminClient: SupabaseClient | null = null;
 
 function requireEnv(name: string): string {
   const value = process.env[name];
@@ -39,14 +40,11 @@ function requireEnv(name: string): string {
  * (servicos, equipe, posts, depoimentos).
  */
 export function getSupabaseServerClient(): SupabaseClient {
-  if (serverClient) return serverClient;
-
-  serverClient = createClient(
+  return createClient(
     requireEnv("NEXT_PUBLIC_SUPABASE_URL"),
     requireEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
-    { auth: { persistSession: false } },
+    { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } },
   );
-  return serverClient;
 }
 
 /**
@@ -61,14 +59,11 @@ export function getSupabaseServerClient(): SupabaseClient {
  * impede).
  */
 export function getSupabaseAdminClient(): SupabaseClient {
-  if (adminClient) return adminClient;
-
-  adminClient = createClient(
+  return createClient(
     requireEnv("NEXT_PUBLIC_SUPABASE_URL"),
     requireEnv("SUPABASE_SERVICE_ROLE_KEY"),
-    { auth: { persistSession: false, autoRefreshToken: false } },
+    { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } },
   );
-  return adminClient;
 }
 
 /**
@@ -78,9 +73,9 @@ export function getSupabaseAdminClient(): SupabaseClient {
  * (`next/headers`), entao sabe QUEM esta logado — nao serve para as
  * queries de conteudo publico (essas continuam com `getSupabaseServerClient`).
  *
- * NAO cacheia instancia (ao contrario dos clientes acima): precisa ler o
- * cookie da request atual a cada chamada, e uma instancia modulo-level
- * vazaria a sessao de um usuario para a proxima request no mesmo processo.
+ * Como os clientes acima, nao cacheia instancia: precisa ler o cookie da
+ * request atual a cada chamada, e uma instancia modulo-level vazaria a
+ * sessao de um usuario para a proxima request no mesmo processo.
  */
 export async function getSupabaseServerComponentClient(): Promise<SupabaseClient> {
   const cookieStore = await cookies();
