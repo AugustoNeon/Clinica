@@ -22,14 +22,19 @@ const SECONDS_PER_FACT = 6;
  * Os fatos correm em loop (conteudo duplicado, a segunda copia
  * `aria-hidden`) e o botao de urgencia com o WhatsApp fica parado ao lado:
  * a informacao mais util nao anda. Otimizacoes em relacao a versao antiga:
- * - botao de pausa visivel tambem no celular (WCAG 2.2.2), alem de pausar
- *   com o mouse em cima e com foco dentro;
+ * - pausa sem botao visivel (o usuario achou que o botao enfeiava a faixa):
+ *   para com o mouse em cima, com um toque (toque de novo retoma) e com o
+ *   foco do teclado (a faixa entra na ordem de Tab). Com isso o requisito
+ *   de pausar movimento automatico (WCAG 2.2.2) continua atendido;
  * - pausa sozinha quando a faixa sai da tela (IntersectionObserver), para
  *   nao gastar bateria animando o que ninguem ve;
  * - duracao proporcional ao numero de fatos: velocidade constante;
  * - so `transform` animado (compositor), nada de layout.
- * Com `prefers-reduced-motion` a faixa fica parada, quebra em linhas e o
- * botao de pausa some (regras em globals.css).
+ * Com `prefers-reduced-motion` a faixa fica parada e quebra em linhas
+ * (regras em globals.css).
+ *
+ * Fonte: Lexend (a do texto) em peso medio, nao a dos titulos: numa faixa
+ * que anda, letra mais simples se le melhor.
  *
  * Coral cheio com tinta por cima (6.1:1).
  */
@@ -52,14 +57,24 @@ export function FactsBand({ facts, whatsapp, whatsappHref }: FactsBandProps) {
   return (
     <div ref={bandRef} className="bg-terracotta text-ink">
       <div className="flex flex-col gap-3 py-4 sm:py-5 lg:flex-row lg:items-center lg:gap-4">
-        <div className="flex min-w-0 flex-1 items-center gap-2 pr-4 sm:pr-6 lg:pr-0">
+        <div className="flex min-w-0 flex-1 items-center">
           <div
-            className="ticker min-w-0 flex-1"
+            className="ticker min-w-0 flex-1 cursor-pointer focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ink"
+            role="group"
+            aria-label="Fatos sobre a clínica. Toque ou pressione Enter para pausar."
+            tabIndex={0}
+            onClick={() => setPaused((current) => !current)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                setPaused((current) => !current);
+              }
+            }}
             data-paused={paused || undefined}
             data-offscreen={offscreen || undefined}
             style={{ "--ticker-duration": `${facts.length * SECONDS_PER_FACT}s` } as React.CSSProperties}
           >
-            <ul className="ticker-track items-center gap-x-10 gap-y-2 px-4 sm:gap-x-14" aria-label="Fatos sobre a clínica">
+            <ul className="ticker-track items-center gap-x-10 gap-y-2 px-4 sm:gap-x-14">
               {loop.map((fact, index) => {
                 const copy = index >= facts.length;
                 return (
@@ -71,30 +86,12 @@ export function FactsBand({ facts, whatsapp, whatsappHref }: FactsBandProps) {
                     <svg aria-hidden viewBox="0 0 24 12" className="h-3 w-6 shrink-0 text-ink/70" fill="none">
                       <path d="M2 2c5 10 15 10 20 0" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
                     </svg>
-                    <span className="whitespace-nowrap font-display text-lg font-semibold sm:text-xl">{fact}</span>
+                    <span className="whitespace-nowrap text-base font-medium tracking-[0.01em] sm:text-lg">{fact}</span>
                   </li>
                 );
               })}
             </ul>
           </div>
-          <button
-            type="button"
-            onClick={() => setPaused((current) => !current)}
-            aria-pressed={paused}
-            aria-label={paused ? "Retomar a faixa de fatos" : "Pausar a faixa de fatos"}
-            className="ticker-toggle inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ink/10 text-ink transition-colors ease-out hover:bg-ink/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
-          >
-            {paused ? (
-              <svg aria-hidden viewBox="0 0 24 24" width={18} height={18} fill="currentColor">
-                <path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" />
-              </svg>
-            ) : (
-              <svg aria-hidden viewBox="0 0 24 24" width={18} height={18} fill="currentColor">
-                <rect x="6" y="5" width="4" height="14" rx="1.25" />
-                <rect x="14" y="5" width="4" height="14" rx="1.25" />
-              </svg>
-            )}
-          </button>
         </div>
 
         {whatsappHref && (
