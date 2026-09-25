@@ -1,9 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import type { ComponentType, SVGProps } from "react";
+import { ADMIN_ICONS } from "@/components/admin/adminIcons";
 import { AdminPanel } from "@/components/admin/AdminPanel";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { buttonClasses } from "@/components/ui/Button";
-import { IconArrowRight, IconCalendar, IconExternal, IconPen, IconPlus, IconUsers } from "@/components/ui/icons";
+import {
+  IconArrowRight,
+  IconCalendar,
+  IconExternal,
+  IconInbox,
+  IconPen,
+  IconPlus,
+  IconUsers,
+} from "@/components/ui/icons";
 import { adminNavGroups } from "@/lib/config/adminNav";
 import { getTotpStatus } from "@/lib/data/adminSecurity";
 import { getAppointmentsForMonth } from "@/lib/data/appointments";
@@ -149,56 +159,85 @@ export default async function AdminDashboardPage() {
     });
   }
 
-  const stats = [
+  const stats: {
+    label: string;
+    value: number;
+    href: string;
+    hint: string;
+    icon: ComponentType<SVGProps<SVGSVGElement>>;
+    tint: string;
+  }[] = [
     {
       label: "Mensagens novas",
       value: newLeads.length,
       href: "/admin/leads?status=novo",
       hint: newLeads.length === 0 ? "Tudo respondido" : "Aguardando retorno",
+      icon: IconInbox,
+      tint: newLeads.length > 0 ? "bg-terracotta text-ink" : "bg-terracotta-tint text-terracotta-text",
     },
     {
       label: "Consultas hoje",
       value: todayAppointments.length,
       href: `/admin/agenda?mes=${today.slice(0, 7)}`,
       hint: formatShortDate(today),
+      icon: IconCalendar,
+      tint: "bg-blue-dark text-white",
     },
     {
       label: "Próximos 7 dias",
       value: upcoming.length,
       href: "/admin/agenda",
       hint: "consultas confirmadas",
+      icon: IconCalendar,
+      tint: "bg-surface-tint text-blue-dark",
     },
     {
       label: "Pacientes",
       value: patients.length,
       href: "/admin/pacientes",
       hint: "cadastrados",
+      icon: IconUsers,
+      tint: "bg-blue-deep text-blue-glow",
     },
   ];
 
   return (
     <div className="grid gap-8">
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-sm text-ink-muted">{formatShortDate(today)}</p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">
-            {greeting(hourInClinicTimeZone())}
-            {firstName ? `, ${firstName}` : ""}
-          </h1>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Link href="/admin/agenda/consultas/nova" className={buttonClasses("primary")}>
-            <IconPlus width={18} height={18} />
-            Nova consulta
-          </Link>
-          <Link href="/admin/pacientes/novo" className={buttonClasses("secondary")}>
-            <IconUsers width={18} height={18} />
-            Novo paciente
-          </Link>
-          <Link href="/admin/blog/novo" className={buttonClasses("secondary")}>
-            <IconPen width={18} height={18} />
-            Novo post
-          </Link>
+      <header className="relative overflow-hidden rounded-3xl bg-blue-deep px-6 py-7 text-white shadow-lg shadow-blue-deep/20 sm:px-8 sm:py-8">
+        <div aria-hidden className="pattern-arcs pointer-events-none absolute inset-0" />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-blue-dark/80 blur-3xl"
+        />
+        <div className="relative flex flex-wrap items-end justify-between gap-5">
+          <div>
+            <p className="text-sm font-medium text-blue-glow">{formatShortDate(today)}</p>
+            <h1 className="mt-1 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+              {greeting(hourInClinicTimeZone())}
+              {firstName ? `, ${firstName}` : ""}
+            </h1>
+            <p className="mt-2 text-sm text-white/85">
+              {todayAppointments.length === 0
+                ? "Nenhuma consulta marcada para hoje."
+                : `${todayAppointments.length} ${todayAppointments.length === 1 ? "consulta marcada" : "consultas marcadas"} para hoje.`}
+              {newLeads.length > 0 &&
+                ` ${newLeads.length} ${newLeads.length === 1 ? "mensagem nova" : "mensagens novas"} aguardando retorno.`}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Link href="/admin/agenda/consultas/nova" className={buttonClasses("inverse")}>
+              <IconPlus width={18} height={18} />
+              Nova consulta
+            </Link>
+            <Link href="/admin/pacientes/novo" className={buttonClasses("outline-inverse")}>
+              <IconUsers width={18} height={18} />
+              Novo paciente
+            </Link>
+            <Link href="/admin/blog/novo" className={buttonClasses("outline-inverse")}>
+              <IconPen width={18} height={18} />
+              Novo post
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -207,11 +246,16 @@ export default async function AdminDashboardPage() {
           <li key={stat.label}>
             <Link
               href={stat.href}
-              className="block rounded-2xl border border-ink/10 bg-surface p-5 shadow-sm shadow-ink/5 transition ease-out hover:border-blue hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark"
+              className="flex h-full items-start gap-4 rounded-2xl border border-ink/10 bg-surface p-5 shadow-md shadow-blue-deep/5 transition duration-200 ease-out hover:-translate-y-0.5 hover:border-blue hover:shadow-lg hover:shadow-blue-deep/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark"
             >
-              <p className="text-sm font-medium text-ink-muted">{stat.label}</p>
-              <p className="mt-2 font-display text-4xl font-semibold leading-none">{stat.value}</p>
-              <p className="mt-2 text-xs text-ink-muted">{stat.hint}</p>
+              <span className={`inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${stat.tint}`}>
+                <stat.icon width={22} height={22} />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-sm font-medium text-ink-muted">{stat.label}</span>
+                <span className="mt-1 block font-display text-4xl font-semibold leading-none">{stat.value}</span>
+                <span className="mt-1.5 block text-xs text-ink-muted">{stat.hint}</span>
+              </span>
             </Link>
           </li>
         ))}
@@ -379,15 +423,16 @@ export default async function AdminDashboardPage() {
           Todas as áreas
         </h2>
         <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {adminNavGroups.flatMap((group) => group.items).map((item) => (
+          {adminNavGroups.flatMap((group) => group.items).map((item) => {
+            const Icon = ADMIN_ICONS[item.icon];
+            return (
             <li key={item.href}>
               <Link
                 href={item.href}
-                className="flex h-full items-start gap-3 rounded-2xl border border-ink/10 bg-surface p-4 transition ease-out hover:border-blue hover:bg-surface-tint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark"
+                className="group flex h-full items-start gap-3 rounded-2xl border border-ink/10 bg-surface p-4 transition ease-out hover:border-blue hover:bg-surface-tint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark"
               >
-                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-tint text-blue-dark">
-                  <IconCalendar width={18} height={18} className={item.icon === "calendar" ? "" : "hidden"} />
-                  {item.icon !== "calendar" && <IconArrowRight width={18} height={18} />}
+                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-tint text-blue-dark transition-colors ease-out group-hover:bg-blue-dark group-hover:text-white">
+                  <Icon width={20} height={20} />
                 </span>
                 <span>
                   <span className="block font-medium">{item.label}</span>
@@ -395,7 +440,8 @@ export default async function AdminDashboardPage() {
                 </span>
               </Link>
             </li>
-          ))}
+            );
+          })}
         </ul>
       </section>
     </div>

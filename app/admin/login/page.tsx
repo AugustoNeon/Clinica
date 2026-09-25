@@ -57,7 +57,7 @@ export default function AdminLoginPage() {
               site, tudo num lugar só.
             </p>
           </div>
-          <div className="relative mx-auto mt-10 hidden w-64 lg:block lg:self-end">
+          <div className="relative mx-auto mt-10 hidden w-64 lg:-mb-12 lg:block">
             <div className="relative aspect-[4/5] overflow-hidden rounded-t-[999px]">
               <Image
                 src="/images/team/ariane-04-jaleco-retrato.jpg"
