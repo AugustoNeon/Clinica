@@ -14,6 +14,9 @@ tokens para manter também.
 
 ## Cor
 
+> Superado pela seção "Azul aceso e revisão anti-IA (issue #73)" no fim
+> deste arquivo. A tabela abaixo fica como histórico.
+
 Paleta completa (não restrita a 1 acento): azul da marca extraído do
 logo real + acento terracota derivado dele + tinta quase-preta. Todo
 par abaixo já vem com contraste verificado (WCAG AA: ≥4.5:1 texto
@@ -48,6 +51,9 @@ contraste — não são cores inventadas soltas, são a marca esticada em
 uma escala.
 
 ## Tipografia
+
+> Superado: desde a issue #73 os títulos são Bricolage Grotesque e o texto
+> é Lexend. Ver a seção "Azul aceso e revisão anti-IA" no fim do arquivo.
 
 - **Títulos:** Fraunces (serifada suave, peso 500/600). Contraste
   serifa+sans com o corpo — não duas sans parecidas.
@@ -330,3 +336,100 @@ Guidelines da Vercel.
   `touch-action: manipulation`.
 - Campos de e-mail com `spellCheck={false}`; login do painel compacto no
   celular (só o logo no topo, formulário na primeira tela).
+
+## Azul aceso e revisão anti-IA (issue #73, 2026-09-25)
+
+**Esta seção é a fonte de verdade de cor, tipografia, forma e motion.**
+Supera as tabelas de "Cor" e "Tipografia" do topo do arquivo e as partes
+de motion da "Camada rica" (ticker, flutuação, parallax, 3D do mouse,
+fade no scroll), que ficam como histórico.
+
+Duas decisões do usuário: (1) a direção de cor A, escolhida numa
+comparação lado a lado, porque o site estava "com cores muito simples e
+sem vida" — a maior área colorida era o marinho `#123F5C`, escuro e pouco
+saturado (OKLCH L 0,35, C 0,07), e o site tinha se afastado do azul do
+logo; (2) revisar tudo com skills dedicadas a tirar a "cara de IA"
+(avoid-ai-design, taste-skill, hallmark, frontend-design, impeccable),
+"nem que mude muita coisa".
+
+### Paleta
+
+| Token | Hex | Papel | Contraste |
+|---|---|---|---|
+| `--blue-dark` | `#0067AB` | Azul vivo: hero, aberturas, faixa final, botões, links | branco 5,95:1; céu 4,88:1 como texto sobre ele |
+| `--blue-deep` | `#0C3654` | Marinho: rodapé, barra do topo, barra do painel, disco dos emblemas | branco 12,6:1 |
+| `--blue` | `#4590BF` | Cor do logo; só decorativo | — |
+| `--blue-glow` | `#CBEEFF` | Texto pequeno claro sobre azul vivo e marinho | 4,88:1 no vivo |
+| `--surface-tint` | `#CBEEFF` | Céu: fundo claro com cor (doutora, ficha prática, grupos) | tinta 13,1:1; muted 5,4:1 |
+| `--terracotta-tint` | `#FFE6DC` | Pêssego: fundo claro quente (primeira consulta) | tinta 13,4:1; muted 5,5:1 |
+| `--terracotta` | `#F27D72` | Coral: faixa de urgência, anel das fotos, arco dos passos | tinta 6,1:1 |
+| `--terracotta-text` | `#B24039` | Coral para texto/ícone sobre claro | branco 5,7:1 |
+| `--terracotta-soft` | `#FEBFB4` | Coral claro: só ícone/arco sobre azul | 3,8:1 no vivo (não é texto) |
+| `--ink` | `#1A222E` | Texto (neutro puxado para o azul da marca) | 16:1 |
+| `--ink-muted` | `#515F6E` | Texto secundário | 6,5:1 no branco |
+
+O coral saiu do tom `#E2805E`, que era quase idêntico ao `#D97757` que a
+frontend-design e a avoid-ai-design apontam como acento-padrão de IA.
+Amarelo ficou de fora de propósito: em clínica odontológica lembra dente
+amarelado.
+
+**Ritmo da Home:** azul vivo → coral → céu → branco → pêssego → branco →
+céu → azul vivo → marinho. Página clara com abertura e fechamento em cor
+de marca; nenhuma seção escura "solta" no meio.
+
+### Tipografia
+
+- **Títulos:** Bricolage Grotesque (variável, eixo de tamanho óptico),
+  peso 700 nos h1/h2, 600 nos h3. Grotesca com personalidade, fora das
+  listas de "fontes de IA" das skills.
+- **Texto:** Lexend (variável), desenhada para facilitar a leitura, com
+  zero comum. Atkinson Hyperlegible Next foi testada e descartada: o zero
+  cortado fazia horários e telefones parecerem "Ø9hØØ".
+- Saíram Fraunces e Inter, apontadas por três skills como a dupla padrão
+  de sites gerados. Arquivos em `app/fonts/` com as licenças OFL.
+- Sem palavra destacada dentro do título, sem itálico em título, sem
+  rótulo em caixa-alta.
+
+### Forma
+
+Regra única: **controles são pílula** (`rounded-full`: botões, chips,
+crachá, pausa); **blocos e mídia têm 24 px** (`rounded-3xl`); **campos
+têm 12 px** (`rounded-xl`). Cartões sem borda e sem sombra: separam por
+fundo (`--surface-sunken` sobre branco, branco sobre céu). Sombra só no
+que flutua de verdade: crachá do hero, retrato sobreposto, barra de
+contato do celular. Header sólido, sem vidro fosco.
+
+### Composição
+
+- **Ordem da Home** pelo que o paciente decide, não pela cascata de
+  landing page: hero → urgência → quem cuida (a doutora) → serviços →
+  primeira consulta → dúvidas → onde e quando → chamada final.
+- **Hero:** foto no arco com anel coral e crachá; sem selos flutuando,
+  sem manchas desfocadas, sem 3D. Rótulo de cidade em texto simples, não
+  em pílula.
+- **Faixa de urgência** (`UrgencyBar`) no lugar da faixa de fatos em
+  movimento: uma informação real e útil, com o número do WhatsApp.
+- **Depoimentos** só aparecem quando existe um real; os de exemplo ficam
+  no banco até a doutora trocar.
+- **Ícones de serviço** ao lado do título, sem círculo tingido; no bloco
+  grande, o ícone é a imagem (marca-d'água).
+- **Um rótulo por intenção:** todo botão de WhatsApp diz "Agendar pelo
+  WhatsApp"; todo link para o formulário diz "Enviar mensagem". Sem seta
+  anexada a botão.
+- **Rodapé** em três colunas (marca, páginas, contato); a lista de
+  serviços saiu (já está em `/servicos`).
+- Texto de marketing sem travessão; vírgula ou ponto no lugar.
+
+### Motion
+
+Um momento orquestrado só: a entrada do hero com o arco do sorriso se
+desenhando. Além dele, o arco que liga os três passos se desenha no
+scroll e o ícone de serviço responde ao hover. A barra de contato do
+celular usa IntersectionObserver, sem listener de scroll. Tudo desligado
+em `prefers-reduced-motion`.
+
+### Verificação
+
+- avoid-ai-design (scanner): 7 achados antes, 0 depois.
+- impeccable (detector no navegador): Home sem nenhum achado.
+- Zero overflow a 375 px em todas as páginas públicas.

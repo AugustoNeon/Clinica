@@ -60,6 +60,10 @@ o usuário achou o redesign "minimalista até demais"; site e painel
 ganharam azul profundo drenched, textura de arcos, divisores curvos,
 ícones ilustrados por serviço e fotos em camadas (ver `DESIGN.md` →
 "Camada rica").
+**Azul aceso e revisão anti-IA (issue #73, 2026-09-25):** paleta com o
+azul do logo aceso (`#0067AB`), céu, pêssego e coral; Bricolage
+Grotesque + Lexend no lugar de Fraunces + Inter; Home reordenada e
+efeitos de "página gerada" removidos (ver `DESIGN.md`).
 
 ## Stack
 
@@ -508,6 +512,20 @@ jamais a prosa:
 
 ## Decisões fechadas
 
+- 2026-09-25: Paleta "azul aceso" e tipografia Bricolage Grotesque +
+  Lexend (issue #73), superando a decisão de 2026-08-05 (Fraunces + Inter,
+  azul `#4590BF` + terracota `#E2805E`) e o marinho dominante da #71. Por
+  que: o usuário achou o site "sem vida" e escolheu a direção A numa
+  comparação visual; depois pediu revisão com skills anti-"cara de IA"
+  mesmo que mudasse muito. Três delas apontam Fraunces + Inter como a
+  dupla padrão de sites gerados e o terracota perto de `#D97757` como
+  acento-padrão; o marinho `#123F5C` media L 0,35 / C 0,07 em OKLCH.
+  Também saíram, pelo mesmo motivo: faixa de fatos em movimento, selos
+  flutuando e 3D do mouse no hero, manchas desfocadas, fade em toda
+  seção, ícone em quadrado tingido, cartão com borda e sombra, seta em
+  botão, depoimento de exemplo em destaque. Fontes self-hosted (OFL) em
+  `app/fonts/`, mantendo a decisão de 2026-08-03 de não depender de rede
+  no build. Custo aceito: identidade tipográfica nova para a clínica.
 - 2026-09-25: Sistema visual ampliado (issue #71) em vez de mantido
   "contido" — o usuário avaliou o resultado da #65 como minimalista
   demais. Entraram 3 tokens (`--blue-deep`, `--blue-glow`,
