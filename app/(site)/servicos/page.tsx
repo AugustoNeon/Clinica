@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { CtaBand } from "@/components/sections/CtaBand";
 import { ServiceList } from "@/components/sections/ServiceList";
+import { HeroEmblem } from "@/components/ui/HeroEmblem";
 import { PageHero } from "@/components/ui/PageHero";
+import { IconTooth } from "@/components/ui/serviceIcons";
 import { getServices } from "@/lib/data/services";
 import { getSiteSettingsMap } from "@/lib/data/siteSettings";
 
@@ -19,6 +21,11 @@ export default async function ServicosPage() {
       <PageHero
         title="Serviços e especialidades"
         lead="Tudo o que a clínica atende, organizado pelo que você está procurando. Em dúvida sobre qual é o seu caso? A avaliação inicial resolve isso."
+        visual={
+          <HeroEmblem>
+            <IconTooth width={128} height={128} strokeWidth={1.25} />
+          </HeroEmblem>
+        }
       />
 
       <ServiceList services={services} />

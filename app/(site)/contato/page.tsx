@@ -3,6 +3,7 @@ import { ContactForm } from "@/components/sections/ContactForm";
 import { PracticalInfo } from "@/components/sections/PracticalInfo";
 import { buttonClasses } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
+import { HeroEmblem } from "@/components/ui/HeroEmblem";
 import { IconClock, IconMail, IconPhone, IconWhatsApp } from "@/components/ui/icons";
 import { PageHero } from "@/components/ui/PageHero";
 import { getServices } from "@/lib/data/services";
@@ -24,6 +25,11 @@ export default async function ContatoPage() {
       <PageHero
         title="Vamos conversar?"
         lead="O caminho mais rápido é o WhatsApp. Se preferir, ligue ou deixe uma mensagem pelo formulário — a clínica responde no horário de atendimento."
+        visual={
+          <HeroEmblem>
+            <IconWhatsApp width={112} height={112} />
+          </HeroEmblem>
+        }
       >
         <a
           href={whatsappHref}

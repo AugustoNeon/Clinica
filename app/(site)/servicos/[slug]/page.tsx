@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { CtaBand } from "@/components/sections/CtaBand";
 import { buttonClasses } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
+import { HeroEmblem } from "@/components/ui/HeroEmblem";
 import { IconArrowRight, IconWhatsApp } from "@/components/ui/icons";
 import { PageHero } from "@/components/ui/PageHero";
 import { ServiceIcon } from "@/components/ui/serviceIcons";
@@ -82,12 +83,9 @@ export default async function ServicoPage({ params }: ServicoPageProps) {
         kicker={group?.title ?? service.category ?? undefined}
         back={{ href: "/servicos", label: "Todos os serviços" }}
         visual={
-          <div className="flex justify-center lg:justify-end">
-            <span className="float relative inline-flex h-56 w-56 items-center justify-center rounded-full bg-blue-dark/60 text-white shadow-2xl shadow-blue-deep/60 ring-1 ring-white/15">
-              <span aria-hidden className="absolute -inset-4 rounded-full border-2 border-terracotta-soft/50" />
-              <ServiceIcon slug={service.slug} width={128} height={128} strokeWidth={1.25} />
-            </span>
-          </div>
+          <HeroEmblem>
+            <ServiceIcon slug={service.slug} width={128} height={128} strokeWidth={1.25} />
+          </HeroEmblem>
         }
       />
 
@@ -110,7 +108,7 @@ export default async function ServicoPage({ params }: ServicoPageProps) {
             <div aria-hidden className="pattern-arcs pointer-events-none absolute inset-0" />
             <div className="relative">
               <h3 className="text-xl font-medium text-white sm:text-2xl">Vale para o meu caso?</h3>
-              <p className="mt-2 text-base leading-relaxed text-white/85">
+              <p className="mt-2 text-base leading-relaxed text-white/90">
                 Só a avaliação responde isso. Ela inclui exame clínico, conversa
                 sobre o que você espera e, quando necessário, exames de imagem —
                 e termina com um plano explicado etapa por etapa.

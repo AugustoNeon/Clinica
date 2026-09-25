@@ -5,6 +5,7 @@ import { CtaBand } from "@/components/sections/CtaBand";
 import { PracticalInfo } from "@/components/sections/PracticalInfo";
 import { buttonClasses } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
+import { HeroEmblem } from "@/components/ui/HeroEmblem";
 import { IconArrowRight, IconHeart, IconShield, IconSparkle } from "@/components/ui/icons";
 import { PageHero } from "@/components/ui/PageHero";
 import { PlaceholderNotice } from "@/components/ui/PlaceholderNotice";
@@ -49,6 +50,17 @@ export default async function SobrePage() {
       <PageHero
         title="Um consultório, uma profissional, o seu sorriso"
         lead="Odontologia clínica e estética em Araucária (PR), com atendimento humanizado e personalizado em todas as especialidades."
+        visual={
+          <HeroEmblem>
+            <Image
+              src="/images/logo/icon-smile.png"
+              alt=""
+              width={512}
+              height={512}
+              className="h-32 w-32 brightness-0 invert"
+            />
+          </HeroEmblem>
+        }
       />
 
       <section className="relative overflow-hidden py-14 sm:py-20 lg:py-24">
@@ -147,9 +159,10 @@ export default async function SobrePage() {
             {["Fachada", "Recepção", "Consultório"].map((label) => (
               <div
                 key={label}
-                className="pattern-arcs-blue flex aspect-[4/3] items-end rounded-3xl border border-dashed border-blue/40 bg-surface-tint p-5"
+                className="relative flex aspect-[4/3] items-end overflow-hidden rounded-3xl border border-dashed border-blue/40 bg-surface-tint p-5"
               >
-                <span className="text-sm font-medium text-ink">{label} — foto em breve</span>
+                <div aria-hidden className="pattern-arcs-blue pointer-events-none absolute inset-0" />
+                <span className="relative text-sm font-medium text-ink">{label} — foto em breve</span>
               </div>
             ))}
           </div>

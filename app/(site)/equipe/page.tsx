@@ -4,6 +4,7 @@ import Link from "next/link";
 import { CtaBand } from "@/components/sections/CtaBand";
 import { buttonClasses } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
+import { HeroEmblem } from "@/components/ui/HeroEmblem";
 import { IconWhatsApp } from "@/components/ui/icons";
 import { PageHero } from "@/components/ui/PageHero";
 import { PlaceholderNotice } from "@/components/ui/PlaceholderNotice";
@@ -38,6 +39,11 @@ export default async function EquipePage() {
       <PageHero
         title="Quem vai cuidar de você"
         lead="Uma única profissional acompanha o seu tratamento do início ao fim: quem avalia é quem trata."
+        visual={
+          <HeroEmblem variant="photo">
+            <Image src={SECOND_PHOTO} alt="" fill sizes="14rem" className="object-cover object-top" />
+          </HeroEmblem>
+        }
       />
 
       <section className="relative overflow-hidden py-14 sm:py-20 lg:py-24">

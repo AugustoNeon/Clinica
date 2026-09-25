@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CtaBand } from "@/components/sections/CtaBand";
 import { Container } from "@/components/ui/Container";
-import { IconArrowRight } from "@/components/ui/icons";
+import { HeroEmblem } from "@/components/ui/HeroEmblem";
+import { IconArrowRight, IconPen } from "@/components/ui/icons";
 import { PageHero } from "@/components/ui/PageHero";
 import { PlaceholderNotice } from "@/components/ui/PlaceholderNotice";
 import { getBlogPosts } from "@/lib/data/blogPosts";
@@ -30,6 +31,11 @@ export default async function BlogPage() {
       <PageHero
         title="Blog"
         lead="Orientações práticas sobre saúde bucal, prevenção e o que esperar de cada tratamento — no mesmo tom da consulta."
+        visual={
+          <HeroEmblem>
+            <IconPen width={112} height={112} strokeWidth={1.25} />
+          </HeroEmblem>
+        }
       />
 
       <section className="py-14 sm:py-20 lg:py-24">
