@@ -29,7 +29,7 @@ export default function AdminLoginPage() {
           aria-hidden
           className="pointer-events-none absolute -left-24 -top-24 h-80 w-80 rounded-full bg-blue-dark/80 blur-3xl"
         />
-        <div className="relative flex h-full flex-col px-6 py-8 sm:px-10 lg:py-12">
+        <div className="relative flex h-full flex-col px-6 py-6 sm:px-10 sm:py-8 lg:py-12">
           <Image
             src="/images/logo/logo-horizontal-white.png"
             alt="Dra. Ariane Vaz Storrer"
@@ -38,7 +38,7 @@ export default function AdminLoginPage() {
             priority
             className="h-10 w-auto self-start"
           />
-          <div className="mt-10 max-w-md lg:mt-auto">
+          <div className="mt-6 max-w-md max-lg:hidden lg:mt-auto">
             <p className="font-display text-3xl font-medium leading-tight sm:text-4xl">
               Te ajudo a sorrir com confiança
             </p>

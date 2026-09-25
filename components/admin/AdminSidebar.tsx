@@ -75,7 +75,7 @@ export function AdminSidebar({ email, badges = {} }: AdminSidebarProps) {
 
       {adminNavGroups.map((group) => (
         <div key={group.label} className="mt-6">
-          <p className="px-3 text-xs font-semibold uppercase tracking-wide text-blue-glow">{group.label}</p>
+          <p className="px-3 text-xs font-semibold text-blue-glow">{group.label}</p>
           <ul className="mt-1.5 space-y-0.5">
             {group.items.map((item) => {
               const Icon = ADMIN_ICONS[item.icon];

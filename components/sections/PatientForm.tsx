@@ -51,6 +51,7 @@ export function PatientForm({ patient, action, submitLabel }: PatientFormProps) 
               id="email"
               name="email"
               type="email"
+              spellCheck={false}
               inputMode="email"
               autoComplete="off"
               defaultValue={patient?.email ?? ""}
