@@ -4,22 +4,25 @@ import { SITE_DESCRIPTION, SITE_NAME, SITE_SHORT_NAME, SITE_URL } from "@/lib/co
 import "./globals.css";
 
 /*
- * Tipografia (DESIGN.md): Fraunces nos titulos, Inter no corpo. Self-hosted
- * com `next/font/local` a partir dos .woff2 versionados em `app/fonts/` — o
- * build continua sem depender de rede de terceiro, que era a objecao que
- * tinha barrado `next/font/google` em 2026-08-03.
+ * Tipografia (DESIGN.md, issue #73): Bricolage Grotesque nos titulos (eixo de
+ * tamanho optico + peso) e Lexend no texto (desenhada para facilitar a
+ * leitura, com zero comum nos telefones e horarios). Trocou
+ * Fraunces + Inter, que as skills de revisao anti-IA apontam como a dupla
+ * padrao de sites gerados. Self-hosted com `next/font/local` a partir dos
+ * .woff2 versionados em `app/fonts/` (licencas OFL ao lado): o build nao
+ * depende de rede de terceiro (decisao de 2026-08-03).
  */
-const fraunces = localFont({
-  src: "./fonts/Fraunces-Variable.woff2",
-  variable: "--font-fraunces",
-  weight: "400 700",
+const heading = localFont({
+  src: "./fonts/BricolageGrotesque-Variable.woff2",
+  variable: "--font-heading",
+  weight: "200 800",
   display: "swap",
 });
 
-const inter = localFont({
-  src: "./fonts/Inter-Variable.woff2",
-  variable: "--font-inter",
-  weight: "400 700",
+const body = localFont({
+  src: "./fonts/Lexend-Variable.woff2",
+  variable: "--font-body",
+  weight: "100 900",
   display: "swap",
 });
 
@@ -62,7 +65,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   // Cor da barra do navegador no celular: azul da marca em tom AA.
-  themeColor: "#1d6a96",
+  themeColor: "#0067ab",
 };
 
 /**
@@ -76,7 +79,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${inter.variable} ${fraunces.variable} h-full antialiased`}>
+    <html lang="pt-BR" className={`${body.variable} ${heading.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );

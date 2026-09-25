@@ -4,7 +4,7 @@ export type ButtonVariant = "primary" | "secondary" | "inverse" | "ghost" | "acc
 export type ButtonSize = "md" | "lg";
 
 const BASE =
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl font-medium transition duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark";
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-full font-semibold transition duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark";
 
 const SIZES: Record<ButtonSize, string> = {
   md: "px-5 py-2.5 text-sm",
@@ -30,14 +30,14 @@ const SIZES: Record<ButtonSize, string> = {
  */
 const VARIANTS: Record<ButtonVariant, string> = {
   primary:
-    "bg-blue-dark text-white shadow-sm shadow-blue-dark/20 hover:brightness-90 hover:shadow-md hover:shadow-blue-dark/25 active:brightness-90",
+    "bg-blue-dark text-white hover:bg-blue-deep active:translate-y-px",
   secondary: "border border-ink/20 bg-surface text-ink hover:border-blue hover:bg-surface-tint",
   inverse:
-    "bg-surface text-blue-dark shadow-md shadow-blue-deep/30 hover:bg-surface-tint hover:shadow-lg focus-visible:outline-white",
+    "bg-surface text-blue-dark hover:bg-surface-tint active:translate-y-px focus-visible:outline-white",
   "outline-inverse":
     "border border-white/40 text-white hover:border-white hover:bg-white/10 focus-visible:outline-white",
   accent:
-    "bg-terracotta text-ink shadow-sm shadow-terracotta/30 hover:brightness-95 hover:shadow-md hover:shadow-terracotta/40 active:brightness-95",
+    "bg-terracotta text-ink hover:brightness-95 active:translate-y-px",
   ghost: "text-blue-dark hover:bg-surface-tint",
 };
 

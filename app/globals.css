@@ -1,48 +1,51 @@
 @import "tailwindcss";
 
 /*
- * Identidade visual da clinica (Fase 3). Os valores abaixo saem da tabela de
- * tokens do DESIGN.md, que ja traz o contraste WCAG AA verificado de cada par.
- * Nao inventar combinacao nova: `--blue` nao serve para texto pequeno sobre
- * branco (3.3:1) — para isso existe `--blue-dark`; mesma logica entre
- * `--terracotta` (preenchimento) e `--terracotta-text` (texto/icone).
+ * Identidade visual da clinica. Os valores abaixo saem da tabela de tokens
+ * do DESIGN.md, que traz o contraste WCAG AA verificado de cada par.
  *
- * Camada rica (issue #71): `--blue-deep` e o fundo "drenched" do hero, dos
- * blocos de destaque e do rodape (branco por cima da 11:1); `--blue-glow` e
- * `--terracotta-soft` sao as versoes claras do azul e do terracota para texto
- * pequeno e icones SOBRE o azul profundo (6.9:1 e 5.6:1). Nenhum deles vai
- * sobre fundo claro.
+ * Direcao A, "azul aceso" (issue #73, 2026-09-25): o azul do logo com mais
+ * saturacao (`--blue-dark` #0067AB) carrega o hero, as aberturas, a faixa
+ * final e os botoes; o marinho (`--blue-deep` #0C3654) fica para rodape,
+ * barra do painel e textos fortes; ceu (#CBEEFF) e pessego (#FFE6DC) sao os
+ * fundos claros com cor; coral (#F27D72) e o unico acento quente — puxado
+ * para longe do tom-padrao de IA #D97757. Neutros puxados para o azul da
+ * marca, nao para o quente.
+ *
+ * Regras de contraste que valem em qualquer componente:
+ * - `--blue` (logo) nao carrega texto pequeno; `--blue-dark` carrega.
+ * - `--terracotta` e preenchimento (tinta por cima); `--terracotta-text` e a
+ *   versao para texto/icone sobre claro.
+ * - Sobre o azul vivo, texto pequeno claro e branco ou `--blue-glow` (ceu,
+ *   4.9:1); `--terracotta-soft` so em icone/arco sobre azul (3.8:1 no vivo).
  */
 
 /*
  * Sem dark mode — decisao fechada em DESIGN.md ("Tema"): o site e so claro.
  * Ancorar a variante `dark:` numa classe que o projeto nunca aplica neutraliza
- * as utilities `dark:` remanescentes em vez de deixa-las reagir ao tema do SO
- * (o que, sem o bloco de cores escuras, produziria texto claro sobre fundo
- * claro).
+ * as utilities `dark:` remanescentes.
  */
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --surface: #ffffff;
-  --surface-tint: #eaf5fd;
-  --ink: #231f20;
-  --ink-muted: #696160;
+  --surface-tint: #cbeeff;
+  --ink: #1a222e;
+  --ink-muted: #515f6e;
   --blue: #4590bf;
-  --blue-dark: #1d6a96;
-  --blue-deep: #123f5c;
-  --blue-glow: #9ad3f2;
-  --terracotta: #e2805e;
-  --terracotta-text: #b8492e;
-  --terracotta-tint: #ffeae3;
-  --terracotta-soft: #f3a583;
+  --blue-dark: #0067ab;
+  --blue-deep: #0c3654;
+  --blue-glow: #cbeeff;
+  --terracotta: #f27d72;
+  --terracotta-text: #b24039;
+  --terracotta-tint: #ffe6dc;
+  --terracotta-soft: #febfb4;
   /* Fundo "rebaixado" do painel admin: os paineis brancos flutuam sobre ele. */
   --surface-sunken: #f3f7fa;
 
   /*
    * Escala semantica de z-index (issue #65). Nunca usar numero solto:
-   * header fixo < painel do menu mobile. Tooltips/modais entram aqui quando
-   * existirem.
+   * header fixo < painel do menu mobile.
    */
   --z-header: 40;
   --z-overlay: 50;
@@ -63,9 +66,13 @@
   --color-terracotta-soft: var(--terracotta-soft);
   --color-surface-sunken: var(--surface-sunken);
 
-  /* As duas variaveis vem do next/font/local em app/layout.tsx. */
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  /*
+   * Tipografia (issue #73): Bricolage Grotesque nos titulos (grotesca com
+   * tamanho optico e personalidade) e Lexend no texto (desenhada para
+   * facilitar a leitura; pacientes de todas as idades). As variaveis vem do next/font/local em app/layout.tsx.
+   */
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
 
   /* Easing unico do site (DESIGN.md → Motion): ease-out expo, sem bounce. */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -79,20 +86,27 @@ html {
   touch-action: manipulation;
 }
 
+/* Nunca rolagem horizontal; `clip` (e nao `hidden`) nao quebra o header sticky. */
+html,
+body {
+  overflow-x: clip;
+}
+
 body {
   background: var(--surface);
   color: var(--ink);
-  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
 }
 
-/* Titulos em Fraunces (serifada) contra o corpo em Inter — DESIGN.md. */
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-fraunces), ui-serif, Georgia, serif;
+  font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+  font-optical-sizing: auto;
+  letter-spacing: -0.015em;
 }
 
 h1,
@@ -115,11 +129,11 @@ p {
   left: 0.75rem;
   z-index: calc(var(--z-overlay) + 1);
   transform: translateY(-200%);
-  border-radius: 0.75rem;
+  border-radius: 999px;
   background: var(--blue-dark);
   padding: 0.625rem 1rem;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   color: #fff;
   transition: transform 150ms var(--ease-out-expo);
 }
@@ -133,9 +147,8 @@ p {
 /*
  * Textura da marca (issue #71): fileiras de arcos do sorriso, em tijolo,
  * desenhadas em SVG inline. E o mesmo traco do logo repetido — nao e um
- * padrao generico de pontos. So sobre azul (hero, aberturas, depoimentos,
- * faixa final, rodape, barra do painel): nos fundos claros ela virava papel
- * de parede (critique de 2026-09-25). Opacidade baixa de proposito.
+ * padrao generico de pontos. So sobre azul (hero, aberturas, faixa final,
+ * rodape, barra do painel). Opacidade baixa de proposito.
  */
 .pattern-arcs {
   background-image:
@@ -145,14 +158,17 @@ p {
   background-position:
     0 0,
     32px 16px;
-  opacity: 0.07;
+  opacity: 0.08;
 }
 
 /*
- * Entrada suave do hero (coreografia unica do site — DESIGN.md pede
- * microinteracao, nao coreografia em toda secao). O conteudo ja esta visivel
- * no primeiro frame: a animacao so parte de uma leve translacao/opacidade e
- * nunca "esconde" nada se o JS ou a animacao falhar.
+ * Motion (revisao anti-IA, issue #73): um unico momento orquestrado — a
+ * entrada do hero (`.rise-in`) com o arco do sorriso se desenhando — mais o
+ * arco dos passos que se desenha no scroll (liga uma sequencia real) e a
+ * resposta do icone de servico ao hover. Saiu o "fade-up em toda secao", o
+ * parallax, a flutuacao, o 3D do mouse e a faixa em movimento: eram o
+ * pacote de efeitos que as skills de revisao apontam como padrao de IA.
+ * O conteudo esta sempre visivel no primeiro frame.
  */
 @keyframes rise-in {
   from {
@@ -170,120 +186,7 @@ p {
   animation-delay: var(--rise-delay, 0ms);
 }
 
-/*
- * Flutuacao dos selos do hero e dos emblemas das internas (issue #71): um
- * unico movimento lento depois do carregamento, que assenta e para. Fica
- * abaixo de 5 s de proposito — movimento automatico mais longo que isso,
- * ao lado de conteudo, exige controle de pausa (WCAG 2.2.2). `--float-delay`
- * desencontra os selos. Usa a propriedade `translate` (nao `transform`)
- * para somar com o `translateZ` das camadas do TiltFrame.
- */
-@keyframes float {
-  0%,
-  100% {
-    translate: 0 0;
-  }
-  50% {
-    translate: 0 -10px;
-  }
-}
-
-.float {
-  animation: float 3.6s ease-in-out 1 both;
-  animation-delay: calc(700ms + var(--float-delay, 0ms));
-}
-
-/*
- * Faixa de fatos em movimento continuo (issue #71). O conteudo e duplicado
- * no markup (segunda copia `aria-hidden`) e a trilha anda -50%: o loop fecha
- * sem salto. Pausa pelo botao (`data-paused`, WCAG 2.2.2), com o mouse em
- * cima e com foco dentro. No celular fica parada e quebra em linhas: texto
- * andando e dificil de ler rolando com o polegar.
- */
-@keyframes ticker {
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-.ticker {
-  overflow: hidden;
-  /* Some antes do botao de pausa (canto direito), para o texto nao passar por baixo. */
-  mask-image: linear-gradient(to right, transparent, #000 6%, #000 86%, transparent 95%);
-}
-
-.ticker-track {
-  display: flex;
-  width: max-content;
-  animation: ticker 48s linear infinite;
-}
-
-.ticker:hover .ticker-track,
-.ticker:focus-within .ticker-track,
-.ticker[data-paused] .ticker-track {
-  animation-play-state: paused;
-}
-
-@media (max-width: 639px) {
-  .ticker {
-    mask-image: none;
-  }
-
-  .ticker-track {
-    animation: none;
-    width: auto;
-    flex-wrap: wrap;
-  }
-
-  .ticker-copy {
-    display: none;
-  }
-}
-
-/*
- * Revelacao ao rolar, em CSS puro (scroll-driven animations). Progressive
- * enhancement: navegador sem `animation-timeline` mostra tudo parado, como
- * sempre foi. O intervalo e em pixels de entrada (nao em % do elemento)
- * para uma secao alta e um item pequeno terem a mesma sensacao.
- */
 @supports (animation-timeline: view()) {
-  @keyframes reveal-in {
-    from {
-      opacity: 0;
-      transform: translateY(28px);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-
-  .reveal {
-    animation: reveal-in linear both;
-    animation-timeline: view();
-    animation-range: entry 0px entry 260px;
-  }
-
-  /*
-   * Parallax leve das formas decorativas (issue #71): enquanto a secao
-   * atravessa a viewport, a forma desloca de `--drift-from` ate
-   * `--drift-to`. So em elementos `aria-hidden`; texto nunca deriva.
-   */
-  @keyframes drift {
-    from {
-      translate: 0 var(--drift-from, 40px);
-    }
-    to {
-      translate: 0 var(--drift-to, -40px);
-    }
-  }
-
-  .drift {
-    animation: drift linear both;
-    animation-timeline: view();
-    animation-range: entry 0% exit 100%;
-  }
-
   /* Arco que liga os tres passos: desenha-se conforme a secao entra. */
   @keyframes draw-on-scroll {
     to {
@@ -300,39 +203,6 @@ p {
   }
 }
 
-/*
- * Moldura 3D do hero (components/ui/TiltFrame.tsx). As variaveis sao
- * escritas pelo componente a cada movimento do mouse; sem JS ficam no
- * padrao e a moldura e uma div comum. Os filhos com `.tilt-layer` ganham
- * profundidade propria (`--depth`, em px) e acompanham a inclinacao.
- */
-.tilt {
-  transform: perspective(1100px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
-  transform-style: preserve-3d;
-  transition: transform 500ms var(--ease-out-expo);
-  will-change: transform;
-}
-
-.tilt-layer {
-  transform: translateZ(var(--depth, 0px));
-}
-
-.tilt-glare::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  border-radius: inherit;
-  background: radial-gradient(
-    circle at var(--glare-x, 50%) var(--glare-y, 50%),
-    rgba(255, 255, 255, 0.28),
-    transparent 60%
-  );
-  opacity: var(--glare-opacity, 0);
-  transition: opacity 400ms var(--ease-out-expo);
-  pointer-events: none;
-}
-
 /* Arco do sorriso sob o titulo do hero: desenha-se uma vez, no carregamento. */
 @keyframes draw-arc {
   to {
@@ -347,9 +217,8 @@ p {
 }
 
 /*
- * Icone de servico responde ao hover do cartao (issue #71): inclina e cresce
- * um pouco. Os icones sao preenchidos (Griddy Icons), entao nao ha traco para
- * redesenhar; a resposta e ao gesto da pessoa, nao decoracao solta.
+ * Icone de servico responde ao hover/foco do cartao: inclina e cresce um
+ * pouco. Resposta ao gesto da pessoa, nao decoracao solta.
  */
 .service-icon {
   transition: transform 300ms var(--ease-out-expo);
@@ -375,8 +244,8 @@ details.faq[open] > summary .faq-chevron {
 }
 
 /*
- * Acessibilidade: quem pede menos movimento nao recebe transicao nenhuma —
- * a mudanca de cor acontece de forma instantanea (PRODUCT.md, DESIGN.md).
+ * Acessibilidade: quem pede menos movimento nao recebe transicao nenhuma
+ * (PRODUCT.md, DESIGN.md).
  */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -388,42 +257,14 @@ details.faq[open] > summary .faq-chevron {
     scroll-behavior: auto !important;
   }
 
-  /* Sem revelacao por scroll, sem flutuacao, sem parallax: tudo parado e visivel. */
-  .reveal,
   .smile-arc,
-  .float,
-  .drift,
   .draw-on-scroll {
     animation: none !important;
+    stroke-dashoffset: 0;
   }
 
   .group:hover .service-icon,
   .group:focus-visible .service-icon {
     transform: none;
-  }
-
-  .smile-arc,
-  .draw-on-scroll {
-    stroke-dashoffset: 0;
-  }
-
-  /* A faixa de fatos para de andar e mostra os itens em linhas; a copia some. */
-  .ticker {
-    mask-image: none;
-  }
-
-  .ticker-track {
-    animation: none !important;
-    width: auto;
-    flex-wrap: wrap;
-  }
-
-  .ticker-copy,
-  .ticker-toggle {
-    display: none !important;
-  }
-
-  .tilt {
-    transform: none !important;
   }
 }
