@@ -407,8 +407,9 @@ contato do celular. Header sólido, sem vidro fosco.
 - **Hero:** foto no arco com anel coral e crachá; sem selos flutuando,
   sem manchas desfocadas, sem 3D. Rótulo de cidade em texto simples, não
   em pílula.
-- **Faixa de urgência** (`UrgencyBar`) no lugar da faixa de fatos em
-  movimento: uma informação real e útil, com o número do WhatsApp.
+- ~~**Faixa de urgência** (`UrgencyBar`) no lugar da faixa de fatos em
+  movimento~~: revertido a pedido do usuário. Voltou a faixa de fatos em
+  movimento (`FactsBand`), com o botão de urgência parado ao lado.
 - **Depoimentos** só aparecem quando existe um real; os de exemplo ficam
   no banco até a doutora trocar.
 - **Ícones de serviço** ao lado do título, sem círculo tingido; no bloco
@@ -422,6 +423,9 @@ contato do celular. Header sólido, sem vidro fosco.
 
 ### Motion
 
+> Superado pela seção "Movimento, hover e dente 3D" logo abaixo: o
+> usuário pediu de volta as animações e o 3D. Fica como histórico.
+
 Um momento orquestrado só: a entrada do hero com o arco do sorriso se
 desenhando. Além dele, o arco que liga os três passos se desenha no
 scroll e o ícone de serviço responde ao hover. A barra de contato do
@@ -433,3 +437,61 @@ em `prefers-reduced-motion`.
 - avoid-ai-design (scanner): 7 achados antes, 0 depois.
 - impeccable (detector no navegador): Home sem nenhum achado.
 - Zero overflow a 375 px em todas as páginas públicas.
+
+## Movimento, hover e dente 3D (issue #73, 2026-09-25)
+
+**Fonte de verdade de motion e 3D.** Supera o "Motion" da seção anterior
+e o item "sem 3D" do hero. O usuário achou que muitas animações tinham
+saído ("animações de passar o mouse", "elementos 3D") e pediu de volta,
+mais um dente 3D. O que as skills anti-IA apontam continua fora: mancha
+desfocada, fade igual em toda seção, card que pula sem sombra coerente.
+
+### O que voltou e como
+
+| Efeito | Onde | Como |
+|---|---|---|
+| Faixa de fatos em movimento | Home, abaixo do hero | `FactsBand`: loop só com `transform`, velocidade constante (6 s por fato), para fora da tela. Fonte Lexend média, não a dos títulos. **Sem botão de pausa visível** (o usuário achou feio): pausa com o mouse em cima, com um toque, com Enter ou foco do teclado |
+| Moldura 3D que segue o mouse | Hero da Home | `TiltFrame` com camadas em profundidade: disco marinho (-70 px), anel coral (-30 px), foto com brilho, crachá (+40 px), dente 3D (+80 px) |
+| Cartão que sobe no hover | Serviços (Home e `/servicos`) | `.lift`: sobe 6 px e ganha sombra azulada só no hover e só com mouse. Parado continua sem sombra e sem borda |
+| Botões | Todos | sobem 2 px com sombra da própria cor no hover; voltam no clique |
+| Revelação ao rolar | Listas, FAQ, ficha prática, depoimentos, chamada final | `.reveal` em CSS puro (scroll-driven), com atraso por item (`--reveal-start`) para cartões lado a lado não subirem juntos |
+| Foto que abre | Doutora (Home), Sobre, mapa | `.reveal-photo`: `clip-path` de baixo para cima com leve zoom de saída |
+| Formas que derivam | Atrás das fotos da doutora (Home, Sobre, Equipe) | `.drift`: círculos chapados (marinho, coral, céu), nunca desfocados |
+| Retrato sobreposto | Doutora (Home), Equipe | inclinado; endireita e cresce um pouco no hover |
+
+### Dente 3D
+
+- **Onde:** na frente da foto do hero da Home (camada mais próxima da
+  moldura 3D) e na abertura de `/servicos`, onde também aparece no celular.
+- **Modelo:** molar superior com três raízes, no formato da imagem de
+  referência enviada pelo usuário. Gerado por código (`components/three`):
+  uma função de distância (coroa bojuda, quatro cúspides, fossa central,
+  colo, raízes curvas) vira malha pelo `MarchingCubes` do three.js. Sem
+  arquivo de modelo, sem licença de terceiro. Esmalte branco acetinado,
+  raiz marfim, luz chave branca com preenchimento e contraluz céu. A
+  contraluz coral foi testada e saiu: no esmalte parecia mancha.
+- **Comportamento:** entra girando uma vez (1,6 s), depois só se mexe com
+  gesto da pessoa. Vira conforme a página rola, olha para o mouse e gira
+  arrastando (dedo ou mouse, com inércia). Nada gira sozinho sem parar, e
+  por isso não precisa de botão de pausa (o usuário pediu para tirar).
+- **Custo:** three.js (~142 KB gzip) só é baixado quando o dente chega a
+  300 px da tela, só no navegador (fora do bundle do Worker). O laço de
+  desenho só roda enquanto algo se mexe e o dente está visível. Tudo é
+  descartado ao sair da página. Geração da malha ~100 ms (84³ amostras,
+  ~25 mil triângulos).
+- **Acessibilidade:** decorativo (`aria-hidden`). Antes do 3D carregar, e
+  se faltar WebGL, aparece o ícone do dente no mesmo lugar. No toque,
+  `touch-action: pan-y` deixa a rolagem vertical livre. Com
+  `prefers-reduced-motion`: sem giro de entrada, sem seguir mouse nem
+  rolagem; arrastar continua.
+- **Armadilha do three.js (r163+):** com o ambiente em `scene.environment`,
+  a intensidade vem de `scene.environmentIntensity`; o `envMapIntensity` do
+  material é ignorado. Foi o que deixou o dente chapado e branco demais na
+  primeira versão.
+
+### Reduced motion
+
+`prefers-reduced-motion: reduce` desliga tudo acima: moldura sem
+inclinação, cartões sem subir, revelações e derivas paradas (conteúdo
+visível), faixa de fatos parada e quebrando em linhas, dente parado.
+Verificado por emulação no Edge headless.
