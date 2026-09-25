@@ -55,6 +55,11 @@ marca, sitemap, robots, manifest, OG image, JSON-LD e o workflow
 `supabase-keepalive`. Lista do que ainda falta antes de divulgar em
 `docs/checklist-pre-lancamento.md` (CRO, bio, depoimentos e post
 placeholder, MFA desligado, domínio).
+**Camada rica (issue #71, 2026-09-25, branch `design/camada-rica`):**
+o usuário achou o redesign "minimalista até demais"; site e painel
+ganharam azul profundo drenched, textura de arcos, divisores curvos,
+ícones ilustrados por serviço e fotos em camadas (ver `DESIGN.md` →
+"Camada rica").
 
 ## Stack
 
@@ -503,6 +508,18 @@ jamais a prosa:
 
 ## Decisões fechadas
 
+- 2026-09-25: Sistema visual ampliado (issue #71) em vez de mantido
+  "contido" — o usuário avaliou o resultado da #65 como minimalista
+  demais. Entraram 3 tokens (`--blue-deep`, `--blue-glow`,
+  `--terracotta-soft`, todos com contraste documentado no `DESIGN.md`),
+  a textura de arcos, o `SmileDivider`, 15 ícones próprios por serviço e
+  motion contínua (selos flutuando, faixa de fatos). Supera a regra "arco
+  do sorriso só em três lugares" da decisão de 2026-09-18. Por que: a
+  marca é "acolhedora e alegre" (PRODUCT.md) e o azul claro + muito
+  branco lia como clínica fria; a identidade (logo, Fraunces/Inter, arco)
+  continua a mesma, só a proporção de cor mudou. Continua sem foto de
+  banco de imagem. Custo aceito: mais CSS de motion para manter e um PR
+  grande de novo.
 - 2026-09-18: Redesign visual (issue #65) entregue num PR só (#66), muito
   acima do limite de 300 linhas do contrato — pedido explícito do usuário
   ("faça tudo que estiver ao seu alcance", "site odontológico completo,

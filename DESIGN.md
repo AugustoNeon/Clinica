@@ -132,6 +132,9 @@ Nenhum token de cor/tipo novo — só padrões de composição e movimento.
 
 ### Motivo gráfico: o arco do sorriso
 
+> Ampliado na issue #71: o arco também virou textura, divisor de seção e
+> desenho dos ícones — ver "Camada rica" no fim deste arquivo.
+
 Único ornamento do site, derivado da curva do logo. Aparece em três
 lugares, de propósito, e em nenhum outro:
 
@@ -223,3 +226,80 @@ painéis brancos flutuam.
 - **Início:** números reais (sem decoração), pendências calculadas do
   banco, próximas consultas e mensagens recentes — a "cara" do dia da
   doutora, não um índice de links.
+
+## Camada rica (issue #71, 2026-09-25)
+
+O usuário avaliou o resultado da #65/#67 como "minimalista até demais".
+Esta camada mantém a marca (azul do logo, Fraunces/Inter, arco do
+sorriso) e troca a **estratégia de cor**: de contida (fundos claros, azul
+só em botão) para **comprometida/drenched** (o azul profundo ocupa o hero,
+a abertura das internas, os depoimentos, o rodapé e a barra do painel).
+Supera a regra "arco do sorriso só em três lugares" da seção anterior: o
+arco agora também é textura, divisor de seção e desenho dos ícones.
+
+### Tokens novos
+
+| Token | Hex | Uso | Contraste |
+|---|---|---|---|
+| `--blue-deep` | `#123F5C` | Fundo drenched: hero, `PageHero`, depoimentos, rodapé, barra do painel | branco 11.1:1; `white/85` 8.5:1 |
+| `--blue-glow` | `#9AD3F2` | Texto pequeno/ícone azul **sobre** `--blue-deep` | 6.9:1 |
+| `--terracotta-soft` | `#F3A583` | Acento terracota **sobre** `--blue-deep` (ícones, estrelas, arco do h1) | 5.6:1 |
+
+Nenhum dos três vai sobre fundo claro. Sobre `--blue-dark` o texto
+secundário é `white/90` (5.1:1), não `white/85` (4.8:1, no limite).
+
+### Textura, divisor e ícones
+
+- **`.pattern-arcs` / `.pattern-arcs-blue`** (`globals.css`): fileiras de
+  arcos do logo em tijolo, SVG em data-URI. Branco a 7% sobre azul; azul a
+  12% sobre `--surface-tint`. É textura, não ilustração: sempre numa
+  `div aria-hidden` absoluta atrás do conteúdo.
+- **`SmileDivider`**: borda curva entre seções (o arco esticado na
+  largura). Pinta com a cor da seção de baixo; o rodapé o usa puxado com
+  margem negativa sobre a última seção.
+- **`serviceIcons.tsx`**: 15 ícones desenhados para os slugs de serviço
+  (dente base + o detalhe da especialidade), traço 1.75 igual aos ícones
+  de interface. Slug sem desenho recebe o dente base. `.draw-icon` refaz o
+  traço no hover do cartão.
+
+### Composição
+
+- **Home:** hero drenched com a foto num palco em camadas (disco azul,
+  anel terracota, foto, selos flutuantes, cada camada com `--depth` própria
+  no `TiltFrame`) → faixa terracota em movimento com os fatos → mosaico de
+  serviços (um bloco grande, cinco médios, bloco azul de chamada) →
+  doutora com duas fotos sobrepostas → três passos sobre o arco desenhado
+  → depoimentos em `--blue-deep` com um em destaque → FAQ em blocos
+  (aberto = tint + disco azul) → ficha prática em blocos brancos sobre tint
+  → faixa final com foto → rodapé.
+- **Internas:** `PageHero` drenched com o arco sob o h1 e slot `visual`
+  preenchido por `HeroEmblem` (disco azul, anel terracota, flutuando; só
+  a partir de `lg`): ícone do serviço em `/servicos/[slug]`, dente em
+  `/servicos`, glifo do logo em `/sobre`, retrato em `/equipe`, WhatsApp
+  em `/contato`, caneta em `/blog`. Grupos de `/servicos` numerados e
+  tintados; fotos em camadas em `/sobre` e `/equipe`.
+- **Header:** faixa fina em `--blue-deep` acima do menu, só a partir de
+  `lg`, com endereço, horário, telefone e Instagram.
+- **Painel:** barra lateral em `--blue-deep` (item ativo = pílula branca),
+  login dividido com painel de marca, início com faixa de saudação
+  drenched e números com ícone tintado por área. Continua registro
+  `product`: sem motion decorativa dentro das telas de trabalho.
+
+### Motion (complementa as anteriores)
+
+- `.float`: selos do hero e ícone do serviço sobem e descem 10 px em 6 s.
+  Usa a propriedade `translate`, não `transform`, para somar com o
+  `translateZ` das camadas 3D.
+- `.ticker`: faixa de fatos em loop de 48 s, pausa com o mouse em cima.
+- `.drift`: formas decorativas derivam no scroll (scroll-driven, só
+  elementos `aria-hidden`).
+- `.draw-on-scroll`: o arco que liga os passos se desenha conforme a
+  seção entra.
+- `prefers-reduced-motion`: tudo acima desliga; a faixa de fatos para e
+  quebra em linhas, e a cópia do loop some.
+
+### Botões novos
+
+- `outline-inverse`: secundário sobre azul (borda e texto brancos).
+- `accent`: terracota com tinta por cima (5.8:1). Nunca no WhatsApp, que
+  continua azul.
