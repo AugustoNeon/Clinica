@@ -250,17 +250,23 @@ secundário é `white/90` (5.1:1), não `white/85` (4.8:1, no limite).
 
 ### Textura, divisor e ícones
 
-- **`.pattern-arcs` / `.pattern-arcs-blue`** (`globals.css`): fileiras de
-  arcos do logo em tijolo, SVG em data-URI. Branco a 7% sobre azul; azul a
-  12% sobre `--surface-tint`. É textura, não ilustração: sempre numa
+- **`.pattern-arcs`** (`globals.css`): fileiras de arcos do logo em tijolo,
+  SVG em data-URI, branco a 7%. **Só sobre azul** (hero, aberturas,
+  depoimentos, faixa final, rodapé, barra do painel): nos fundos claros
+  virava papel de parede (validação de 2026-09-25). Sempre numa
   `div aria-hidden` absoluta atrás do conteúdo.
 - **`SmileDivider`**: borda curva entre seções (o arco esticado na
   largura). Pinta com a cor da seção de baixo; o rodapé o usa puxado com
   margem negativa sobre a última seção.
-- **`serviceIcons.tsx`**: 15 ícones desenhados para os slugs de serviço
-  (dente base + o detalhe da especialidade), traço 1.75 igual aos ícones
-  de interface. Slug sem desenho recebe o dente base. `.draw-icon` refaz o
-  traço no hover do cartão.
+- **`serviceIcons.tsx`**: 15 ícones da coleção **Griddy Icons** (MIT),
+  obtidos com o CLI `better-icons` (Iconify) — uma família odontológica
+  num estilo só (aparelho, implante, faceta, canal, extração, coroa, ponte,
+  restauração). Preenchidos com `currentColor`; slug sem desenho recebe o
+  dente base. `.service-icon` inclina de leve no hover/foco do cartão.
+- **Grades de cartões:** ícone **ao lado** do título (círculo tintado),
+  nunca num quadrado em cima; o cartão não sobe no hover (só borda e
+  fundo respondem); "Saiba mais" é texto sublinhado, sem seta anexada.
+  Grupos de `/servicos` sem numeração (não são sequência).
 
 ### Composição
 
@@ -287,10 +293,13 @@ secundário é `white/90` (5.1:1), não `white/85` (4.8:1, no limite).
 
 ### Motion (complementa as anteriores)
 
-- `.float`: selos do hero e ícone do serviço sobem e descem 10 px em 6 s.
-  Usa a propriedade `translate`, não `transform`, para somar com o
-  `translateZ` das camadas 3D.
-- `.ticker`: faixa de fatos em loop de 48 s, pausa com o mouse em cima.
+- `.float`: selos do hero e emblemas sobem e voltam **uma vez** (3,6 s),
+  depois param — abaixo de 5 s, fora do alcance da WCAG 2.2.2. Usa a
+  propriedade `translate`, não `transform`, para somar com o `translateZ`
+  das camadas 3D.
+- `.ticker`: faixa de fatos em loop de 48 s no desktop, com **botão de
+  pausa** visível (WCAG 2.2.2), pausa também no hover e com foco dentro.
+  No celular fica parada e mostra só 4 fatos.
 - `.drift`: formas decorativas derivam no scroll (scroll-driven, só
   elementos `aria-hidden`).
 - `.draw-on-scroll`: o arco que liga os passos se desenha conforme a
@@ -303,3 +312,21 @@ secundário é `white/90` (5.1:1), não `white/85` (4.8:1, no limite).
 - `outline-inverse`: secundário sobre azul (borda e texto brancos).
 - `accent`: terracota com tinta por cima (5.8:1). Nunca no WhatsApp, que
   continua azul.
+
+### Celular (validação e skills de mobile, 2026-09-25)
+
+Aplicado com as skills tailwindcss-mobile-first, responsive-design e
+accessibility-compliance, além do impeccable e das Web Interface
+Guidelines da Vercel.
+
+- **Alvo de toque de 44 px:** `Button` tem `min-h-11`; links de contato,
+  pílulas de serviço, logo e links do rodapé (no celular) também.
+- **Barra de contato na zona do polegar** (`MobileActionBar`): WhatsApp +
+  Ligar, fixa embaixo abaixo de `lg`, aparece depois de 560 px de rolagem,
+  respeita `env(safe-area-inset-bottom)`, fica `inert` quando escondida.
+  O rodapé reserva o espaço (`max-lg:pb-28`) para nada ficar coberto.
+- **Menus em gaveta** com `overscroll-contain`; `scroll-padding-top` no
+  `html` para o header fixo não cobrir foco nem âncora;
+  `touch-action: manipulation`.
+- Campos de e-mail com `spellCheck={false}`; login do painel compacto no
+  celular (só o logo no topo, formulário na primeira tela).
