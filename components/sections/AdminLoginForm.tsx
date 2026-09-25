@@ -19,6 +19,7 @@ export function AdminLoginForm() {
           id="email"
           name="email"
           type="email"
+          spellCheck={false}
           autoComplete="email"
           inputMode="email"
           className={inputClasses}

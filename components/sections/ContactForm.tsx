@@ -138,6 +138,7 @@ export function ContactForm({ services }: ContactFormProps) {
             id="email"
             name="email"
             type="email"
+            spellCheck={false}
             inputMode="email"
             autoComplete="email"
             maxLength={180}

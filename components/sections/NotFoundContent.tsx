@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { buttonClasses } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
+import { IconTooth } from "@/components/ui/serviceIcons";
 
 /**
  * Conteudo da pagina 404, compartilhado entre `app/not-found.tsx` (URL que
@@ -11,30 +12,47 @@ import { Container } from "@/components/ui/Container";
  */
 export function NotFoundContent() {
   return (
-    <Container className="py-20 sm:py-28">
-      <div className="max-w-xl">
-        <p className="font-display text-7xl font-semibold leading-none text-blue sm:text-8xl">
-          404
-        </p>
-        <h1 className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">
-          Essa página não existe
-        </h1>
-        <p className="mt-4 text-base leading-relaxed text-ink-muted">
-          O endereço pode ter mudado ou ter sido digitado errado. O que você
-          procura provavelmente está em uma das páginas abaixo.
-        </p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Link href="/" className={buttonClasses("primary")}>
-            Voltar ao início
-          </Link>
-          <Link href="/servicos" className={buttonClasses("secondary")}>
-            Ver serviços
-          </Link>
-          <Link href="/contato" className={buttonClasses("secondary")}>
-            Falar com a clínica
-          </Link>
+    <div className="relative overflow-hidden">
+      <Container className="relative grid items-center gap-10 py-20 sm:py-28 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+        <div className="max-w-xl">
+          <p className="font-display text-7xl font-semibold leading-none text-blue sm:text-8xl lg:text-9xl">
+            404
+          </p>
+          <svg aria-hidden viewBox="0 0 240 40" className="mt-2 h-6 w-40 text-terracotta" fill="none">
+            <path
+              className="smile-arc"
+              d="M8 8c40 34 184 34 224 0"
+              stroke="currentColor"
+              strokeWidth="7"
+              strokeLinecap="round"
+              pathLength={1}
+            />
+          </svg>
+          <h1 className="mt-6 text-3xl font-semibold tracking-tight sm:text-4xl">
+            Essa página não existe
+          </h1>
+          <p className="mt-4 text-lg leading-relaxed text-ink-muted">
+            O endereço pode ter mudado ou ter sido digitado errado. O que você
+            procura provavelmente está em uma das páginas abaixo.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link href="/" className={buttonClasses("primary")}>
+              Voltar ao início
+            </Link>
+            <Link href="/servicos" className={buttonClasses("secondary")}>
+              Ver serviços
+            </Link>
+            <Link href="/contato" className={buttonClasses("secondary")}>
+              Falar com a clínica
+            </Link>
+          </div>
         </div>
-      </div>
-    </Container>
+        <div aria-hidden className="float hidden justify-center lg:flex">
+          <span className="inline-flex h-56 w-56 items-center justify-center rounded-full bg-surface-tint text-blue">
+            <IconTooth width={128} height={128} />
+          </span>
+        </div>
+      </Container>
+    </div>
   );
 }

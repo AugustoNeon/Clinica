@@ -3,6 +3,7 @@ import { ContactForm } from "@/components/sections/ContactForm";
 import { PracticalInfo } from "@/components/sections/PracticalInfo";
 import { buttonClasses } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
+import { HeroEmblem } from "@/components/ui/HeroEmblem";
 import { IconClock, IconMail, IconPhone, IconWhatsApp } from "@/components/ui/icons";
 import { PageHero } from "@/components/ui/PageHero";
 import { getServices } from "@/lib/data/services";
@@ -24,12 +25,17 @@ export default async function ContatoPage() {
       <PageHero
         title="Vamos conversar?"
         lead="O caminho mais rápido é o WhatsApp. Se preferir, ligue ou deixe uma mensagem pelo formulário — a clínica responde no horário de atendimento."
+        visual={
+          <HeroEmblem>
+            <IconWhatsApp width={112} height={112} />
+          </HeroEmblem>
+        }
       >
         <a
           href={whatsappHref}
           target="_blank"
           rel="noopener noreferrer"
-          className={buttonClasses("primary", "", "lg")}
+          className={buttonClasses("inverse", "", "lg")}
         >
           <IconWhatsApp width={20} height={20} />
           Chamar no WhatsApp
@@ -37,7 +43,7 @@ export default async function ContatoPage() {
         {settings.phone && (
           <a
             href={`tel:${settings.phone.replace(/\D/g, "")}`}
-            className={buttonClasses("secondary", "", "lg")}
+            className={buttonClasses("outline-inverse", "", "lg")}
           >
             <IconPhone width={20} height={20} />
             {settings.phone}
@@ -70,7 +76,7 @@ export default async function ContatoPage() {
                       href={whatsappHref}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block py-1 text-lg font-medium text-ink underline-offset-4 hover:underline"
+                      className="inline-flex min-h-11 items-center text-lg font-medium text-ink underline-offset-4 hover:underline"
                     >
                       {settings.whatsapp}
                     </a>
@@ -84,7 +90,7 @@ export default async function ContatoPage() {
                       <p className="text-sm font-medium text-ink-muted">Telefone</p>
                       <a
                         href={`tel:${settings.phone.replace(/\D/g, "")}`}
-                        className="inline-block py-1 text-lg font-medium text-ink underline-offset-4 hover:underline"
+                        className="inline-flex min-h-11 items-center text-lg font-medium text-ink underline-offset-4 hover:underline"
                       >
                         {settings.phone}
                       </a>

@@ -5,6 +5,7 @@ import { CtaBand } from "@/components/sections/CtaBand";
 import { PracticalInfo } from "@/components/sections/PracticalInfo";
 import { buttonClasses } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
+import { HeroEmblem } from "@/components/ui/HeroEmblem";
 import { IconArrowRight, IconHeart, IconShield, IconSparkle } from "@/components/ui/icons";
 import { PageHero } from "@/components/ui/PageHero";
 import { PlaceholderNotice } from "@/components/ui/PlaceholderNotice";
@@ -20,20 +21,25 @@ export const metadata: Metadata = {
 const VALUES = [
   {
     icon: IconHeart,
+    tint: "bg-terracotta-tint text-terracotta-text",
     title: "Acolhimento de verdade",
     text: "Consulta é conversa antes de ser procedimento. Medo de dentista, vergonha do sorriso, dúvida boba: tudo cabe aqui.",
   },
   {
     icon: IconShield,
+    tint: "bg-surface-tint text-blue-dark",
     title: "Transparência no plano",
     text: "Cada etapa proposta vem explicada e com o porquê. Você decide sabendo o que está decidindo.",
   },
   {
     icon: IconSparkle,
+    tint: "bg-blue-deep text-blue-glow",
     title: "Cuidado personalizado",
     text: "Sem protocolo genérico: o plano parte do seu caso, do seu tempo e do que você quer alcançar.",
   },
 ];
+
+type Vars = React.CSSProperties;
 
 export default async function SobrePage() {
   const [settings, team] = await Promise.all([getSiteSettingsMap(), getTeamMembers()]);
@@ -44,12 +50,23 @@ export default async function SobrePage() {
       <PageHero
         title="Um consultório, uma profissional, o seu sorriso"
         lead="Odontologia clínica e estética em Araucária (PR), com atendimento humanizado e personalizado em todas as especialidades."
+        visual={
+          <HeroEmblem>
+            <Image
+              src="/images/logo/icon-smile.png"
+              alt=""
+              width={512}
+              height={512}
+              className="h-32 w-32 brightness-0 invert"
+            />
+          </HeroEmblem>
+        }
       />
 
-      <section className="py-14 sm:py-20 lg:py-24">
+      <section className="relative overflow-hidden py-14 sm:py-20 lg:py-24">
         <Container className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
           <div className="max-w-prose">
-            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">A clínica</h2>
+            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">A clínica</h2>
             <div className="mt-5 space-y-4 text-lg leading-relaxed text-ink-muted">
               <p>
                 A Dra. Ariane Vaz Storrer oferece atendimento humanizado e
@@ -67,15 +84,25 @@ export default async function SobrePage() {
               </p>
             </div>
             {professional && (
-              <Link href="/equipe" className={buttonClasses("secondary", "mt-8")}>
+              <Link href="/equipe" className={buttonClasses("primary", "mt-8")}>
                 Conhecer a profissional
                 <IconArrowRight width={18} height={18} />
               </Link>
             )}
           </div>
 
-          <div className="relative mx-auto w-full max-w-sm lg:max-w-md">
-            <div className="relative aspect-[3/4] overflow-hidden rounded-[999px_999px_1.75rem_1.75rem] bg-blue/20">
+          <div className="reveal relative mx-auto w-full max-w-sm lg:max-w-md">
+            <div
+              aria-hidden
+              className="drift absolute -right-10 -top-10 h-52 w-52 rounded-full bg-blue/30"
+              style={{ "--drift-from": "30px", "--drift-to": "-30px" } as Vars}
+            />
+            <div aria-hidden className="absolute -left-6 bottom-10 h-28 w-28 rounded-full bg-terracotta/40" />
+            <div
+              aria-hidden
+              className="absolute -inset-3 rounded-[999px_999px_2.25rem_2.25rem] border-2 border-terracotta/50"
+            />
+            <div className="relative aspect-[3/4] overflow-hidden rounded-[999px_999px_1.75rem_1.75rem] bg-blue/20 shadow-2xl shadow-blue-deep/25">
               <Image
                 src="/images/team/ariane-04-jaleco-retrato.jpg"
                 alt="Dra. Ariane Vaz Storrer de jaleco, com o nome bordado"
@@ -88,23 +115,28 @@ export default async function SobrePage() {
         </Container>
       </section>
 
-      <section className="bg-surface-tint py-14 sm:py-20 lg:py-24">
-        <Container>
+      <section className="relative overflow-hidden bg-surface-tint py-14 sm:py-20 lg:py-24">
+        <Container className="relative">
           <div className="max-w-2xl">
-            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
               O que você pode esperar
             </h2>
           </div>
-          <ul className="mt-10 grid gap-8 md:grid-cols-3">
+          <ul className="reveal mt-10 grid gap-4 md:grid-cols-3">
             {VALUES.map((value) => (
-              <li key={value.title} className="flex gap-4">
-                <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-terracotta-tint text-terracotta-text">
-                  <value.icon width={22} height={22} />
-                </span>
-                <div>
-                  <h3 className="text-xl font-medium">{value.title}</h3>
-                  <p className="mt-2 text-base leading-relaxed text-ink-muted">{value.text}</p>
+              <li
+                key={value.title}
+                className="rounded-3xl bg-surface p-6 shadow-md shadow-blue-deep/5 sm:p-7"
+              >
+                <div className="flex items-center gap-4">
+                  <span
+                    className={`inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${value.tint}`}
+                  >
+                    <value.icon width={24} height={24} />
+                  </span>
+                  <h3 className="text-xl font-medium sm:text-2xl">{value.title}</h3>
                 </div>
+                <p className="mt-4 text-base leading-relaxed text-ink-muted">{value.text}</p>
               </li>
             ))}
           </ul>
@@ -114,7 +146,7 @@ export default async function SobrePage() {
       <section className="py-14 sm:py-20 lg:py-24">
         <Container>
           <div className="max-w-2xl">
-            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">O espaço</h2>
+            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">O espaço</h2>
             <p className="mt-4 text-lg leading-relaxed text-ink-muted">
               Consultório em {settings.address}.
             </p>
@@ -128,9 +160,9 @@ export default async function SobrePage() {
             {["Fachada", "Recepção", "Consultório"].map((label) => (
               <div
                 key={label}
-                className="flex aspect-[4/3] items-end rounded-3xl border border-dashed border-ink/20 bg-surface-tint p-5"
+                className="relative flex aspect-[4/3] items-end overflow-hidden rounded-3xl border border-dashed border-blue/40 bg-surface-tint p-5"
               >
-                <span className="text-sm font-medium text-ink-muted">{label} — foto em breve</span>
+                <span className="relative text-sm font-medium text-ink">{label} — foto em breve</span>
               </div>
             ))}
           </div>

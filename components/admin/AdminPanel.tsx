@@ -11,7 +11,11 @@ interface AdminPanelProps {
   flush?: boolean;
 }
 
-/** Superficie branca do painel admin, sobre o fundo rebaixado do shell. */
+/**
+ * Superficie branca do painel admin, sobre o fundo rebaixado do shell. O
+ * cabecalho tem fundo levemente rebaixado (issue #71): o titulo do bloco
+ * se destaca do conteudo sem precisar de linha grossa.
+ */
 export function AdminPanel({
   children,
   title,
@@ -21,9 +25,11 @@ export function AdminPanel({
   flush = false,
 }: AdminPanelProps) {
   return (
-    <section className={`rounded-2xl border border-ink/10 bg-surface shadow-sm shadow-ink/5 ${className}`}>
+    <section
+      className={`overflow-hidden rounded-2xl border border-ink/10 bg-surface shadow-md shadow-blue-deep/5 ${className}`}
+    >
       {(title || action) && (
-        <header className="flex flex-wrap items-start justify-between gap-3 border-b border-ink/10 px-5 py-4">
+        <header className="flex flex-wrap items-start justify-between gap-3 border-b border-ink/10 bg-surface-sunken/70 px-5 py-4">
           <div>
             {title && <h2 className="font-display text-lg font-medium">{title}</h2>}
             {description && <p className="mt-0.5 text-sm text-ink-muted">{description}</p>}

@@ -27,15 +27,20 @@ const STEPS = [
  * "Sua primeira consulta": sequencia real de 3 passos — por isso a
  * numeracao existe (o numero carrega informacao de ordem, nao e enfeite
  * de secao). Texto generico do processo de consulta, sem prazo ou preco.
+ *
+ * Camada rica (issue #71): os tres passos ficam sobre o arco do sorriso —
+ * o do meio desce um pouco e um traco terracota liga os tres numeros,
+ * desenhando-se conforme a secao entra na tela. A composicao e a curva do
+ * logo, nao uma linha do tempo generica.
  */
 export function Steps({ whatsapp }: StepsProps) {
   const whatsappHref = buildWhatsAppUrl(whatsapp, "Olá! Gostaria de agendar uma primeira consulta.");
 
   return (
-    <section className="py-14 sm:py-20 lg:py-24">
+    <section className="relative overflow-hidden py-16 sm:py-20 lg:py-28">
       <Container>
-        <div className="max-w-2xl">
-          <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
             Como funciona a primeira consulta
           </h2>
           <p className="mt-4 text-lg leading-relaxed text-ink-muted">
@@ -44,22 +49,48 @@ export function Steps({ whatsapp }: StepsProps) {
           </p>
         </div>
 
-        <ol className="reveal mt-12 grid gap-10 md:grid-cols-3 md:gap-8">
-          {STEPS.map((step, index) => (
-            <li key={step.title} className="relative border-t-2 border-blue/30 pt-6">
-              <span className="font-display text-5xl font-semibold leading-none text-blue" aria-hidden>
-                {index + 1}
-              </span>
-              <h3 className="mt-4 text-xl font-medium">
-                <span className="sr-only">Passo {index + 1}: </span>
-                {step.title}
-              </h3>
-              <p className="mt-2 text-base leading-relaxed text-ink-muted">{step.text}</p>
-            </li>
-          ))}
-        </ol>
+        <div className="relative mt-14 lg:mt-16">
+          {/* O arco que liga os passos: so a partir de `md`, quando os tres ficam lado a lado. */}
+          <svg
+            aria-hidden
+            viewBox="0 0 1200 96"
+            preserveAspectRatio="none"
+            className="pointer-events-none absolute inset-x-0 top-0 hidden h-24 w-full md:block"
+            fill="none"
+          >
+            <path
+              d="M200 32Q600 128 1000 32"
+              stroke="var(--terracotta)"
+              strokeWidth="4"
+              strokeLinecap="round"
+              pathLength={1}
+              className="draw-on-scroll"
+            />
+          </svg>
 
-        <div className="mt-12 flex flex-wrap items-center gap-3">
+          <ol className="reveal relative grid gap-12 md:grid-cols-3 md:gap-8">
+            {STEPS.map((step, index) => (
+              <li
+                key={step.title}
+                className={`flex flex-col items-center text-center ${index === 1 ? "md:translate-y-12" : ""}`}
+              >
+                <span
+                  aria-hidden
+                  className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-dark font-display text-2xl font-semibold text-white shadow-lg shadow-blue-dark/30 ring-8 ring-surface"
+                >
+                  {index + 1}
+                </span>
+                <h3 className="mt-6 text-xl font-medium sm:text-2xl">
+                  <span className="sr-only">Passo {index + 1}: </span>
+                  {step.title}
+                </h3>
+                <p className="mt-3 max-w-sm text-base leading-relaxed text-ink-muted">{step.text}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <div className="mt-14 flex flex-wrap items-center justify-center gap-3 md:mt-24">
           <a
             href={whatsappHref}
             target="_blank"

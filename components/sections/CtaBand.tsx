@@ -15,9 +15,10 @@ interface CtaBandProps {
 }
 
 /**
- * Faixa final de conversao, azul solido com texto branco (estrategia
- * "committed": a cor da marca carrega a secao inteira). O glifo do
- * sorriso do logo entra como marca-d'agua — assinatura, nao enfeite.
+ * Faixa final de conversao, azul com texto branco (estrategia "committed":
+ * a cor da marca carrega a secao inteira). Camada rica (issue #71): a
+ * textura de arcos por cima do azul e a foto real da doutora encostada na
+ * base da faixa — a pessoa que vai atender aparece no momento de decidir.
  */
 export function CtaBand({
   whatsapp,
@@ -30,20 +31,15 @@ export function CtaBand({
 
   return (
     <section className="relative overflow-hidden bg-blue-dark text-white">
-      <Image
-        src="/images/logo/icon-smile.png"
-        alt=""
-        width={512}
-        height={512}
+      <div aria-hidden className="pattern-arcs pointer-events-none absolute inset-0" />
+      <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-16 -right-10 h-72 w-72 opacity-10 brightness-0 invert sm:h-96 sm:w-96 lg:-right-4 lg:h-[30rem] lg:w-[30rem]"
+        className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-blue/40 blur-3xl"
       />
-      <Container className="relative py-16 sm:py-20 lg:py-24">
-        <div className="reveal max-w-2xl">
-          <h2 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-5xl">
-            {title}
-          </h2>
-          <p className="mt-5 text-lg leading-relaxed text-white/90">{text}</p>
+      <Container className="relative grid items-end gap-10 pt-16 sm:pt-20 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-16 lg:pt-0">
+        <div className="reveal max-w-2xl pb-16 sm:pb-20 lg:py-28">
+          <h2 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-5xl">{title}</h2>
+          <p className="mt-5 text-lg leading-relaxed text-white/90 sm:text-xl">{text}</p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <a
               href={whatsappHref}
@@ -54,14 +50,7 @@ export function CtaBand({
               <IconWhatsApp width={20} height={20} />
               Agendar pelo WhatsApp
             </a>
-            <Link
-              href="/contato"
-              className={buttonClasses(
-                "ghost",
-                "text-white hover:bg-white/10 focus-visible:outline-white",
-                "lg",
-              )}
-            >
+            <Link href="/contato" className={buttonClasses("outline-inverse", "", "lg")}>
               Enviar mensagem
             </Link>
           </div>
@@ -70,12 +59,29 @@ export function CtaBand({
               Ou ligue:{" "}
               <a
                 href={`tel:${phone.replace(/\D/g, "")}`}
-                className="inline-block py-1 font-medium text-white underline-offset-4 hover:underline"
+                className="inline-flex min-h-11 items-center font-medium text-white underline-offset-4 hover:underline"
               >
                 {phone}
               </a>
             </p>
           )}
+        </div>
+
+        {/* Foto encostada na base da faixa: arco em cima, reta embaixo. */}
+        <div className="relative mx-auto w-56 self-end sm:w-72 lg:w-full lg:max-w-sm lg:justify-self-end">
+          <div
+            aria-hidden
+            className="absolute -inset-x-6 bottom-0 top-10 rounded-t-[999px] bg-blue-deep/50"
+          />
+          <div className="relative aspect-[4/5] overflow-hidden rounded-t-[999px]">
+            <Image
+              src="/images/team/ariane-04-jaleco-retrato.jpg"
+              alt="Dra. Ariane Vaz Storrer de jaleco"
+              fill
+              sizes="(min-width: 1024px) 24rem, (min-width: 640px) 18rem, 14rem"
+              className="object-cover object-top"
+            />
+          </div>
         </div>
       </Container>
     </section>
