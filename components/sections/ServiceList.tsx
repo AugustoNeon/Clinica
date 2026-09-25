@@ -56,11 +56,15 @@ export function ServiceList({ services }: ServiceListProps) {
             </div>
 
             <ul className="grid gap-3 sm:grid-cols-2">
-              {group.services.map((service) => (
-                <li key={service.id}>
+              {group.services.map((service, serviceIndex) => (
+                <li
+                  key={service.id}
+                  className="reveal"
+                  style={{ "--reveal-start": `${(serviceIndex % 2) * 40}px` } as React.CSSProperties}
+                >
                   <Link
                     href={`/servicos/${service.slug}`}
-                    className={`group flex h-full flex-col rounded-3xl p-6 transition-colors duration-200 ease-out ${index % 2 === 1 ? "bg-surface hover:bg-surface-sunken" : "bg-surface-sunken hover:bg-surface-tint"} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark`}
+                    className={`lift group flex h-full flex-col rounded-3xl p-6 ${index % 2 === 1 ? "bg-surface hover:bg-surface-sunken" : "bg-surface-sunken hover:bg-surface-tint"} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark`}
                   >
                     <div className="flex items-center gap-4">
                       <ServiceIcon

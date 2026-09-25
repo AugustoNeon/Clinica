@@ -66,7 +66,7 @@ export function Steps({ whatsapp }: StepsProps) {
             />
           </svg>
 
-          <ol className="relative grid gap-12 md:grid-cols-3 md:gap-8">
+          <ol className="reveal relative grid gap-12 md:grid-cols-3 md:gap-8">
             {STEPS.map((step, index) => (
               <li
                 key={step.title}

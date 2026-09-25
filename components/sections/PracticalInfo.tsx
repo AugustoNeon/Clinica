@@ -42,7 +42,7 @@ export function PracticalInfo({ settings, title = "Onde e quando", compact = fal
       <Container className="relative grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-16">
         <div>
           <h2 className="text-4xl font-bold sm:text-5xl">{title}</h2>
-          <dl className="mt-8 grid gap-2">
+          <dl className="reveal mt-8 grid gap-2">
             {settings.address && (
               <InfoRow icon={<IconMapPin width={22} height={22} />} label="Endereço">
                 <dd className="mt-1 text-lg leading-snug">{settings.address}</dd>
@@ -118,7 +118,7 @@ export function PracticalInfo({ settings, title = "Onde e quando", compact = fal
           </dl>
         </div>
 
-        <div className="flex flex-col overflow-hidden rounded-3xl bg-surface">
+        <div className="reveal-photo flex flex-col overflow-hidden rounded-3xl bg-surface">
           <div className="flex-1 overflow-hidden">
             <LocationMap embedUrl={settings.maps_embed_url} />
           </div>

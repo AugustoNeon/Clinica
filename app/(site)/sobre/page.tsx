@@ -90,11 +90,17 @@ export default async function SobrePage() {
           </div>
 
           <div className="relative mx-auto w-full max-w-sm lg:max-w-md">
+            {/* Circulo chapado que deriva no scroll atras da foto (decorativo). */}
+            <div
+              aria-hidden
+              className="drift absolute -right-10 -top-10 h-48 w-48 rounded-full bg-surface-tint sm:h-56 sm:w-56"
+              style={{ "--drift-from": "30px", "--drift-to": "-30px" } as React.CSSProperties}
+            />
             <div
               aria-hidden
               className="absolute -inset-3 rounded-[999px_999px_2.25rem_2.25rem] border-[3px] border-terracotta"
             />
-            <div className="relative aspect-[3/4] overflow-hidden rounded-[999px_999px_1.75rem_1.75rem] bg-blue/20">
+            <div className="reveal-photo relative aspect-[3/4] overflow-hidden rounded-[999px_999px_1.75rem_1.75rem] bg-blue/20">
               <Image
                 src="/images/team/ariane-04-jaleco-retrato.jpg"
                 alt="Dra. Ariane Vaz Storrer de jaleco, com o nome bordado"

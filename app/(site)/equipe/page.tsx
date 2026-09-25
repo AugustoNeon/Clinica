@@ -52,6 +52,12 @@ export default async function EquipePage() {
           ) : (
             <div className="grid gap-16 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-20">
               <div className="relative mx-auto w-full max-w-sm pb-10 pr-10 sm:pr-14 lg:max-w-none">
+                {/* Circulo chapado que deriva no scroll atras da foto (decorativo). */}
+                <div
+                  aria-hidden
+                  className="drift absolute -left-10 -top-10 h-48 w-48 rounded-full bg-surface-tint sm:h-56 sm:w-56"
+                  style={{ "--drift-from": "30px", "--drift-to": "-30px" } as React.CSSProperties}
+                />
                 <div
                   aria-hidden
                   className="absolute -inset-3 right-7 bottom-7 rounded-[999px_999px_2.25rem_2.25rem] border-[3px] border-terracotta sm:right-11"
@@ -66,7 +72,7 @@ export default async function EquipePage() {
                     className="object-cover object-top"
                   />
                 </div>
-                <div className="absolute bottom-0 right-0 w-36 rotate-3 rounded-3xl bg-surface p-2 shadow-md shadow-blue-deep/15 sm:w-44">
+                <div className="absolute bottom-0 right-0 w-36 rotate-6 rounded-3xl bg-surface p-2 shadow-md shadow-blue-deep/15 transition-transform duration-500 ease-out hover:rotate-0 hover:scale-105 sm:w-44">
                   <div className="relative aspect-square overflow-hidden rounded-xl bg-blue/20">
                     <Image
                       src={SECOND_PHOTO}

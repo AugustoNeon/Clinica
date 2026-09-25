@@ -28,7 +28,7 @@ export function Faq({
           <p className="mt-4 text-lg leading-relaxed text-ink-muted">{description}</p>
         </div>
 
-        <div className="grid gap-2">
+        <div className="reveal grid gap-2">
           {items.map((item) => (
             <details
               key={item.question}

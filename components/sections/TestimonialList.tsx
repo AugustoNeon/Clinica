@@ -36,7 +36,7 @@ export function TestimonialList({ testimonials }: TestimonialListProps) {
   const [featured, ...others] = testimonials;
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-16">
+    <div className="reveal grid gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-16">
       <figure>
         <blockquote>
           <p className="font-display text-2xl font-medium leading-snug text-ink sm:text-3xl">

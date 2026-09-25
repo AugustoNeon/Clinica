@@ -162,13 +162,18 @@ p {
 }
 
 /*
- * Motion (revisao anti-IA, issue #73): um unico momento orquestrado — a
- * entrada do hero (`.rise-in`) com o arco do sorriso se desenhando — mais o
- * arco dos passos que se desenha no scroll (liga uma sequencia real) e a
- * resposta do icone de servico ao hover, alem da faixa de fatos em
- * movimento (que o usuario pediu de volta). Saiu o "fade-up em toda secao",
- * o parallax, a flutuacao e o 3D do mouse.
- * O conteudo esta sempre visivel no primeiro frame.
+ * Motion (issue #73). A revisao anti-IA tinha tirado quase tudo; o usuario
+ * pediu de volta as animacoes de hover e o 3D, entao voltaram, com ajuste:
+ * - entrada do hero (`.rise-in`) com o arco do sorriso se desenhando;
+ * - moldura 3D que segue o mouse no hero (`.tilt`, camadas com profundidade);
+ * - cartoes que sobem com sombra so no hover (`.lift`), botoes idem;
+ * - revelacao ao rolar (`.reveal`, `.reveal-photo`), em CSS puro, cada uma
+ *   do jeito do que revela (lista sobe, foto abre de baixo para cima);
+ * - formas chapadas que derivam devagar no scroll (`.drift`), so decorativas;
+ * - arco dos passos desenhado no scroll, faixa de fatos em movimento e o
+ *   dente 3D (components/three).
+ * Sem manchas desfocadas: essas continuam fora. Com prefers-reduced-motion,
+ * nada disso roda (bloco no fim do arquivo).
  */
 @keyframes rise-in {
   from {
@@ -201,6 +206,133 @@ p {
     animation-timeline: view();
     animation-range: entry 10% entry 90%;
   }
+
+  /*
+   * Revelacao ao rolar. Progressive enhancement: sem `animation-timeline`
+   * tudo aparece parado. Intervalo em pixels de entrada, para uma secao
+   * alta e um item pequeno terem a mesma sensacao.
+   */
+  @keyframes reveal-in {
+    from {
+      opacity: 0;
+      transform: translateY(28px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .reveal {
+    animation: reveal-in linear both;
+    animation-timeline: view();
+    animation-range: entry var(--reveal-start, 0px) entry calc(var(--reveal-start, 0px) + 240px);
+  }
+
+  /* Foto abre de baixo para cima, com um leve zoom de saida. */
+  @keyframes reveal-photo {
+    from {
+      clip-path: inset(18% 0 0 0 round 1.5rem);
+      scale: 1.04;
+    }
+    to {
+      clip-path: inset(0 0 0 0 round 0);
+      scale: 1;
+    }
+  }
+
+  .reveal-photo {
+    animation: reveal-photo linear both;
+    animation-timeline: view();
+    animation-range: entry 0px entry 320px;
+  }
+
+  /* Formas chapadas de fundo: derivam de --drift-from ate --drift-to no scroll. */
+  @keyframes drift {
+    from {
+      translate: 0 var(--drift-from, 40px);
+    }
+    to {
+      translate: 0 var(--drift-to, -40px);
+    }
+  }
+
+  .drift {
+    animation: drift linear both;
+    animation-timeline: view();
+    animation-range: entry 0% exit 100%;
+  }
+}
+
+/*
+ * Moldura 3D do hero (components/ui/TiltFrame.tsx). O componente escreve as
+ * variaveis a cada movimento do mouse; sem JS a moldura e uma div comum. Os
+ * filhos com `.tilt-layer` ganham profundidade propria (`--depth`, em px).
+ */
+.tilt {
+  transform: perspective(1100px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 500ms var(--ease-out-expo);
+  will-change: transform;
+}
+
+.tilt-layer {
+  transform: translateZ(var(--depth, 0px));
+}
+
+.tilt-glare::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgba(255, 255, 255, 0.28),
+    transparent 60%
+  );
+  opacity: var(--glare-opacity, 0);
+  transition: opacity 400ms var(--ease-out-expo);
+  pointer-events: none;
+}
+
+/* Entrada flutuando, uma vez so (< 5 s): o selo "pousa" na moldura. */
+@keyframes float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -10px;
+  }
+}
+
+.float {
+  animation: float 3.6s ease-in-out 1 both;
+  animation-delay: calc(700ms + var(--float-delay, 0ms));
+}
+
+/*
+ * Cartao que responde ao mouse: sobe um pouco e ganha sombra azulada so no
+ * hover (parado nao tem sombra nem borda, DESIGN.md). So em aparelho com
+ * mouse: no toque, hover "grudado" e ruido.
+ */
+.lift {
+  transition:
+    transform 450ms var(--ease-out-expo),
+    box-shadow 450ms var(--ease-out-expo),
+    background-color 200ms ease-out;
+}
+
+@media (hover: hover) {
+  .lift:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 22px 44px -22px rgb(12 54 84 / 0.4);
+  }
+}
+
+.lift:focus-visible {
+  transform: translateY(-6px);
 }
 
 /* Arco do sorriso sob o titulo do hero: desenha-se uma vez, no carregamento. */
@@ -294,6 +426,19 @@ details.faq[open] > summary .faq-chevron {
   .draw-on-scroll {
     animation: none !important;
     stroke-dashoffset: 0;
+  }
+
+  .reveal,
+  .reveal-photo,
+  .drift,
+  .float {
+    animation: none !important;
+  }
+
+  .tilt,
+  .lift:hover,
+  .lift:focus-visible {
+    transform: none !important;
   }
 
   .group:hover .service-icon,

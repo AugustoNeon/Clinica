@@ -33,7 +33,7 @@ export function CtaBand({
     <section className="relative overflow-hidden bg-blue-dark text-white">
       <div aria-hidden className="pattern-arcs pointer-events-none absolute inset-0" />
       <Container className="relative grid items-end gap-10 pt-16 sm:pt-20 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-16 lg:pt-0">
-        <div className="max-w-2xl pb-16 sm:pb-20 lg:py-24">
+        <div className="reveal max-w-2xl pb-16 sm:pb-20 lg:py-24">
           <h2 className="text-4xl font-bold text-white sm:text-5xl">{title}</h2>
           <p className="mt-5 text-lg leading-relaxed text-white/90 sm:text-xl">{text}</p>
           <div className="mt-8 flex flex-wrap items-center gap-3">

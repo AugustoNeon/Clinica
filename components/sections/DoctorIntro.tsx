@@ -24,9 +24,12 @@ const SECOND_PHOTO = "/images/team/ariane-01-retrato-casual.jpg";
  * NAO aparece aqui.
  *
  * Duas fotos reais: a grande em arco invertido e um retrato menor por cima.
- * Sem manchas decorativas nem sombra pesada (revisao anti-IA); a tagline nao
- * se repete aqui porque ja e o titulo do hero, logo acima.
+ * Atras, dois circulos chapados (marinho e coral) que derivam devagar no
+ * scroll; a foto grande abre de baixo para cima ao entrar e o retrato menor
+ * se endireita com o mouse. Sem manchas desfocadas. A tagline nao se repete
+ * aqui porque ja e o titulo do hero, logo acima.
  */
+type Vars = React.CSSProperties;
 export function DoctorIntro({ professional, whatsapp }: DoctorIntroProps) {
   const whatsappHref = whatsapp
     ? buildWhatsAppUrl(whatsapp, "Olá! Gostaria de agendar uma avaliação.")
@@ -37,8 +40,19 @@ export function DoctorIntro({ professional, whatsapp }: DoctorIntroProps) {
     <section className="bg-surface-tint py-16 sm:py-20 lg:py-24">
       <Container className="grid items-center gap-14 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-20">
         <div className="relative mx-auto w-full max-w-sm pb-10 pr-10 sm:pr-14 lg:max-w-md">
+          {/* Formas chapadas de fundo: derivam no scroll, so decorativas. */}
+          <div
+            aria-hidden
+            className="drift absolute -left-10 -top-8 h-44 w-44 rounded-full bg-blue-dark sm:h-52 sm:w-52"
+            style={{ "--drift-from": "30px", "--drift-to": "-30px" } as Vars}
+          />
+          <div
+            aria-hidden
+            className="drift absolute right-0 top-1/3 h-24 w-24 rounded-full bg-terracotta"
+            style={{ "--drift-from": "-20px", "--drift-to": "40px" } as Vars}
+          />
           {/* Arco invertido em relacao ao hero: mesma familia de forma, outra postura. */}
-          <div className="relative aspect-[4/5] overflow-hidden rounded-[1.5rem_1.5rem_999px_999px] bg-blue/20">
+          <div className="reveal-photo relative aspect-[4/5] overflow-hidden rounded-[1.5rem_1.5rem_999px_999px] bg-blue/20">
             <Image
               src={professional.photo_url ?? FALLBACK_PHOTO}
               alt={`${professional.name}, ${professional.role}`}
@@ -49,7 +63,7 @@ export function DoctorIntro({ professional, whatsapp }: DoctorIntroProps) {
           </div>
 
           {/* Segundo retrato por cima: a mesma pessoa fora do jaleco. */}
-          <div className="absolute bottom-0 right-0 w-36 -rotate-3 rounded-3xl bg-surface p-2 shadow-md shadow-blue-deep/15 sm:w-44">
+          <div className="absolute bottom-0 right-0 w-36 -rotate-6 rounded-3xl bg-surface p-2 shadow-md shadow-blue-deep/15 transition-transform duration-500 ease-out hover:rotate-0 hover:scale-105 sm:w-44">
             <div className="relative aspect-square overflow-hidden rounded-2xl bg-blue/20">
               <Image
                 src={SECOND_PHOTO}
