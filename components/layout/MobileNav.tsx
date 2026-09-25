@@ -75,7 +75,7 @@ export function MobileNav({ items, whatsappHref }: MobileNavProps) {
           role="dialog"
           aria-modal="true"
           aria-label="Menu principal"
-          className="fixed inset-0 z-(--z-overlay) flex flex-col bg-surface px-4 pb-8 pt-4 sm:px-6"
+          className="fixed inset-0 z-(--z-overlay) flex flex-col overflow-y-auto overscroll-contain bg-surface px-4 pb-8 pt-4 sm:px-6"
         >
           <div className="flex items-center justify-between">
             <p className="font-display text-lg font-medium">Menu</p>

@@ -208,7 +208,8 @@ p {
 
 .ticker {
   overflow: hidden;
-  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  /* Some antes do botao de pausa (canto direito), para o texto nao passar por baixo. */
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 86%, transparent 95%);
 }
 
 .ticker-track {

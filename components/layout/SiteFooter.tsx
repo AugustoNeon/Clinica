@@ -10,6 +10,7 @@ import {
   IconWhatsApp,
 } from "@/components/ui/icons";
 import { SmileDivider } from "@/components/ui/SmileDivider";
+import { MobileActionBar } from "./MobileActionBar";
 import { footerNav, mainNav } from "@/lib/config/navigation";
 import { SITE_NAME } from "@/lib/config/site";
 import { getServices } from "@/lib/data/services";
@@ -40,6 +41,9 @@ export async function SiteFooter() {
   const clinicName = settings?.clinic_name ?? SITE_NAME;
   const professional = team[0] ?? null;
   const year = new Date().getFullYear();
+  const whatsappHref = settings?.whatsapp
+    ? buildWhatsAppUrl(settings.whatsapp, "Olá! Gostaria de agendar uma avaliação.")
+    : null;
 
   return (
     <footer className="relative mt-auto text-sm text-white">
@@ -67,7 +71,7 @@ export async function SiteFooter() {
                 href={settings.instagram_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/25 px-4 py-2 text-white transition-colors ease-out hover:border-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full border border-white/25 px-4 py-2 text-white transition-colors ease-out hover:border-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
               >
                 <IconInstagram />
                 <span>Instagram</span>
@@ -77,12 +81,12 @@ export async function SiteFooter() {
 
           <nav aria-label="Navegação do rodapé">
             <p className="font-display text-lg font-medium">Páginas</p>
-            <ul className="mt-3 space-y-2">
+            <ul className="mt-3 sm:space-y-2">
               {mainNav.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="inline-block py-1 text-white/85 transition-colors ease-out hover:text-white"
+                    className="inline-block py-1 max-sm:py-3 text-white/85 transition-colors ease-out hover:text-white"
                   >
                     {item.label}
                   </Link>
@@ -94,12 +98,12 @@ export async function SiteFooter() {
           {services.length > 0 && (
             <nav aria-label="Serviços">
               <p className="font-display text-lg font-medium">Serviços</p>
-              <ul className="mt-3 space-y-2">
+              <ul className="mt-3 sm:space-y-2">
                 {services.slice(0, FOOTER_SERVICE_LIMIT).map((service) => (
                   <li key={service.id}>
                     <Link
                       href={`/servicos/${service.slug}`}
-                      className="inline-block py-1 text-white/85 transition-colors ease-out hover:text-white"
+                      className="inline-block py-1 max-sm:py-3 text-white/85 transition-colors ease-out hover:text-white"
                     >
                       {service.title}
                     </Link>
@@ -109,7 +113,7 @@ export async function SiteFooter() {
                   <li>
                     <Link
                       href="/servicos"
-                      className="inline-block py-1 font-medium text-white underline-offset-4 hover:underline"
+                      className="inline-block py-1 max-sm:py-3 font-medium text-white underline-offset-4 hover:underline"
                     >
                       Ver todos os serviços
                     </Link>
@@ -135,7 +139,7 @@ export async function SiteFooter() {
                             href={settings.maps_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-block py-1 font-medium text-white underline-offset-4 hover:underline"
+                            className="inline-block py-1 max-sm:py-3 font-medium text-white underline-offset-4 hover:underline"
                           >
                             Como chegar
                           </a>
@@ -149,7 +153,7 @@ export async function SiteFooter() {
                     <IconPhone className="mt-0.5 shrink-0 text-terracotta-soft" />
                     <a
                       href={`tel:${settings.phone.replace(/\D/g, "")}`}
-                      className="inline-block py-1 transition-colors ease-out hover:text-white"
+                      className="inline-block py-1 max-sm:py-3 transition-colors ease-out hover:text-white"
                     >
                       {settings.phone}
                     </a>
@@ -162,7 +166,7 @@ export async function SiteFooter() {
                       href={buildWhatsAppUrl(settings.whatsapp, "Olá! Gostaria de agendar uma avaliação.")}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block py-1 transition-colors ease-out hover:text-white"
+                      className="inline-block py-1 max-sm:py-3 transition-colors ease-out hover:text-white"
                     >
                       {settings.whatsapp}
                     </a>
@@ -173,7 +177,7 @@ export async function SiteFooter() {
                     <IconMail className="mt-0.5 shrink-0 text-terracotta-soft" />
                     <a
                       href={`mailto:${settings.email}`}
-                      className="inline-block break-all py-1 transition-colors ease-out hover:text-white"
+                      className="inline-block break-all py-1 max-sm:py-3 transition-colors ease-out hover:text-white"
                     >
                       {settings.email}
                     </a>
@@ -191,7 +195,7 @@ export async function SiteFooter() {
         </Container>
 
         <div className="relative border-t border-white/15">
-          <Container className="flex flex-col gap-3 py-6 text-xs text-white/85 sm:flex-row sm:items-center sm:justify-between">
+          <Container className="flex flex-col gap-3 py-6 text-xs text-white/85 max-lg:pb-28 sm:flex-row sm:items-center sm:justify-between">
             <p>
               © {year} {clinicName}.
               {/* Divulgacao de profissional de odontologia exige o numero do CRO (CFO). */}
@@ -208,7 +212,7 @@ export async function SiteFooter() {
                   {/* LGPD: a politica de privacidade tem que estar linkada no rodape (PLANEJAMENTO.md secao 7). */}
                   <Link
                     href={item.href}
-                    className="inline-block py-1 transition-colors ease-out hover:text-white"
+                    className="inline-block py-1 max-sm:py-3 transition-colors ease-out hover:text-white"
                   >
                     {item.label}
                   </Link>
@@ -218,6 +222,7 @@ export async function SiteFooter() {
           </Container>
         </div>
       </div>
+      <MobileActionBar whatsappHref={whatsappHref} phone={settings?.phone ?? null} />
     </footer>
   );
 }

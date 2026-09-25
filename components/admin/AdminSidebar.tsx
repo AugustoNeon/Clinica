@@ -194,7 +194,7 @@ export function AdminSidebar({ email, badges = {} }: AdminSidebarProps) {
             role="dialog"
             aria-modal="true"
             aria-label="Menu do painel"
-            className="absolute inset-y-0 left-0 flex w-[min(20rem,88vw)] flex-col overflow-hidden bg-blue-deep text-white shadow-2xl"
+            className="absolute inset-y-0 left-0 flex w-[min(20rem,88vw)] flex-col overflow-hidden overscroll-contain bg-blue-deep text-white shadow-2xl"
           >
             <div aria-hidden className="pattern-arcs pointer-events-none absolute inset-0" />
             <div className="relative flex items-center justify-between pr-3">

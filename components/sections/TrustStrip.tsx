@@ -68,7 +68,7 @@ export function TrustStrip({ insurance, serviceCount, openingHours }: TrustStrip
         onClick={() => setPaused((current) => !current)}
         aria-pressed={paused}
         aria-label={paused ? "Retomar a faixa de fatos" : "Pausar a faixa de fatos"}
-        className="ticker-toggle absolute right-3 top-1/2 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-ink/10 text-ink transition-colors ease-out hover:bg-ink/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink sm:inline-flex"
+        className="ticker-toggle absolute right-3 top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-ink text-terracotta shadow-md shadow-ink/20 transition-colors ease-out hover:bg-blue-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink sm:inline-flex"
       >
         {paused ? (
           <svg aria-hidden viewBox="0 0 24 24" width={18} height={18} fill="currentColor">

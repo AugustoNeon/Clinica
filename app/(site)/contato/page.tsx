@@ -76,7 +76,7 @@ export default async function ContatoPage() {
                       href={whatsappHref}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block py-1 text-lg font-medium text-ink underline-offset-4 hover:underline"
+                      className="inline-flex min-h-11 items-center text-lg font-medium text-ink underline-offset-4 hover:underline"
                     >
                       {settings.whatsapp}
                     </a>
@@ -90,7 +90,7 @@ export default async function ContatoPage() {
                       <p className="text-sm font-medium text-ink-muted">Telefone</p>
                       <a
                         href={`tel:${settings.phone.replace(/\D/g, "")}`}
-                        className="inline-block py-1 text-lg font-medium text-ink underline-offset-4 hover:underline"
+                        className="inline-flex min-h-11 items-center text-lg font-medium text-ink underline-offset-4 hover:underline"
                       >
                         {settings.phone}
                       </a>

@@ -4,7 +4,7 @@ export type ButtonVariant = "primary" | "secondary" | "inverse" | "ghost" | "acc
 export type ButtonSize = "md" | "lg";
 
 const BASE =
-  "inline-flex items-center justify-center gap-2 rounded-xl font-medium transition duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark";
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl font-medium transition duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark";
 
 const SIZES: Record<ButtonSize, string> = {
   md: "px-5 py-2.5 text-sm",

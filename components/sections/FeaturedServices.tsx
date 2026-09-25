@@ -149,7 +149,7 @@ export function FeaturedServices({ services, whatsapp }: FeaturedServicesProps) 
                 <li key={service.id}>
                   <Link
                     href={`/servicos/${service.slug}`}
-                    className="inline-flex items-center gap-2 rounded-full border border-ink/15 py-2 pl-2.5 pr-4 text-sm text-ink transition-colors ease-out hover:border-blue hover:bg-surface-tint hover:text-blue-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark"
+                    className="inline-flex min-h-11 items-center gap-2 rounded-full border border-ink/15 py-2 pl-2.5 pr-4 text-sm text-ink transition-colors ease-out hover:border-blue hover:bg-surface-tint hover:text-blue-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark"
                   >
                     <ServiceIcon slug={service.slug} width={20} height={20} className="text-blue-dark" />
                     {service.title}

@@ -87,7 +87,7 @@ export async function SiteHeader() {
           */}
           <Link
             href="/"
-            className="shrink-0 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-dark"
+            className="inline-flex min-h-11 shrink-0 items-center rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-dark"
           >
             <Image
               src="/images/logo/logo-horizontal-color.png"
