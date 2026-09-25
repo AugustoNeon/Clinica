@@ -6,13 +6,14 @@ import { Hero } from "@/components/sections/Hero";
 import { PracticalInfo } from "@/components/sections/PracticalInfo";
 import { Steps } from "@/components/sections/Steps";
 import { TestimonialList } from "@/components/sections/TestimonialList";
-import { UrgencyBar } from "@/components/sections/UrgencyBar";
+import { FactsBand } from "@/components/sections/FactsBand";
 import { LocalBusinessJsonLd } from "@/components/seo/LocalBusinessJsonLd";
 import { Section } from "@/components/ui/Section";
 import { getServices } from "@/lib/data/services";
 import { getSiteSettingsMap } from "@/lib/data/siteSettings";
 import { getTeamMembers } from "@/lib/data/team";
 import { getTestimonials } from "@/lib/data/testimonials";
+import { buildWhatsAppUrl } from "@/lib/utils/whatsapp";
 
 /**
  * Home (issue #65; reorganizada na #73). A ordem segue a decisao de quem
@@ -38,6 +39,19 @@ export default async function HomePage() {
   ]);
   const professional = team[0] ?? null;
   const realTestimonials = testimonials.filter((testimonial) => !/placeholder/i.test(testimonial.patient_name));
+  // Fatos da faixa coral: so o que a clinica confirmou (questionario), nada inventado.
+  const facts = [
+    "Uma profissional, do início ao fim",
+    `${services.length} especialidades em um só lugar`,
+    "Urgência fora do horário? Direto pelo WhatsApp",
+    settings.insurance ? `Particular e convênio ${settings.insurance}` : "Atendimento particular",
+    "Pix, dinheiro, débito e crédito",
+    settings.opening_hours ? `Atendimento ${settings.opening_hours}` : null,
+    "Araucária, PR",
+  ].filter((fact): fact is string => Boolean(fact));
+  const urgencyHref = settings.whatsapp
+    ? buildWhatsAppUrl(settings.whatsapp, "Olá! Estou com uma urgência odontológica.")
+    : null;
 
   return (
     <>
@@ -52,7 +66,7 @@ export default async function HomePage() {
         professional={professional ? { name: professional.name, role: professional.role } : null}
       />
 
-      <UrgencyBar whatsapp={settings.whatsapp} />
+      <FactsBand facts={facts} whatsapp={settings.whatsapp} whatsappHref={urgencyHref} />
 
       {professional && (
         <DoctorIntro

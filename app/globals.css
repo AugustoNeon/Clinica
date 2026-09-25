@@ -165,9 +165,9 @@ p {
  * Motion (revisao anti-IA, issue #73): um unico momento orquestrado — a
  * entrada do hero (`.rise-in`) com o arco do sorriso se desenhando — mais o
  * arco dos passos que se desenha no scroll (liga uma sequencia real) e a
- * resposta do icone de servico ao hover. Saiu o "fade-up em toda secao", o
- * parallax, a flutuacao, o 3D do mouse e a faixa em movimento: eram o
- * pacote de efeitos que as skills de revisao apontam como padrao de IA.
+ * resposta do icone de servico ao hover, alem da faixa de fatos em
+ * movimento (que o usuario pediu de volta). Saiu o "fade-up em toda secao",
+ * o parallax, a flutuacao e o 3D do mouse.
  * O conteudo esta sempre visivel no primeiro frame.
  */
 @keyframes rise-in {
@@ -214,6 +214,38 @@ p {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
   animation: draw-arc 1100ms var(--ease-out-expo) 500ms forwards;
+}
+
+/*
+ * Faixa de fatos em movimento (components/sections/FactsBand.tsx). Volta na
+ * issue #73 a pedido do usuario. Conteudo duplicado no markup; a trilha anda
+ * -50% e o loop fecha sem salto. So `transform` anima (compositor). Pausa
+ * pelo botao (`data-paused`, WCAG 2.2.2), com o mouse em cima, com foco
+ * dentro e quando a faixa sai da tela (`data-offscreen`). A duracao vem do
+ * componente (`--ticker-duration`), proporcional ao numero de fatos.
+ */
+@keyframes ticker {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.ticker {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, #000 5%, #000 92%, transparent);
+}
+
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ticker var(--ticker-duration, 42s) linear infinite;
+}
+
+.ticker:hover .ticker-track,
+.ticker:focus-within .ticker-track,
+.ticker[data-paused] .ticker-track,
+.ticker[data-offscreen] .ticker-track {
+  animation-play-state: paused;
 }
 
 /*
@@ -266,5 +298,21 @@ details.faq[open] > summary .faq-chevron {
   .group:hover .service-icon,
   .group:focus-visible .service-icon {
     transform: none;
+  }
+
+  /* Faixa de fatos parada, quebrando em linhas; a copia do loop e a pausa somem. */
+  .ticker {
+    mask-image: none;
+  }
+
+  .ticker-track {
+    animation: none !important;
+    width: auto;
+    flex-wrap: wrap;
+  }
+
+  .ticker-copy,
+  .ticker-toggle {
+    display: none !important;
   }
 }
