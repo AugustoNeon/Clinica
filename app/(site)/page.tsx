@@ -6,9 +6,8 @@ import { Hero } from "@/components/sections/Hero";
 import { PracticalInfo } from "@/components/sections/PracticalInfo";
 import { Steps } from "@/components/sections/Steps";
 import { TestimonialList } from "@/components/sections/TestimonialList";
-import { TrustStrip } from "@/components/sections/TrustStrip";
+import { UrgencyBar } from "@/components/sections/UrgencyBar";
 import { LocalBusinessJsonLd } from "@/components/seo/LocalBusinessJsonLd";
-import { PlaceholderNotice } from "@/components/ui/PlaceholderNotice";
 import { Section } from "@/components/ui/Section";
 import { getServices } from "@/lib/data/services";
 import { getSiteSettingsMap } from "@/lib/data/siteSettings";
@@ -16,12 +15,19 @@ import { getTeamMembers } from "@/lib/data/team";
 import { getTestimonials } from "@/lib/data/testimonials";
 
 /**
- * Home (issue #65; camada rica na #71). Ordem das secoes segue o funil de
- * quem procura dentista pelo celular (PRODUCT.md): quem e / o que faz /
- * como e / prova social / onde fica / chamada final. Cada bloco le do
- * banco via `lib/data/*`. O ritmo de cor e deliberado: azul profundo →
- * terracota → branco → azul diluido → branco → azul profundo → branco →
- * azul diluido → azul → rodape azul profundo.
+ * Home (issue #65; reorganizada na #73). A ordem segue a decisao de quem
+ * procura dentista pelo celular (PRODUCT.md): primeiro QUEM atende — a
+ * clinica e uma profissional so, e isso e o que a diferencia —, depois o
+ * que ela faz, como e a primeira consulta, as duvidas, onde fica e a
+ * chamada final. Nao e a "cascata padrao" de landing page.
+ *
+ * Depoimentos so aparecem quando existe pelo menos um REAL: exemplo
+ * rotulado como placeholder nao e prova social, e prova social inventada e
+ * o sinal de pagina gerada que as skills de revisao mais apontam. Os de
+ * exemplo continuam no banco ate a doutora trocar (checklist).
+ *
+ * Ritmo de cor: azul vivo -> coral -> ceu -> branco -> pessego -> branco ->
+ * ceu -> azul vivo -> rodape marinho.
  */
 export default async function HomePage() {
   const [settings, services, team, testimonials] = await Promise.all([
@@ -31,9 +37,7 @@ export default async function HomePage() {
     getTestimonials(),
   ]);
   const professional = team[0] ?? null;
-  const hasPlaceholderTestimonial = testimonials.some((testimonial) =>
-    /placeholder/i.test(testimonial.patient_name),
-  );
+  const realTestimonials = testimonials.filter((testimonial) => !/placeholder/i.test(testimonial.patient_name));
 
   return (
     <>
@@ -48,13 +52,7 @@ export default async function HomePage() {
         professional={professional ? { name: professional.name, role: professional.role } : null}
       />
 
-      <TrustStrip
-        insurance={settings.insurance}
-        serviceCount={services.length}
-        openingHours={settings.opening_hours}
-      />
-
-      <FeaturedServices services={services} whatsapp={settings.whatsapp} />
+      <UrgencyBar whatsapp={settings.whatsapp} />
 
       {professional && (
         <DoctorIntro
@@ -64,23 +62,13 @@ export default async function HomePage() {
         />
       )}
 
+      <FeaturedServices services={services} whatsapp={settings.whatsapp} />
+
       <Steps whatsapp={settings.whatsapp} />
 
-      {testimonials.length > 0 && (
-        <Section
-          tone="deep"
-          title="Quem já passou por aqui"
-          description="Depoimentos publicados só com consentimento por escrito do paciente."
-        >
-          {hasPlaceholderTestimonial && (
-            <div className="mb-8">
-              <PlaceholderNotice>
-                Os depoimentos abaixo são exemplos. Entram os reais assim que a
-                clínica tiver o consentimento por escrito de cada paciente.
-              </PlaceholderNotice>
-            </div>
-          )}
-          <TestimonialList testimonials={testimonials} featureFirst={!hasPlaceholderTestimonial} />
+      {realTestimonials.length > 0 && (
+        <Section title="Quem já passou por aqui" description="Publicados com consentimento por escrito de cada paciente.">
+          <TestimonialList testimonials={realTestimonials} />
         </Section>
       )}
 

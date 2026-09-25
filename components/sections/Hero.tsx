@@ -4,7 +4,6 @@ import { buttonClasses } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { IconClock, IconMapPin, IconShield, IconWhatsApp } from "@/components/ui/icons";
 import { SmileDivider } from "@/components/ui/SmileDivider";
-import { TiltFrame } from "@/components/ui/TiltFrame";
 import { buildWhatsAppUrl } from "@/lib/utils/whatsapp";
 
 interface HeroProps {
@@ -21,51 +20,38 @@ interface HeroProps {
 type Vars = React.CSSProperties;
 
 /**
- * Abertura da Home (issue #65; camada rica na #71).
+ * Abertura da Home (issue #65; azul aceso e revisao anti-IA na #73).
  *
- * Estrategia de cor "drenched": o azul profundo da marca ocupa a faixa
- * inteira, com a textura de arcos por cima e duas formas que derivam
- * devagar no scroll. A foto real da doutora continua sendo o elemento
- * principal (PRODUCT.md, principio 1), agora num palco em camadas: anel
- * terracota atras, disco azul mais atras ainda, e dois "chips" de fato na
- * frente — cada camada tem profundidade propria e acompanha a inclinacao
- * do mouse (`TiltFrame` + `.tilt-layer`). Os chips flutuam devagar.
+ * O azul do logo, com mais saturacao, ocupa a faixa inteira; a foto real da
+ * doutora e o elemento principal (PRODUCT.md, principio 1), dentro do arco
+ * do logo com um anel coral. Sem manchas desfocadas, sem selos flutuando e
+ * sem inclinacao 3D: as skills de revisao apontam esse pacote como padrao de
+ * pagina gerada. O unico movimento e a entrada do texto e o sorriso se
+ * desenhando sob o titulo.
  *
  * O h1 e a tagline em primeira pessoa (confirmada pela cliente), nao o nome
- * da clinica: o nome ja esta no logo, no `<title>` e na etiqueta da foto.
+ * da clinica: o nome ja esta no logo, no `<title>` e no cracha da foto.
  */
 export function Hero({ tagline, whatsapp, address, openingHours, insurance, professional }: HeroProps) {
   const whatsappHref = buildWhatsAppUrl(whatsapp, "Olá! Gostaria de agendar uma avaliação.");
   const [street, cityState] = (address ?? "").split("—").map((part) => part.trim());
 
   return (
-    <section className="relative overflow-hidden bg-blue-deep text-white">
+    <section className="relative overflow-hidden bg-blue-dark text-white">
       <div aria-hidden className="pattern-arcs pointer-events-none absolute inset-0" />
-      {/* Formas de fundo: derivam no scroll (`.drift`), so decorativas. */}
-      <div
-        aria-hidden
-        className="drift pointer-events-none absolute -top-40 right-[-14rem] h-[46rem] w-[46rem] rounded-full bg-blue-dark/80 blur-3xl lg:right-[-6rem]"
-        style={{ "--drift-from": "0px", "--drift-to": "-90px" } as Vars}
-      />
-      <div
-        aria-hidden
-        className="drift pointer-events-none absolute bottom-24 -left-32 h-80 w-80 rounded-full bg-terracotta/30 blur-3xl"
-        style={{ "--drift-from": "50px", "--drift-to": "-50px" } as Vars}
-      />
 
-      <Container className="relative grid items-center gap-16 pt-14 pb-20 sm:pt-20 sm:pb-24 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-12 lg:py-28">
+      <Container className="relative grid items-center gap-14 pb-16 pt-12 sm:pb-20 sm:pt-16 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-10 lg:py-20">
         <div className="max-w-2xl">
-          <p className="rise-in inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-medium text-blue-glow">
-            <span aria-hidden className="h-2 w-2 rounded-full bg-terracotta-soft" />
+          <p className="rise-in text-base font-semibold text-blue-glow">
             Odontologia clínica e estética em Araucária, PR
           </p>
           <h1
-            className="rise-in mt-7 text-[3rem] font-semibold leading-[1.02] tracking-tight text-white sm:text-6xl lg:text-[4.75rem] xl:text-[5.25rem]"
+            className="rise-in mt-5 text-[2.75rem] font-bold leading-[1.02] text-white sm:text-6xl lg:text-7xl"
             style={{ "--rise-delay": "80ms" } as Vars}
           >
             {tagline}
           </h1>
-          {/* O sorriso do logo, desenhado sob o titulo: assinatura da marca, nao enfeite. */}
+          {/* O sorriso do logo, desenhado sob o titulo: assinatura da marca. */}
           <svg aria-hidden viewBox="0 0 240 40" className="mt-4 h-7 w-48 text-terracotta-soft sm:w-64" fill="none">
             <path
               className="smile-arc"
@@ -77,12 +63,11 @@ export function Hero({ tagline, whatsapp, address, openingHours, insurance, prof
             />
           </svg>
           <p
-            className="rise-in mt-7 max-w-xl text-lg leading-relaxed text-white/85 sm:text-xl"
+            className="rise-in mt-6 max-w-xl text-lg leading-relaxed text-white/90 sm:text-xl"
             style={{ "--rise-delay": "160ms" } as Vars}
           >
-            Atendimento humanizado e personalizado, da consulta de rotina à
-            reabilitação completa — com uma única profissional cuidando de você
-            do início ao fim.
+            Da limpeza de rotina à reabilitação completa, com a mesma profissional
+            cuidando de você do início ao fim.
           </p>
 
           <div className="rise-in mt-9 flex flex-wrap gap-3" style={{ "--rise-delay": "240ms" } as Vars}>
@@ -102,7 +87,7 @@ export function Hero({ tagline, whatsapp, address, openingHours, insurance, prof
 
           {/* So no celular: no desktop a barra de topo ja mostra endereco e horario. */}
           <ul
-            className="rise-in mt-11 flex flex-wrap gap-x-8 gap-y-3 text-sm text-white/85 lg:hidden"
+            className="rise-in mt-10 flex flex-wrap gap-x-8 gap-y-3 text-sm text-white/90 lg:hidden"
             style={{ "--rise-delay": "320ms" } as Vars}
           >
             <li className="flex items-center gap-2">
@@ -126,85 +111,40 @@ export function Hero({ tagline, whatsapp, address, openingHours, insurance, prof
         </div>
 
         <div
-          className="rise-in relative mx-auto w-full max-w-sm px-4 sm:max-w-md sm:px-0 lg:max-w-none lg:pl-8"
+          className="rise-in relative mx-auto w-full max-w-sm px-3 sm:max-w-md sm:px-0 lg:ml-auto lg:mr-4"
           style={{ "--rise-delay": "120ms" } as Vars}
         >
-          <TiltFrame max={7} className="relative">
-            {/* Camadas de tras: disco azul e anel terracota, com profundidade negativa. */}
-            <div
-              aria-hidden
-              className="tilt-layer absolute -left-10 top-6 h-44 w-44 rounded-full bg-blue/70 sm:-left-14 sm:h-56 sm:w-56"
-              style={{ "--depth": "-70px" } as Vars}
+          {/* Anel coral atras da foto: a mesma curva do logo, deslocada. */}
+          <div
+            aria-hidden
+            className="absolute -right-3 top-5 bottom-8 left-5 rounded-[999px_999px_2rem_2rem] border-[3px] border-terracotta sm:-right-5"
+          />
+          <div className="relative aspect-[4/5] overflow-hidden rounded-[999px_999px_1.5rem_1.5rem] bg-blue-deep">
+            <Image
+              src="/images/team/ariane-02-sentada.jpg"
+              alt="Dra. Ariane Vaz Storrer sorrindo, sentada, em foto de estúdio"
+              fill
+              priority
+              sizes="(min-width: 1024px) 34vw, (min-width: 640px) 28rem, 100vw"
+              className="object-cover object-top"
             />
-            <div
-              aria-hidden
-              className="tilt-layer absolute -inset-3 rounded-[999px_999px_2.25rem_2.25rem] border-2 border-terracotta-soft/70 sm:-inset-4"
-              style={{ "--depth": "-30px" } as Vars}
-            />
+          </div>
 
-            <div className="tilt-glare relative aspect-[4/5] overflow-hidden rounded-[999px_999px_1.75rem_1.75rem] bg-blue-dark shadow-2xl shadow-blue-deep/70">
-              <Image
-                src="/images/team/ariane-02-sentada.jpg"
-                alt="Dra. Ariane Vaz Storrer sorrindo, sentada, em foto de estúdio"
-                fill
-                priority
-                sizes="(min-width: 1024px) 40vw, (min-width: 640px) 28rem, 100vw"
-                className="object-cover object-top"
-              />
+          {professional && (
+            <div className="absolute -bottom-5 left-0 flex items-center gap-3 rounded-full bg-surface py-2 pl-2 pr-5 text-ink shadow-lg shadow-blue-deep/30 sm:-left-6">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-surface-tint">
+                <Image src="/images/logo/icon-smile.png" alt="" width={512} height={512} className="h-7 w-7" />
+              </span>
+              <span className="leading-tight">
+                <span className="block font-display text-base font-semibold">{professional.name}</span>
+                <span className="block text-xs text-ink-muted">{professional.role}</span>
+              </span>
             </div>
-
-            {/* Selos na frente da foto: profundidade positiva + flutuacao. O de
-                urgencia parece botao, entao E um link para o WhatsApp. */}
-            <a
-              href={whatsappHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="tilt-layer float absolute left-0 top-[14%] flex items-center gap-2.5 rounded-2xl bg-surface px-3.5 py-2.5 text-ink shadow-xl shadow-blue-deep/50 transition-colors ease-out hover:bg-surface-tint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:-left-8"
-              style={{ "--depth": "55px", "--float-delay": "0ms" } as Vars}
-            >
-              <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-dark text-white">
-                <IconWhatsApp width={16} height={16} />
-              </span>
-              <span className="text-sm font-medium leading-tight">
-                Urgência?
-                <br />
-                <span className="font-normal text-ink-muted">Direto pelo WhatsApp</span>
-              </span>
-            </a>
-
-            {insurance && (
-              <div
-                className="tilt-layer float absolute right-2 top-[58%] flex items-center gap-2.5 rounded-2xl bg-surface px-3.5 py-2.5 text-ink shadow-xl shadow-blue-deep/50 sm:-right-2"
-                style={{ "--depth": "75px", "--float-delay": "1600ms" } as Vars}
-              >
-                <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-terracotta text-ink">
-                  <IconShield width={16} height={16} />
-                </span>
-                <span className="text-sm font-medium leading-tight">
-                  Particular e convênio
-                  <br />
-                  <span className="font-normal text-ink-muted">{insurance}</span>
-                </span>
-              </div>
-            )}
-
-            {professional && (
-              <div
-                className="tilt-layer absolute -bottom-6 left-4 flex items-center gap-3 rounded-2xl bg-surface px-4 py-3 text-ink shadow-xl shadow-blue-deep/50 sm:left-8"
-                style={{ "--depth": "40px" } as Vars}
-              >
-                <Image src="/images/logo/icon-smile.png" alt="" width={512} height={512} className="h-9 w-9" />
-                <div className="leading-tight">
-                  <p className="font-display text-base font-medium">{professional.name}</p>
-                  <p className="text-xs text-ink-muted">{professional.role}</p>
-                </div>
-              </div>
-            )}
-          </TiltFrame>
+          )}
         </div>
       </Container>
 
-      {/* A faixa sorri para a proxima secao (ticker terracota). */}
+      {/* A faixa sorri para a proxima secao (aviso de urgencia em coral). */}
       <SmileDivider className="relative text-terracotta" />
     </section>
   );

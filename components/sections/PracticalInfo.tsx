@@ -13,7 +13,7 @@ interface PracticalInfoProps {
 
 function InfoRow({ icon, label, children }: { icon: ReactNode; label: string; children: ReactNode }) {
   return (
-    <div className="flex gap-4 rounded-2xl bg-surface p-5 shadow-sm shadow-blue-deep/5">
+    <div className="flex gap-4 rounded-3xl bg-surface p-5">
       <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-terracotta-tint text-terracotta-text">
         {icon}
       </span>
@@ -38,11 +38,11 @@ export function PracticalInfo({ settings, title = "Onde e quando", compact = fal
     : null;
 
   return (
-    <section className="relative overflow-hidden bg-surface-tint py-16 sm:py-20 lg:py-28" id="localizacao">
+    <section className="relative overflow-hidden bg-surface-tint py-16 sm:py-20 lg:py-24" id="localizacao">
       <Container className="relative grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-16">
         <div>
-          <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">{title}</h2>
-          <dl className="reveal mt-8 grid gap-3">
+          <h2 className="text-4xl font-bold sm:text-5xl">{title}</h2>
+          <dl className="mt-8 grid gap-2">
             {settings.address && (
               <InfoRow icon={<IconMapPin width={22} height={22} />} label="Endereço">
                 <dd className="mt-1 text-lg leading-snug">{settings.address}</dd>
@@ -118,8 +118,8 @@ export function PracticalInfo({ settings, title = "Onde e quando", compact = fal
           </dl>
         </div>
 
-        <div className="reveal flex flex-col overflow-hidden rounded-3xl bg-surface p-2 shadow-xl shadow-blue-deep/15 lg:p-3">
-          <div className="flex-1 overflow-hidden rounded-2xl">
+        <div className="flex flex-col overflow-hidden rounded-3xl bg-surface">
+          <div className="flex-1 overflow-hidden">
             <LocationMap embedUrl={settings.maps_embed_url} />
           </div>
         </div>

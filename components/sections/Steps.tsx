@@ -11,7 +11,7 @@ interface StepsProps {
 const STEPS = [
   {
     title: "Você entra em contato",
-    text: "Pelo WhatsApp, pelo telefone ou pelo formulário do site. Conte o que está sentindo ou o que gostaria de mudar — não precisa saber o nome do procedimento.",
+    text: "Pelo WhatsApp, pelo telefone ou pelo formulário do site. Conte o que está sentindo ou o que gostaria de mudar. Não precisa saber o nome do procedimento.",
   },
   {
     title: "Avaliação no consultório",
@@ -37,15 +37,13 @@ export function Steps({ whatsapp }: StepsProps) {
   const whatsappHref = buildWhatsAppUrl(whatsapp, "Olá! Gostaria de agendar uma primeira consulta.");
 
   return (
-    <section className="relative overflow-hidden py-16 sm:py-20 lg:py-28">
+    <section className="relative overflow-hidden bg-terracotta-tint py-16 sm:py-20 lg:py-24">
       <Container>
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
-            Como funciona a primeira consulta
-          </h2>
+          <h2 className="text-4xl font-bold sm:text-5xl">Como funciona a primeira consulta</h2>
           <p className="mt-4 text-lg leading-relaxed text-ink-muted">
-            Três passos, sem mistério. A ideia é que você chegue sabendo o que
-            esperar e saia sabendo o que vem depois.
+            Três passos. Você chega sabendo o que esperar e sai sabendo o que vem
+            depois.
           </p>
         </div>
 
@@ -68,7 +66,7 @@ export function Steps({ whatsapp }: StepsProps) {
             />
           </svg>
 
-          <ol className="reveal relative grid gap-12 md:grid-cols-3 md:gap-8">
+          <ol className="relative grid gap-12 md:grid-cols-3 md:gap-8">
             {STEPS.map((step, index) => (
               <li
                 key={step.title}
@@ -76,11 +74,11 @@ export function Steps({ whatsapp }: StepsProps) {
               >
                 <span
                   aria-hidden
-                  className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-dark font-display text-2xl font-semibold text-white shadow-lg shadow-blue-dark/30 ring-8 ring-surface"
+                  className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-dark font-display text-2xl font-bold text-white ring-8 ring-terracotta-tint"
                 >
                   {index + 1}
                 </span>
-                <h3 className="mt-6 text-xl font-medium sm:text-2xl">
+                <h3 className="mt-6 text-xl font-semibold sm:text-2xl">
                   <span className="sr-only">Passo {index + 1}: </span>
                   {step.title}
                 </h3>
@@ -98,10 +96,10 @@ export function Steps({ whatsapp }: StepsProps) {
             className={buttonClasses("primary", "", "lg")}
           >
             <IconWhatsApp width={20} height={20} />
-            Dar o primeiro passo
+            Agendar pelo WhatsApp
           </a>
           <Link href="/contato" className={buttonClasses("ghost", "", "lg")}>
-            Prefiro enviar uma mensagem
+            Enviar mensagem
           </Link>
         </div>
       </Container>
