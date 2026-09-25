@@ -22,13 +22,13 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
   return (
     <Container className="py-20 sm:py-28">
       <div className="max-w-xl">
-        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+        <h1 className="text-3xl font-bold sm:text-4xl">
           Não conseguimos carregar esta página
         </h1>
         <p className="mt-4 text-base leading-relaxed text-ink-muted">
           Pode ser uma instabilidade momentânea. Tente de novo em alguns
           segundos. Se continuar assim, fale com a clínica pelo telefone ou
-          WhatsApp — o atendimento não depende do site.
+          WhatsApp: o atendimento não depende do site.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Button type="button" onClick={reset}>

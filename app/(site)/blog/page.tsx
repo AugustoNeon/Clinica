@@ -30,7 +30,7 @@ export default async function BlogPage() {
     <>
       <PageHero
         title="Blog"
-        lead="Orientações práticas sobre saúde bucal, prevenção e o que esperar de cada tratamento — no mesmo tom da consulta."
+        lead="Orientações práticas sobre saúde bucal, prevenção e o que esperar de cada tratamento, no mesmo tom da consulta."
         visual={
           <HeroEmblem>
             <IconPen width={112} height={112} strokeWidth={1.25} />
@@ -44,7 +44,7 @@ export default async function BlogPage() {
             <div className="mb-10 max-w-3xl">
               <PlaceholderNotice>
                 O blog é confirmado (a Dra. Ariane pretende publicar 1x por
-                semana), mas nenhum post real foi escrito ainda — a listagem
+                semana), mas nenhum post real foi escrito ainda. A listagem
                 abaixo é só um exemplo.
               </PlaceholderNotice>
             </div>

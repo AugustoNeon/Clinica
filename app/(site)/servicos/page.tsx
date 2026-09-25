@@ -34,7 +34,7 @@ export default async function ServicosPage() {
         whatsapp={settings.whatsapp}
         phone={settings.phone}
         title="Não sabe por onde começar?"
-        text="Mande uma mensagem contando o que está sentindo. A avaliação define qual especialidade faz sentido — e se faz."
+        text="Mande uma mensagem contando o que está sentindo. A avaliação define qual especialidade faz sentido, e se faz."
       />
     </>
   );

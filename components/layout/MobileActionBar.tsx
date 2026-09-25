@@ -8,14 +8,12 @@ interface MobileActionBarProps {
   phone?: string | null;
 }
 
-/** Quanto rolar (px) antes de a barra aparecer: o hero ja tem os mesmos botoes. */
-const SHOW_AFTER = 560;
 
 /**
  * Barra de contato na zona do polegar, so no celular e tablet (issue #71,
  * pesquisa de mobile com as skills tailwindcss-mobile-first e
- * responsive-design): WhatsApp e ligacao sempre ao alcance depois que o
- * hero sai da tela — em pagina longa, o CTA do topo fica a varias
+ * responsive-design): WhatsApp e ligacao sempre ao alcance depois que a
+ * abertura da pagina sai da tela — em pagina longa, o CTA do topo fica a varias
  * rolagens de distancia.
  *
  * - `env(safe-area-inset-bottom)` com piso de 0.75rem: nao encosta na barra
@@ -31,12 +29,17 @@ export function MobileActionBar({ whatsappHref, phone }: MobileActionBarProps) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    function update() {
-      setVisible(window.scrollY > SHOW_AFTER);
-    }
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    return () => window.removeEventListener("scroll", update);
+    // Aparece quando a abertura da pagina (hero ou PageHero, que ja tem os
+    // mesmos botoes) sai da tela. IntersectionObserver em vez de listener de
+    // scroll: nada roda a cada quadro de rolagem.
+    const opening = document.querySelector("#conteudo > :not(script)");
+    // Toda pagina do site abre com um hero; sem ele, a barra fica escondida.
+    if (!opening) return;
+    const observer = new IntersectionObserver(([entry]) => setVisible(!entry.isIntersecting), {
+      rootMargin: "0px 0px -35% 0px",
+    });
+    observer.observe(opening);
+    return () => observer.disconnect();
   }, []);
 
   if (!whatsappHref && !phone) return null;
@@ -48,7 +51,7 @@ export function MobileActionBar({ whatsappHref, phone }: MobileActionBarProps) {
       aria-label="Contato rápido"
       aria-hidden={!visible || undefined}
       inert={!visible}
-      className={`fixed inset-x-0 bottom-0 z-(--z-header) border-t border-ink/10 bg-surface/95 px-4 pt-3 shadow-[0_-8px_24px_rgb(18_63_92/0.12)] backdrop-blur transition-transform duration-300 ease-out lg:hidden ${
+      className={`fixed inset-x-0 bottom-0 z-(--z-header) border-t border-ink/10 bg-surface px-4 pt-3 shadow-[0_-8px_24px_rgb(12_54_84/0.12)] transition-transform duration-300 ease-out lg:hidden ${
         visible ? "translate-y-0" : "translate-y-full"
       }`}
       style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
@@ -59,7 +62,7 @@ export function MobileActionBar({ whatsappHref, phone }: MobileActionBarProps) {
             href={whatsappHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-blue-dark px-4 text-base font-medium text-white shadow-sm shadow-blue-dark/20 transition active:brightness-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark"
+            className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full bg-blue-dark px-4 text-base font-semibold text-white transition active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark"
           >
             <IconWhatsApp width={20} height={20} />
             Agendar
@@ -68,7 +71,7 @@ export function MobileActionBar({ whatsappHref, phone }: MobileActionBarProps) {
         {telHref && (
           <a
             href={telHref}
-            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-ink/20 bg-surface px-5 text-base font-medium text-ink transition active:bg-surface-tint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark"
+            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-ink/20 bg-surface px-5 text-base font-semibold text-ink transition active:bg-surface-tint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark"
           >
             <IconPhone width={20} height={20} />
             Ligar

@@ -46,7 +46,7 @@ export function Section({
         {(title || description) && (
           <header className="mb-10 max-w-2xl sm:mb-12">
             {title && (
-              <h2 className={`text-3xl font-semibold tracking-tight sm:text-4xl ${onDark ? "text-white" : ""}`}>
+              <h2 className={`text-3xl font-bold sm:text-4xl ${onDark ? "text-white" : ""}`}>
                 {title}
               </h2>
             )}

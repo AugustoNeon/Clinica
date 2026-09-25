@@ -7,7 +7,7 @@ interface LocationMapProps {
  * Mapa da clinica embutido do Google Maps.
  *
  * O iframe so carrega porque `next.config.ts` libera
- * `frame-src https://www.google.com` no CSP — mexer num sem o outro quebra
+ * `frame-src https://www.google.com` no CSP; mexer num sem o outro quebra
  * o mapa em producao sem erro visivel no build.
  *
  * `loading="lazy"` porque o mapa aparece abaixo da dobra nas duas paginas que
