@@ -39,7 +39,6 @@ export function PracticalInfo({ settings, title = "Onde e quando", compact = fal
 
   return (
     <section className="relative overflow-hidden bg-surface-tint py-16 sm:py-20 lg:py-28" id="localizacao">
-      <div aria-hidden className="pattern-arcs-blue pointer-events-none absolute inset-0" />
       <Container className="relative grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-16">
         <div>
           <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">{title}</h2>

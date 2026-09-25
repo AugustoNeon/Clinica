@@ -116,7 +116,6 @@ export default async function SobrePage() {
       </section>
 
       <section className="relative overflow-hidden bg-surface-tint py-14 sm:py-20 lg:py-24">
-        <div aria-hidden className="pattern-arcs-blue pointer-events-none absolute inset-0" />
         <Container className="relative">
           <div className="max-w-2xl">
             <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
@@ -129,13 +128,15 @@ export default async function SobrePage() {
                 key={value.title}
                 className="rounded-3xl bg-surface p-6 shadow-md shadow-blue-deep/5 sm:p-7"
               >
-                <span
-                  className={`inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${value.tint}`}
-                >
-                  <value.icon width={26} height={26} />
-                </span>
-                <h3 className="mt-5 text-xl font-medium sm:text-2xl">{value.title}</h3>
-                <p className="mt-2 text-base leading-relaxed text-ink-muted">{value.text}</p>
+                <div className="flex items-center gap-4">
+                  <span
+                    className={`inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${value.tint}`}
+                  >
+                    <value.icon width={24} height={24} />
+                  </span>
+                  <h3 className="text-xl font-medium sm:text-2xl">{value.title}</h3>
+                </div>
+                <p className="mt-4 text-base leading-relaxed text-ink-muted">{value.text}</p>
               </li>
             ))}
           </ul>
@@ -161,7 +162,6 @@ export default async function SobrePage() {
                 key={label}
                 className="relative flex aspect-[4/3] items-end overflow-hidden rounded-3xl border border-dashed border-blue/40 bg-surface-tint p-5"
               >
-                <div aria-hidden className="pattern-arcs-blue pointer-events-none absolute inset-0" />
                 <span className="relative text-sm font-medium text-ink">{label} — foto em breve</span>
               </div>
             ))}

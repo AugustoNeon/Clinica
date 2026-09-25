@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
-import { IconArrowRight } from "@/components/ui/icons";
 import { ServiceIcon } from "@/components/ui/serviceIcons";
 import { groupServices } from "@/lib/config/services";
 import type { Service } from "@/types";
@@ -26,8 +25,8 @@ const GROUP_TINTS = [
  * uma grade unica de 15 cards. O agrupamento e so apresentacao
  * (`lib/config/services.ts`); servico novo no admin cai em "Outras
  * especialidades" ate ganhar grupo. Camada rica (issue #71): icone
- * ilustrado proprio em cada servico, tinta por grupo, e o icone se
- * redesenha no hover.
+ * proprio em cada servico (Griddy Icons), ao lado do titulo, com tinta por
+ * grupo.
  */
 export function ServiceList({ services }: ServiceListProps) {
   if (services.length === 0) {
@@ -48,16 +47,10 @@ export function ServiceList({ services }: ServiceListProps) {
           aria-labelledby={`grupo-${index}`}
           className={`relative ${index % 2 === 1 ? "overflow-hidden bg-surface-tint" : ""}`}
         >
-          {index % 2 === 1 && <div aria-hidden className="pattern-arcs-blue pointer-events-none absolute inset-0" />}
           <Container className="relative grid gap-8 py-12 sm:py-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-16">
             <div className="lg:sticky lg:top-28 lg:self-start">
-              <span
-                aria-hidden
-                className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl font-display text-xl font-semibold ${GROUP_TINTS[index % GROUP_TINTS.length]}`}
-              >
-                {index + 1}
-              </span>
-              <h2 id={`grupo-${index}`} className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">
+              {/* Grupos nao sao uma sequencia: sem numero, so o titulo (critique 2026-09-25). */}
+              <h2 id={`grupo-${index}`} className="text-3xl font-semibold tracking-tight sm:text-4xl">
                 {group.title}
               </h2>
               <p className="mt-3 text-lg leading-relaxed text-ink-muted">{group.description}</p>
@@ -68,26 +61,23 @@ export function ServiceList({ services }: ServiceListProps) {
                 <li key={service.id}>
                   <Link
                     href={`/servicos/${service.slug}`}
-                    className="group flex h-full flex-col rounded-3xl border border-ink/10 bg-surface p-6 transition duration-300 ease-out hover:-translate-y-1 hover:border-blue hover:shadow-xl hover:shadow-blue-dark/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark"
+                    className="group flex h-full flex-col rounded-3xl border border-ink/10 bg-surface p-6 transition-colors duration-200 ease-out hover:border-blue hover:bg-surface-tint/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark"
                   >
-                    <span
-                      className={`inline-flex h-14 w-14 items-center justify-center rounded-2xl ${GROUP_TINTS[index % GROUP_TINTS.length]}`}
-                    >
-                      <ServiceIcon slug={service.slug} className="service-icon" width={30} height={30} />
-                    </span>
-                    <h3 className="mt-5 text-xl font-medium transition-colors ease-out group-hover:text-blue-dark">
-                      {service.title}
-                    </h3>
-                    <p className="mt-2 flex-1 text-base leading-relaxed text-ink-muted">
+                    <div className="flex items-center gap-4">
+                      <span
+                        className={`inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${GROUP_TINTS[index % GROUP_TINTS.length]}`}
+                      >
+                        <ServiceIcon slug={service.slug} className="service-icon" width={26} height={26} />
+                      </span>
+                      <h3 className="text-xl font-medium transition-colors ease-out group-hover:text-blue-dark">
+                        {service.title}
+                      </h3>
+                    </div>
+                    <p className="mt-4 flex-1 text-base leading-relaxed text-ink-muted">
                       {service.description}
                     </p>
-                    <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-blue-dark">
+                    <span className="mt-5 text-sm font-medium text-blue-dark underline decoration-blue-dark/30 underline-offset-4 transition-colors group-hover:decoration-blue-dark">
                       Saiba mais
-                      <IconArrowRight
-                        width={16}
-                        height={16}
-                        className="transition-transform duration-200 ease-out group-hover:translate-x-1"
-                      />
                     </span>
                   </Link>
                 </li>

@@ -13,7 +13,6 @@ import { IconTooth } from "@/components/ui/serviceIcons";
 export function NotFoundContent() {
   return (
     <div className="relative overflow-hidden">
-      <div aria-hidden className="pattern-arcs-blue pointer-events-none absolute inset-0" />
       <Container className="relative grid items-center gap-10 py-20 sm:py-28 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <div className="max-w-xl">
           <p className="font-display text-7xl font-semibold leading-none text-blue sm:text-8xl lg:text-9xl">

@@ -23,12 +23,14 @@ const ICON_TINTS = [
 ];
 
 /**
- * Servicos na Home (issue #65; mosaico ilustrado na #71). Seis servicos em
- * destaque como blocos com icone ilustrado proprio (`serviceIcons.tsx`),
- * o primeiro maior (duas linhas de altura no desktop), e um bloco azul de
- * chamada no fim da grade — nao e uma grade de cards iguais: os tamanhos
- * variam, as tintas alternam e o icone se redesenha no hover. O restante
- * dos servicos continua a um clique, como indice compacto.
+ * Servicos na Home (issue #65; mosaico na #71). Seis servicos em destaque,
+ * o primeiro maior (duas linhas de altura no desktop) com o icone grande
+ * como imagem do bloco, e um bloco azul de chamada no fim da grade.
+ *
+ * Critique de 2026-09-25: nos blocos menores o icone fica AO LADO do
+ * titulo (nao num quadrado em cima, o padrao de template que o detector
+ * apontou), o bloco nao "pula" no hover — so a borda e o fundo respondem —
+ * e o "Saiba mais" e texto sublinhado, sem seta anexada.
  */
 export function FeaturedServices({ services, whatsapp }: FeaturedServicesProps) {
   if (services.length === 0) {
@@ -36,7 +38,10 @@ export function FeaturedServices({ services, whatsapp }: FeaturedServicesProps) 
   }
 
   const { featured, rest } = pickFeatured(services);
-  const whatsappHref = buildWhatsAppUrl(whatsapp, "Olá! Não sei qual especialidade procurar. Gostaria de agendar uma avaliação.");
+  const whatsappHref = buildWhatsAppUrl(
+    whatsapp,
+    "Olá! Não sei qual especialidade procurar. Gostaria de agendar uma avaliação.",
+  );
 
   return (
     <section className="relative py-16 sm:py-20 lg:py-28" id="servicos">
@@ -60,49 +65,50 @@ export function FeaturedServices({ services, whatsapp }: FeaturedServicesProps) 
 
         <ul className="reveal mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {featured.map((service, index) => {
-            const large = index === 0;
+            if (index === 0) {
+              return (
+                <li key={service.id} className="sm:col-span-2 lg:col-span-1 lg:row-span-2">
+                  <Link
+                    href={`/servicos/${service.slug}`}
+                    className="group relative flex h-full min-h-72 flex-col justify-end overflow-hidden rounded-3xl bg-blue-dark p-7 text-white transition-colors duration-300 ease-out hover:bg-blue-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark lg:p-9"
+                  >
+                    <div aria-hidden className="pattern-arcs pointer-events-none absolute inset-0" />
+                    {/* O icone grande e a imagem do bloco: sem caixa, sangrando no canto. */}
+                    <ServiceIcon
+                      slug={service.slug}
+                      className="service-icon pointer-events-none absolute -right-6 -top-6 h-44 w-44 text-white/15 lg:h-64 lg:w-64"
+                    />
+                    <h3 className="relative text-2xl font-medium text-white lg:text-3xl">{service.title}</h3>
+                    <p className="relative mt-2 max-w-sm text-base leading-relaxed text-white/90 lg:text-lg">
+                      {service.description}
+                    </p>
+                    <span className="relative mt-6 text-sm font-medium text-white underline decoration-white/40 underline-offset-4 transition-colors group-hover:decoration-white">
+                      Saiba mais
+                    </span>
+                  </Link>
+                </li>
+              );
+            }
+
             return (
-              <li key={service.id} className={large ? "sm:col-span-2 lg:col-span-1 lg:row-span-2" : ""}>
+              <li key={service.id}>
                 <Link
                   href={`/servicos/${service.slug}`}
-                  className={`group relative flex h-full flex-col overflow-hidden rounded-3xl border p-6 transition duration-300 ease-out hover:-translate-y-1 hover:border-blue hover:shadow-xl hover:shadow-blue-dark/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark sm:p-7 ${
-                    large ? "border-blue/25 bg-surface-tint lg:p-9" : "border-ink/10 bg-surface"
-                  }`}
+                  className="group flex h-full flex-col rounded-3xl border border-ink/10 bg-surface p-6 transition-colors duration-200 ease-out hover:border-blue hover:bg-surface-tint/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark sm:p-7"
                 >
-                  {large && (
-                    <svg
-                      aria-hidden
-                      viewBox="0 0 240 120"
-                      className="pointer-events-none absolute -right-16 top-32 hidden h-56 w-auto text-blue/15 transition-colors duration-300 ease-out group-hover:text-blue/25 lg:block"
-                      fill="none"
+                  <div className="flex items-center gap-4">
+                    <span
+                      className={`inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${ICON_TINTS[index % ICON_TINTS.length]}`}
                     >
-                      <path d="M10 10c50 100 170 100 220 0" stroke="currentColor" strokeWidth="22" strokeLinecap="round" />
-                    </svg>
-                  )}
-                  <span
-                    className={`relative inline-flex shrink-0 items-center justify-center rounded-2xl ${
-                      large ? "h-16 w-16 bg-blue-dark text-white lg:h-24 lg:w-24" : `h-14 w-14 ${ICON_TINTS[index % ICON_TINTS.length]}`
-                    }`}
-                  >
-                    <ServiceIcon slug={service.slug} className="service-icon" width={large ? 48 : 30} height={large ? 48 : 30} />
-                  </span>
-                  <h3
-                    className={`relative font-medium ${large ? "mt-6 lg:mt-auto lg:pt-10" : "mt-6"} transition-colors ease-out group-hover:text-blue-dark ${
-                      large ? "text-2xl lg:text-3xl" : "text-xl sm:text-2xl"
-                    }`}
-                  >
-                    {service.title}
-                  </h3>
-                  <p className={`relative mt-2 leading-relaxed text-ink-muted ${large ? "text-base lg:text-lg" : "flex-1 text-base"}`}>
-                    {service.description}
-                  </p>
-                  <span className="relative mt-6 inline-flex items-center gap-2 text-sm font-medium text-blue-dark">
+                      <ServiceIcon slug={service.slug} className="service-icon" width={26} height={26} />
+                    </span>
+                    <h3 className="text-xl font-medium transition-colors ease-out group-hover:text-blue-dark sm:text-2xl">
+                      {service.title}
+                    </h3>
+                  </div>
+                  <p className="mt-4 flex-1 text-base leading-relaxed text-ink-muted">{service.description}</p>
+                  <span className="mt-5 text-sm font-medium text-blue-dark underline decoration-blue-dark/30 underline-offset-4 transition-colors group-hover:decoration-blue-dark">
                     Saiba mais
-                    <IconArrowRight
-                      width={16}
-                      height={16}
-                      className="transition-transform duration-200 ease-out group-hover:translate-x-1"
-                    />
                   </span>
                 </Link>
               </li>
@@ -111,7 +117,7 @@ export function FeaturedServices({ services, whatsapp }: FeaturedServicesProps) 
 
           {/* Bloco de chamada: fecha a grade em azul, com a textura da marca. */}
           <li className="lg:col-span-2">
-            <div className="relative flex h-full flex-col justify-between gap-6 overflow-hidden rounded-3xl bg-blue-dark p-7 text-white sm:p-8 lg:flex-row lg:items-center lg:gap-8">
+            <div className="relative flex h-full flex-col justify-between gap-6 overflow-hidden rounded-3xl bg-blue-deep p-7 text-white sm:p-8 lg:flex-row lg:items-center lg:gap-8">
               <div aria-hidden className="pattern-arcs pointer-events-none absolute inset-0" />
               <div className="relative max-w-md">
                 <p className="font-display text-2xl font-medium leading-tight sm:text-3xl">
@@ -143,7 +149,7 @@ export function FeaturedServices({ services, whatsapp }: FeaturedServicesProps) 
                 <li key={service.id}>
                   <Link
                     href={`/servicos/${service.slug}`}
-                    className="inline-flex items-center gap-2 rounded-full border border-ink/15 py-2 pl-2.5 pr-4 text-sm text-ink transition ease-out hover:border-blue hover:bg-surface-tint hover:text-blue-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark"
+                    className="inline-flex items-center gap-2 rounded-full border border-ink/15 py-2 pl-2.5 pr-4 text-sm text-ink transition-colors ease-out hover:border-blue hover:bg-surface-tint hover:text-blue-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark"
                   >
                     <ServiceIcon slug={service.slug} width={20} height={20} className="text-blue-dark" />
                     {service.title}

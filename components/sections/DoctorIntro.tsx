@@ -36,7 +36,6 @@ export function DoctorIntro({ professional, clinicTagline, whatsapp }: DoctorInt
 
   return (
     <section className="relative overflow-hidden bg-surface-tint py-16 sm:py-20 lg:py-28">
-      <div aria-hidden className="pattern-arcs-blue pointer-events-none absolute inset-0" />
       <Container className="relative grid items-center gap-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-20">
         <div className="reveal relative mx-auto w-full max-w-sm pb-10 pr-10 sm:pr-14 lg:max-w-md">
           <div
