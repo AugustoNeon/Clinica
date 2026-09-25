@@ -50,7 +50,7 @@ export function NotFoundContent() {
         </div>
         <div aria-hidden className="float hidden justify-center lg:flex">
           <span className="inline-flex h-56 w-56 items-center justify-center rounded-full bg-surface-tint text-blue">
-            <IconTooth width={140} height={140} strokeWidth={1.25} />
+            <IconTooth width={128} height={128} />
           </span>
         </div>
       </Container>

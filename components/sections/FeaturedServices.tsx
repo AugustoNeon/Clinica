@@ -84,7 +84,7 @@ export function FeaturedServices({ services, whatsapp }: FeaturedServicesProps) 
                       large ? "h-16 w-16 bg-blue-dark text-white lg:h-24 lg:w-24" : `h-14 w-14 ${ICON_TINTS[index % ICON_TINTS.length]}`
                     }`}
                   >
-                    <ServiceIcon slug={service.slug} className="draw-icon" width={large ? 48 : 30} height={large ? 48 : 30} />
+                    <ServiceIcon slug={service.slug} className="service-icon" width={large ? 48 : 30} height={large ? 48 : 30} />
                   </span>
                   <h3
                     className={`relative font-medium ${large ? "mt-6 lg:mt-auto lg:pt-10" : "mt-6"} transition-colors ease-out group-hover:text-blue-dark ${

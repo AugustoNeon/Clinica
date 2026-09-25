@@ -23,7 +23,7 @@ export default async function ServicosPage() {
         lead="Tudo o que a clínica atende, organizado pelo que você está procurando. Em dúvida sobre qual é o seu caso? A avaliação inicial resolve isso."
         visual={
           <HeroEmblem>
-            <IconTooth width={128} height={128} strokeWidth={1.25} />
+            <IconTooth width={120} height={120} />
           </HeroEmblem>
         }
       />

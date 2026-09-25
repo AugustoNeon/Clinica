@@ -73,7 +73,7 @@ export function ServiceList({ services }: ServiceListProps) {
                     <span
                       className={`inline-flex h-14 w-14 items-center justify-center rounded-2xl ${GROUP_TINTS[index % GROUP_TINTS.length]}`}
                     >
-                      <ServiceIcon slug={service.slug} className="draw-icon" width={30} height={30} />
+                      <ServiceIcon slug={service.slug} className="service-icon" width={30} height={30} />
                     </span>
                     <h3 className="mt-5 text-xl font-medium transition-colors ease-out group-hover:text-blue-dark">
                       {service.title}

@@ -329,30 +329,17 @@ p {
 }
 
 /*
- * Icone de servico que se redesenha ao passar o mouse no cartao (issue #71).
- * Os paths tem `pathLength=1`; no hover o traco parte do zero e completa em
- * 900 ms. Fora do hover o icone esta sempre inteiro — nada depende disso.
+ * Icone de servico responde ao hover do cartao (issue #71): inclina e cresce
+ * um pouco. Os icones sao preenchidos (Griddy Icons), entao nao ha traco para
+ * redesenhar; a resposta e ao gesto da pessoa, nao decoracao solta.
  */
-@keyframes draw-icon {
-  from {
-    stroke-dashoffset: 1;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
+.service-icon {
+  transition: transform 300ms var(--ease-out-expo);
 }
 
-.draw-icon path,
-.draw-icon circle,
-.draw-icon rect {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 0;
-}
-
-.group:hover .draw-icon path,
-.group:hover .draw-icon circle,
-.group:hover .draw-icon rect {
-  animation: draw-icon 900ms var(--ease-out-expo) both;
+.group:hover .service-icon,
+.group:focus-visible .service-icon {
+  transform: scale(1.08) rotate(-6deg);
 }
 
 /* Marcador nativo do <details> escondido: o chevron e desenhado pelo FAQ. */
@@ -388,11 +375,13 @@ details.faq[open] > summary .faq-chevron {
   .smile-arc,
   .float,
   .drift,
-  .draw-on-scroll,
-  .draw-icon path,
-  .draw-icon circle,
-  .draw-icon rect {
+  .draw-on-scroll {
     animation: none !important;
+  }
+
+  .group:hover .service-icon,
+  .group:focus-visible .service-icon {
+    transform: none;
   }
 
   .smile-arc,

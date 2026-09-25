@@ -84,7 +84,7 @@ export default async function ServicoPage({ params }: ServicoPageProps) {
         back={{ href: "/servicos", label: "Todos os serviços" }}
         visual={
           <HeroEmblem>
-            <ServiceIcon slug={service.slug} width={128} height={128} strokeWidth={1.25} />
+            <ServiceIcon slug={service.slug} width={120} height={120} />
           </HeroEmblem>
         }
       />
