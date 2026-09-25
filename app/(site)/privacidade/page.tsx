@@ -31,7 +31,7 @@ export default async function PrivacidadePage() {
       <Container className="py-14 sm:py-16 lg:py-20">
       <div className="max-w-prose space-y-10 text-base leading-relaxed">
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight">1. Quem é o controlador</h2>
+          <h2 className="text-2xl font-bold">1. Quem é o controlador</h2>
           <p className="mt-3 text-ink-muted">
             {settings.clinic_name} ainda não tem CNPJ constituído — o
             faturamento não justifica hoje a abertura de pessoa jurídica, e a
@@ -50,7 +50,7 @@ export default async function PrivacidadePage() {
         </div>
 
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight">2. Quais dados são coletados</h2>
+          <h2 className="text-2xl font-bold">2. Quais dados são coletados</h2>
           <p className="mt-3 text-ink-muted">
             Pelo formulário de contato (<code>/contato</code>): nome,
             telefone, e-mail (opcional), serviço de interesse e mensagem. O
@@ -70,7 +70,7 @@ export default async function PrivacidadePage() {
         </div>
 
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight">3. Finalidade e base legal</h2>
+          <h2 className="text-2xl font-bold">3. Finalidade e base legal</h2>
           <p className="mt-3 text-ink-muted">
             Os dados são usados para responder à mensagem enviada e, quando
             aplicável, organizar o agendamento de consulta. A base legal é o
@@ -80,7 +80,7 @@ export default async function PrivacidadePage() {
         </div>
 
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight">4. Compartilhamento</h2>
+          <h2 className="text-2xl font-bold">4. Compartilhamento</h2>
           <p className="mt-3 text-ink-muted">
             Os dados são processados pelos seguintes fornecedores, contratados
             para operar o site: Cloudflare (hospedagem do site e verificação
@@ -92,7 +92,7 @@ export default async function PrivacidadePage() {
         </div>
 
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight">5. Retenção e exclusão</h2>
+          <h2 className="text-2xl font-bold">5. Retenção e exclusão</h2>
           <p className="mt-3 text-ink-muted">
             Mensagens recebidas pelo formulário de contato que não avançam
             para atendimento são mantidas por até 12 meses, após os quais são
@@ -101,7 +101,7 @@ export default async function PrivacidadePage() {
         </div>
 
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight">6. Direitos do titular</h2>
+          <h2 className="text-2xl font-bold">6. Direitos do titular</h2>
           <p className="mt-3 text-ink-muted">
             Qualquer pessoa pode solicitar acesso, correção, portabilidade,
             exclusão ou anonimização dos próprios dados a qualquer momento,
@@ -115,7 +115,7 @@ export default async function PrivacidadePage() {
         </div>
 
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight">7. Segurança</h2>
+          <h2 className="text-2xl font-bold">7. Segurança</h2>
           <p className="mt-3 text-ink-muted">
             O site é servido inteiramente por HTTPS. O acesso ao painel
             administrativo, onde os dados de contato ficam visíveis, é
@@ -127,7 +127,7 @@ export default async function PrivacidadePage() {
         </div>
 
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight">8. Cookies</h2>
+          <h2 className="text-2xl font-bold">8. Cookies</h2>
           <p className="mt-3 text-ink-muted">
             O site usa cookies apenas para manter a sessão de login do painel
             administrativo e controlar o tempo de inatividade dessa sessão —

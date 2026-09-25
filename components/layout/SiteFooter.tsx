@@ -13,12 +13,9 @@ import { SmileDivider } from "@/components/ui/SmileDivider";
 import { MobileActionBar } from "./MobileActionBar";
 import { footerNav, mainNav } from "@/lib/config/navigation";
 import { SITE_NAME } from "@/lib/config/site";
-import { getServices } from "@/lib/data/services";
 import { getSiteSettingsMap } from "@/lib/data/siteSettings";
 import { getTeamMembers } from "@/lib/data/team";
 import { buildWhatsAppUrl } from "@/lib/utils/whatsapp";
-
-const FOOTER_SERVICE_LIMIT = 8;
 
 /**
  * Rodape completo: marca + contato + paginas + servicos + linha legal.
@@ -33,9 +30,8 @@ const FOOTER_SERVICE_LIMIT = 8;
  * paginas e legal.
  */
 export async function SiteFooter() {
-  const [settings, services, team] = await Promise.all([
+  const [settings, team] = await Promise.all([
     getSiteSettingsMap().catch(() => null),
-    getServices().catch(() => []),
     getTeamMembers().catch(() => []),
   ]);
   const clinicName = settings?.clinic_name ?? SITE_NAME;
@@ -52,7 +48,7 @@ export async function SiteFooter() {
       </div>
       <div className="relative overflow-hidden bg-blue-deep">
         <div aria-hidden className="pattern-arcs pointer-events-none absolute inset-0" />
-        <Container className="relative grid gap-10 pb-14 pt-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr] lg:gap-8 lg:pt-14">
+        <Container className="relative grid gap-10 pb-14 pt-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_0.8fr_1.2fr] lg:gap-12 lg:pt-14">
           <div>
             <Image
               src="/images/logo/logo-horizontal-white.png"
@@ -80,7 +76,7 @@ export async function SiteFooter() {
           </div>
 
           <nav aria-label="Navegação do rodapé">
-            <p className="font-display text-lg font-medium">Páginas</p>
+            <p className="font-display text-lg font-semibold">Páginas</p>
             <ul className="mt-3 sm:space-y-2">
               {mainNav.map((item) => (
                 <li key={item.href}>
@@ -95,37 +91,9 @@ export async function SiteFooter() {
             </ul>
           </nav>
 
-          {services.length > 0 && (
-            <nav aria-label="Serviços">
-              <p className="font-display text-lg font-medium">Serviços</p>
-              <ul className="mt-3 sm:space-y-2">
-                {services.slice(0, FOOTER_SERVICE_LIMIT).map((service) => (
-                  <li key={service.id}>
-                    <Link
-                      href={`/servicos/${service.slug}`}
-                      className="inline-block py-1 max-sm:py-3 text-white/85 transition-colors ease-out hover:text-white"
-                    >
-                      {service.title}
-                    </Link>
-                  </li>
-                ))}
-                {services.length > FOOTER_SERVICE_LIMIT && (
-                  <li>
-                    <Link
-                      href="/servicos"
-                      className="inline-block py-1 max-sm:py-3 font-medium text-white underline-offset-4 hover:underline"
-                    >
-                      Ver todos os serviços
-                    </Link>
-                  </li>
-                )}
-              </ul>
-            </nav>
-          )}
-
           {settings && (
             <address className="not-italic">
-              <p className="font-display text-lg font-medium">Contato</p>
+              <p className="font-display text-lg font-semibold">Contato</p>
               <ul className="mt-3 space-y-3 text-white/85">
                 {settings.address && (
                   <li className="flex gap-2.5">

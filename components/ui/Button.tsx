@@ -4,7 +4,7 @@ export type ButtonVariant = "primary" | "secondary" | "inverse" | "ghost" | "acc
 export type ButtonSize = "md" | "lg";
 
 const BASE =
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl font-medium transition duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark";
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-full font-semibold transition duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark";
 
 const SIZES: Record<ButtonSize, string> = {
   md: "px-5 py-2.5 text-sm",
@@ -17,9 +17,9 @@ const SIZES: Record<ButtonSize, string> = {
  * nao se qualifica como texto grande pelo WCAG (exige 18px normal ou 14px
  * bold/700+), entao vale o piso de 4.5:1 — branco sobre `--blue` da 3.3:1, e
  * sobre `--blue-dark` da 5.9:1 (par documentado no DESIGN.md). Mesmo raciocinio
- * do rodape. O hover/active escurece por `brightness` em vez de trocar de token:
- * nao existe `--blue-darker` e clarear reabriria o problema de contraste. O
- * `transition-*` respeita `prefers-reduced-motion` pela regra global de globals.css.
+ * do rodape. No hover o botao sobe 2px e ganha sombra da propria cor (so com
+ * mouse: o `hover:` do Tailwind 4 ja ignora toque); no clique volta ao lugar.
+ * O `transition-*` respeita `prefers-reduced-motion` pela regra global de globals.css.
  *
  * `inverse` e o par invertido para fundo azul (faixa de CTA, hero, rodape):
  * botao branco com texto `--blue-dark` (5.9:1, mesmo par ao contrario).
@@ -30,14 +30,15 @@ const SIZES: Record<ButtonSize, string> = {
  */
 const VARIANTS: Record<ButtonVariant, string> = {
   primary:
-    "bg-blue-dark text-white shadow-sm shadow-blue-dark/20 hover:brightness-90 hover:shadow-md hover:shadow-blue-dark/25 active:brightness-90",
-  secondary: "border border-ink/20 bg-surface text-ink hover:border-blue hover:bg-surface-tint",
+    "bg-blue-dark text-white hover:-translate-y-0.5 hover:bg-blue-deep hover:shadow-lg hover:shadow-blue-dark/30 active:translate-y-0",
+  secondary:
+    "border border-ink/20 bg-surface text-ink hover:-translate-y-0.5 hover:border-blue hover:bg-surface-tint active:translate-y-0",
   inverse:
-    "bg-surface text-blue-dark shadow-md shadow-blue-deep/30 hover:bg-surface-tint hover:shadow-lg focus-visible:outline-white",
+    "bg-surface text-blue-dark hover:-translate-y-0.5 hover:bg-surface-tint hover:shadow-lg hover:shadow-blue-deep/40 active:translate-y-0 focus-visible:outline-white",
   "outline-inverse":
-    "border border-white/40 text-white hover:border-white hover:bg-white/10 focus-visible:outline-white",
+    "border border-white/40 text-white hover:-translate-y-0.5 hover:border-white hover:bg-white/10 active:translate-y-0 focus-visible:outline-white",
   accent:
-    "bg-terracotta text-ink shadow-sm shadow-terracotta/30 hover:brightness-95 hover:shadow-md hover:shadow-terracotta/40 active:brightness-95",
+    "bg-terracotta text-ink hover:-translate-y-0.5 hover:brightness-95 hover:shadow-lg hover:shadow-terracotta/40 active:translate-y-0",
   ghost: "text-blue-dark hover:bg-surface-tint",
 };
 

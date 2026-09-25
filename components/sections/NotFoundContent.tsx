@@ -15,7 +15,7 @@ export function NotFoundContent() {
     <div className="relative overflow-hidden">
       <Container className="relative grid items-center gap-10 py-20 sm:py-28 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <div className="max-w-xl">
-          <p className="font-display text-7xl font-semibold leading-none text-blue sm:text-8xl lg:text-9xl">
+          <p className="font-display text-7xl font-bold leading-none text-blue-dark sm:text-8xl lg:text-9xl">
             404
           </p>
           <svg aria-hidden viewBox="0 0 240 40" className="mt-2 h-6 w-40 text-terracotta" fill="none">
@@ -28,7 +28,7 @@ export function NotFoundContent() {
               pathLength={1}
             />
           </svg>
-          <h1 className="mt-6 text-3xl font-semibold tracking-tight sm:text-4xl">
+          <h1 className="mt-6 text-3xl font-bold sm:text-4xl">
             Essa página não existe
           </h1>
           <p className="mt-4 text-lg leading-relaxed text-ink-muted">
@@ -47,7 +47,7 @@ export function NotFoundContent() {
             </Link>
           </div>
         </div>
-        <div aria-hidden className="float hidden justify-center lg:flex">
+        <div aria-hidden className="hidden justify-center lg:flex">
           <span className="inline-flex h-56 w-56 items-center justify-center rounded-full bg-surface-tint text-blue">
             <IconTooth width={128} height={128} />
           </span>

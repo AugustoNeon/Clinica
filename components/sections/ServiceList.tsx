@@ -12,12 +12,11 @@ interface ServiceListProps {
  * Cada grupo tem a propria tinta de icone — o paciente que rola a pagina
  * ve a mudanca de "familia" pela cor, alem do titulo.
  */
-const GROUP_TINTS = [
-  "bg-surface-tint text-blue-dark",
-  "bg-terracotta-tint text-terracotta-text",
-  "bg-blue-deep text-blue-glow",
-  "bg-blue-dark text-white",
-];
+/*
+ * Cor do icone por grupo: o paciente que rola a pagina ve a mudanca de
+ * "familia" pela cor, alem do titulo. Sem circulo tingido atras (issue #73).
+ */
+const GROUP_ICON_COLORS = ["text-blue-dark", "text-terracotta-text", "text-blue-deep", "text-blue-dark"];
 
 /**
  * Lista completa de servicos (pagina /servicos), agrupada por intencao do
@@ -50,33 +49,38 @@ export function ServiceList({ services }: ServiceListProps) {
           <Container className="relative grid gap-8 py-12 sm:py-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-16">
             <div className="lg:sticky lg:top-28 lg:self-start">
               {/* Grupos nao sao uma sequencia: sem numero, so o titulo (critique 2026-09-25). */}
-              <h2 id={`grupo-${index}`} className="text-3xl font-semibold tracking-tight sm:text-4xl">
+              <h2 id={`grupo-${index}`} className="text-3xl font-bold sm:text-4xl">
                 {group.title}
               </h2>
               <p className="mt-3 text-lg leading-relaxed text-ink-muted">{group.description}</p>
             </div>
 
-            <ul className="reveal grid gap-4 sm:grid-cols-2">
-              {group.services.map((service) => (
-                <li key={service.id}>
+            <ul className="grid gap-3 sm:grid-cols-2">
+              {group.services.map((service, serviceIndex) => (
+                <li
+                  key={service.id}
+                  className="reveal"
+                  style={{ "--reveal-start": `${(serviceIndex % 2) * 40}px` } as React.CSSProperties}
+                >
                   <Link
                     href={`/servicos/${service.slug}`}
-                    className="group flex h-full flex-col rounded-3xl border border-ink/10 bg-surface p-6 transition-colors duration-200 ease-out hover:border-blue hover:bg-surface-tint/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark"
+                    className={`lift group flex h-full flex-col rounded-3xl p-6 ${index % 2 === 1 ? "bg-surface hover:bg-surface-sunken" : "bg-surface-sunken hover:bg-surface-tint"} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark`}
                   >
                     <div className="flex items-center gap-4">
-                      <span
-                        className={`inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${GROUP_TINTS[index % GROUP_TINTS.length]}`}
-                      >
-                        <ServiceIcon slug={service.slug} className="service-icon" width={26} height={26} />
-                      </span>
-                      <h3 className="text-xl font-medium transition-colors ease-out group-hover:text-blue-dark">
+                      <ServiceIcon
+                        slug={service.slug}
+                        className={`service-icon shrink-0 ${GROUP_ICON_COLORS[index % GROUP_ICON_COLORS.length]}`}
+                        width={34}
+                        height={34}
+                      />
+                      <h3 className="text-xl font-bold transition-colors ease-out group-hover:text-blue-dark">
                         {service.title}
                       </h3>
                     </div>
                     <p className="mt-4 flex-1 text-base leading-relaxed text-ink-muted">
                       {service.description}
                     </p>
-                    <span className="mt-5 text-sm font-medium text-blue-dark underline decoration-blue-dark/30 underline-offset-4 transition-colors group-hover:decoration-blue-dark">
+                    <span className="mt-5 text-sm font-semibold text-blue-dark underline decoration-blue-dark/30 underline-offset-4 transition-colors group-hover:decoration-blue-dark">
                       Saiba mais
                     </span>
                   </Link>

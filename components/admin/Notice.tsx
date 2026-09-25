@@ -11,8 +11,9 @@ interface NoticeProps {
 }
 
 const TONES: Record<NoticeTone, { box: string; icon: ReactNode }> = {
+  // Verde aqui e cor de estado (sucesso), nao acento de marca.
   success: {
-    box: "border-emerald-600/30 bg-emerald-50 text-emerald-900",
+    box: "border-emerald-600/30 bg-emerald-50 text-emerald-900", // avoid-ai-design-ignore: SD8
     icon: <IconCheck width={18} height={18} className="mt-0.5 shrink-0 text-emerald-700" />,
   },
   error: {

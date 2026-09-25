@@ -91,7 +91,7 @@ export default async function ServicoPage({ params }: ServicoPageProps) {
 
       <Container className="grid gap-12 py-14 sm:py-16 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-20 lg:py-20">
         <article className="max-w-prose">
-          <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+          <h2 className="text-2xl font-bold sm:text-3xl">
             O que é {service.title.toLowerCase()}
           </h2>
           {/*
@@ -107,10 +107,10 @@ export default async function ServicoPage({ params }: ServicoPageProps) {
           <div className="relative mt-10 overflow-hidden rounded-3xl bg-blue-dark p-6 text-white sm:p-8">
             <div aria-hidden className="pattern-arcs pointer-events-none absolute inset-0" />
             <div className="relative">
-              <h3 className="text-xl font-medium text-white sm:text-2xl">Vale para o meu caso?</h3>
+              <h3 className="text-xl font-semibold text-white sm:text-2xl">Vale para o meu caso?</h3>
               <p className="mt-2 text-base leading-relaxed text-white/90">
                 Só a avaliação responde isso. Ela inclui exame clínico, conversa
-                sobre o que você espera e, quando necessário, exames de imagem —
+                sobre o que você espera e, quando necessário, exames de imagem,
                 e termina com um plano explicado etapa por etapa.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
@@ -121,7 +121,7 @@ export default async function ServicoPage({ params }: ServicoPageProps) {
                   className={buttonClasses("inverse")}
                 >
                   <IconWhatsApp width={18} height={18} />
-                  Agendar avaliação
+                  Agendar pelo WhatsApp
                 </a>
                 <Link href="/contato" className={buttonClasses("outline-inverse")}>
                   Enviar mensagem

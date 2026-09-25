@@ -78,7 +78,7 @@ export async function SiteHeader() {
         </div>
       )}
 
-      <header className="sticky top-0 z-(--z-header) border-b border-ink/10 bg-surface/90 shadow-sm shadow-blue-deep/5 backdrop-blur supports-[backdrop-filter]:bg-surface/80">
+      <header className="sticky top-0 z-(--z-header) border-b border-ink/10 bg-surface">
         <Container className="flex items-center justify-between gap-4 py-3 sm:py-4">
           {/*
             Versao colorida e horizontal, sem tagline (DESIGN.md → Logo → Header).
@@ -121,7 +121,7 @@ export async function SiteHeader() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Agendar pelo WhatsApp"
-                className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-blue-dark text-white transition ease-out hover:brightness-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark sm:hidden"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-blue-dark text-white transition ease-out hover:brightness-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-dark sm:hidden"
               >
                 <IconWhatsApp width={22} height={22} />
               </a>

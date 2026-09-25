@@ -60,6 +60,14 @@ o usuário achou o redesign "minimalista até demais"; site e painel
 ganharam azul profundo drenched, textura de arcos, divisores curvos,
 ícones ilustrados por serviço e fotos em camadas (ver `DESIGN.md` →
 "Camada rica").
+**Azul aceso e revisão anti-IA (issue #73, 2026-09-25):** paleta com o
+azul do logo aceso (`#0067AB`), céu, pêssego e coral; Bricolage
+Grotesque + Lexend no lugar de Fraunces + Inter; Home reordenada e
+efeitos de "página gerada" removidos (ver `DESIGN.md`). Na mesma issue,
+a pedido do usuário, voltaram a faixa de fatos em movimento (sem botão
+de pausa), a moldura 3D do hero, hover nos cartões e botões, revelação
+ao rolar, e entrou um **dente 3D** (three.js, `components/three/`) no
+hero da Home e em `/servicos`.
 
 ## Stack
 
@@ -508,6 +516,36 @@ jamais a prosa:
 
 ## Decisões fechadas
 
+- 2026-09-25: Movimento e 3D de volta (issue #73), revertendo parte da
+  revisão anti-IA do mesmo dia. O usuário pediu de volta a faixa de fatos
+  em movimento, as animações de hover e o 3D, e aprovou incluir um dente
+  3D, depois pedindo o formato de um molar de três raízes a partir de uma
+  imagem de referência e que os botões de pausa (faixa e dente) saíssem
+  "porque deixam o site feio". Como ficou: a faixa pausa com mouse,
+  toque, Enter ou foco; o dente não gira sozinho sem parar (só entra
+  girando < 2 s e depois responde a rolagem, mouse e arrasto), então nada
+  exige controle de pausa visível (WCAG 2.2.2). O dente é gerado por
+  código (SDF + `MarchingCubes` do three.js), sem arquivo de modelo nem
+  licença de terceiro; three.js entra como dependência (~142 KB gzip),
+  carregado só no navegador e só perto do dente, fora do bundle do
+  Worker. Continuam fora: manchas desfocadas e fade idêntico em toda
+  seção. Custo aceito: +1 dependência grande no cliente e mais movimento
+  na página (tudo desligado em `prefers-reduced-motion`). Detalhes em
+  `DESIGN.md` → "Movimento, hover e dente 3D".
+- 2026-09-25: Paleta "azul aceso" e tipografia Bricolage Grotesque +
+  Lexend (issue #73), superando a decisão de 2026-08-05 (Fraunces + Inter,
+  azul `#4590BF` + terracota `#E2805E`) e o marinho dominante da #71. Por
+  que: o usuário achou o site "sem vida" e escolheu a direção A numa
+  comparação visual; depois pediu revisão com skills anti-"cara de IA"
+  mesmo que mudasse muito. Três delas apontam Fraunces + Inter como a
+  dupla padrão de sites gerados e o terracota perto de `#D97757` como
+  acento-padrão; o marinho `#123F5C` media L 0,35 / C 0,07 em OKLCH.
+  Também saíram, pelo mesmo motivo: faixa de fatos em movimento, selos
+  flutuando e 3D do mouse no hero, manchas desfocadas, fade em toda
+  seção, ícone em quadrado tingido, cartão com borda e sombra, seta em
+  botão, depoimento de exemplo em destaque. Fontes self-hosted (OFL) em
+  `app/fonts/`, mantendo a decisão de 2026-08-03 de não depender de rede
+  no build. Custo aceito: identidade tipográfica nova para a clínica.
 - 2026-09-25: Sistema visual ampliado (issue #71) em vez de mantido
   "contido" — o usuário avaliou o resultado da #65 como minimalista
   demais. Entraram 3 tokens (`--blue-deep`, `--blue-glow`,

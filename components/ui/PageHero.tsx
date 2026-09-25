@@ -16,6 +16,8 @@ interface PageHeroProps {
   children?: ReactNode;
   /** Elemento visual a direita do texto (icone grande, foto...), opcional. */
   visual?: ReactNode;
+  /** Mostra o `visual` tambem no celular, abaixo do texto (padrao: so a partir de `lg`). */
+  visualOnMobile?: boolean;
 }
 
 type Vars = React.CSSProperties;
@@ -26,31 +28,26 @@ type Vars = React.CSSProperties;
  * Da identidade a cada pagina sem repetir o hero da Home — e sorri para a
  * secao seguinte pelo divisor curvo.
  */
-export function PageHero({ title, lead, back, kicker, children, visual }: PageHeroProps) {
+export function PageHero({ title, lead, back, kicker, children, visual, visualOnMobile = false }: PageHeroProps) {
   return (
-    <div className="relative overflow-hidden bg-blue-deep text-white">
+    <div className="relative overflow-hidden bg-blue-dark text-white">
       <div aria-hidden className="pattern-arcs pointer-events-none absolute inset-0" />
-      <div
-        aria-hidden
-        className="drift pointer-events-none absolute -right-32 -top-40 h-[30rem] w-[30rem] rounded-full bg-blue-dark/80 blur-3xl"
-        style={{ "--drift-from": "0px", "--drift-to": "-60px" } as Vars}
-      />
       <Container className="relative grid items-center gap-10 pb-14 pt-12 sm:pb-16 sm:pt-16 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:pb-20 lg:pt-20">
         <div className="max-w-3xl">
           {back && (
             <Link
               href={back.href}
-              className="rise-in inline-flex items-center gap-1.5 text-sm font-medium text-blue-glow underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              className="rise-in inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-blue-glow underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               <IconArrowLeft width={16} height={16} />
               {back.label}
             </Link>
           )}
           {kicker && (
-            <p className={`rise-in text-sm font-medium text-terracotta-soft ${back ? "mt-6" : ""}`}>{kicker}</p>
+            <p className={`rise-in text-base font-semibold text-blue-glow ${back ? "mt-6" : ""}`}>{kicker}</p>
           )}
           <h1
-            className={`rise-in text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl ${
+            className={`rise-in text-4xl font-bold text-white sm:text-5xl lg:text-6xl ${
               back || kicker ? "mt-3" : ""
             }`}
             style={{ "--rise-delay": "60ms" } as Vars}
@@ -69,7 +66,7 @@ export function PageHero({ title, lead, back, kicker, children, visual }: PageHe
           </svg>
           {lead && (
             <p
-              className="rise-in mt-5 max-w-2xl text-lg leading-relaxed text-white/85 sm:text-xl"
+              className="rise-in mt-5 max-w-2xl text-lg leading-relaxed text-white/90 sm:text-xl"
               style={{ "--rise-delay": "140ms" } as Vars}
             >
               {lead}
@@ -81,7 +78,14 @@ export function PageHero({ title, lead, back, kicker, children, visual }: PageHe
             </div>
           )}
         </div>
-        {visual && <div className="rise-in relative hidden lg:block" style={{ "--rise-delay": "120ms" } as Vars}>{visual}</div>}
+        {visual && (
+          <div
+            className={`rise-in relative ${visualOnMobile ? "" : "hidden lg:block"}`}
+            style={{ "--rise-delay": "120ms" } as Vars}
+          >
+            {visual}
+          </div>
+        )}
       </Container>
       <SmileDivider className="relative text-surface" />
     </div>

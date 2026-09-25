@@ -24,7 +24,7 @@ export default async function ContatoPage() {
     <>
       <PageHero
         title="Vamos conversar?"
-        lead="O caminho mais rápido é o WhatsApp. Se preferir, ligue ou deixe uma mensagem pelo formulário — a clínica responde no horário de atendimento."
+        lead="O caminho mais rápido é o WhatsApp. Se preferir, ligue ou deixe uma mensagem pelo formulário. A clínica responde no horário de atendimento."
         visual={
           <HeroEmblem>
             <IconWhatsApp width={112} height={112} />
@@ -38,7 +38,7 @@ export default async function ContatoPage() {
           className={buttonClasses("inverse", "", "lg")}
         >
           <IconWhatsApp width={20} height={20} />
-          Chamar no WhatsApp
+          Agendar pelo WhatsApp
         </a>
         {settings.phone && (
           <a
@@ -54,10 +54,10 @@ export default async function ContatoPage() {
       <section className="py-14 sm:py-20 lg:py-24">
         <Container className="grid gap-12 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-20">
           <div>
-            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">Deixe uma mensagem</h2>
+            <h2 className="text-3xl font-bold sm:text-4xl">Deixe uma mensagem</h2>
             <p className="mt-3 max-w-prose text-base leading-relaxed text-ink-muted">
               Conte o que você está sentindo ou o que gostaria de mudar. Não
-              precisa saber o nome do procedimento — isso a avaliação descobre.
+              precisa saber o nome do procedimento: isso a avaliação descobre.
             </p>
             <div className="mt-8">
               <ContactForm services={services} />

@@ -24,7 +24,7 @@ export function CtaBand({
   whatsapp,
   phone,
   title = "Vamos cuidar do seu sorriso?",
-  text = "Conte o que você está sentindo ou o que quer mudar. A avaliação define o próximo passo — e você decide com calma.",
+  text = "Conte o que você está sentindo ou o que quer mudar. A avaliação define o próximo passo, e você decide com calma.",
   whatsappMessage = "Olá! Gostaria de agendar uma avaliação.",
 }: CtaBandProps) {
   const whatsappHref = buildWhatsAppUrl(whatsapp, whatsappMessage);
@@ -32,13 +32,9 @@ export function CtaBand({
   return (
     <section className="relative overflow-hidden bg-blue-dark text-white">
       <div aria-hidden className="pattern-arcs pointer-events-none absolute inset-0" />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-blue/40 blur-3xl"
-      />
       <Container className="relative grid items-end gap-10 pt-16 sm:pt-20 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-16 lg:pt-0">
-        <div className="reveal max-w-2xl pb-16 sm:pb-20 lg:py-28">
-          <h2 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-5xl">{title}</h2>
+        <div className="reveal max-w-2xl pb-16 sm:pb-20 lg:py-24">
+          <h2 className="text-4xl font-bold text-white sm:text-5xl">{title}</h2>
           <p className="mt-5 text-lg leading-relaxed text-white/90 sm:text-xl">{text}</p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <a
@@ -71,7 +67,7 @@ export function CtaBand({
         <div className="relative mx-auto w-56 self-end sm:w-72 lg:w-full lg:max-w-sm lg:justify-self-end">
           <div
             aria-hidden
-            className="absolute -inset-x-6 bottom-0 top-10 rounded-t-[999px] bg-blue-deep/50"
+            className="absolute -inset-x-6 bottom-0 top-10 rounded-t-[999px] bg-blue-deep"
           />
           <div className="relative aspect-[4/5] overflow-hidden rounded-t-[999px]">
             <Image
