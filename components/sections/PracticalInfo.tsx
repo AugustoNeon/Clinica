@@ -119,8 +119,8 @@ export function PracticalInfo({ settings, title = "Onde e quando", compact = fal
           </dl>
         </div>
 
-        <div className="reveal overflow-hidden rounded-3xl bg-surface p-2 shadow-xl shadow-blue-deep/15 lg:p-3">
-          <div className="overflow-hidden rounded-2xl">
+        <div className="reveal flex flex-col overflow-hidden rounded-3xl bg-surface p-2 shadow-xl shadow-blue-deep/15 lg:p-3">
+          <div className="flex-1 overflow-hidden rounded-2xl">
             <LocationMap embedUrl={settings.maps_embed_url} />
           </div>
         </div>

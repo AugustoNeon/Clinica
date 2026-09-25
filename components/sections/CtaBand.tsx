@@ -39,7 +39,7 @@ export function CtaBand({
       <Container className="relative grid items-end gap-10 pt-16 sm:pt-20 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-16 lg:pt-0">
         <div className="reveal max-w-2xl pb-16 sm:pb-20 lg:py-28">
           <h2 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-5xl">{title}</h2>
-          <p className="mt-5 text-lg leading-relaxed text-white/85 sm:text-xl">{text}</p>
+          <p className="mt-5 text-lg leading-relaxed text-white/90 sm:text-xl">{text}</p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <a
               href={whatsappHref}
@@ -55,7 +55,7 @@ export function CtaBand({
             </Link>
           </div>
           {phone && (
-            <p className="mt-6 text-sm text-white/85">
+            <p className="mt-6 text-sm text-white/90">
               Ou ligue:{" "}
               <a
                 href={`tel:${phone.replace(/\D/g, "")}`}

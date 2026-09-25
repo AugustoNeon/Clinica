@@ -37,7 +37,7 @@ export function Section({
   id,
 }: SectionProps) {
   const onDark = tone === "dark" || tone === "deep";
-  const muted = onDark ? "text-white/85" : "text-ink-muted";
+  const muted = onDark ? "text-white/90" : "text-ink-muted";
 
   return (
     <section id={id} className={`relative py-14 sm:py-20 lg:py-24 ${TONES[tone]} ${className}`}>

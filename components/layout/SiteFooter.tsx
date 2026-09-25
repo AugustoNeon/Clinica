@@ -43,8 +43,8 @@ export async function SiteFooter() {
 
   return (
     <footer className="relative mt-auto text-sm text-white">
-      <div className="relative z-10 -mb-px">
-        <SmileDivider flip className="text-blue-deep" />
+      <div className="relative z-10 -mt-8 sm:-mt-12 lg:-mt-[4.5rem]">
+        <SmileDivider className="text-blue-deep" />
       </div>
       <div className="relative overflow-hidden bg-blue-deep">
         <div aria-hidden className="pattern-arcs pointer-events-none absolute inset-0" />

@@ -49,7 +49,7 @@ export function Hero({ tagline, whatsapp, address, openingHours, insurance, prof
       />
       <div
         aria-hidden
-        className="drift pointer-events-none absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-terracotta/35 blur-2xl"
+        className="drift pointer-events-none absolute bottom-24 -left-32 h-80 w-80 rounded-full bg-terracotta/30 blur-3xl"
         style={{ "--drift-from": "50px", "--drift-to": "-50px" } as Vars}
       />
 
@@ -169,7 +169,7 @@ export function Hero({ tagline, whatsapp, address, openingHours, insurance, prof
 
             {insurance && (
               <div
-                className="tilt-layer float absolute right-0 top-[58%] flex items-center gap-2.5 rounded-2xl bg-surface px-3.5 py-2.5 text-ink shadow-xl shadow-blue-deep/50 sm:-right-6"
+                className="tilt-layer float absolute right-2 top-[58%] flex items-center gap-2.5 rounded-2xl bg-surface px-3.5 py-2.5 text-ink shadow-xl shadow-blue-deep/50 sm:-right-2"
                 style={{ "--depth": "75px", "--float-delay": "1600ms" } as Vars}
               >
                 <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-terracotta text-ink">
