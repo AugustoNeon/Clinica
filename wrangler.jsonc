@@ -11,6 +11,13 @@
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
+  },
+  // Logs do Worker guardados no painel da Cloudflare (issue #75): o
+  // travamento de 2026-09-25 so deu para investigar com `wrangler tail`
+  // ao vivo. O codigo nunca loga dado pessoal (regra do AGENTS.md), entao
+  // o que fica guardado e request/status/erro, nao conteudo de formulario.
+  "observability": {
+    "enabled": true
   }
   // Sem kv_namespaces/r2_buckets de proposito: nenhuma pagina usa
   // revalidate/ISR hoje (grep confirmado em app/**). Adicionar cache
